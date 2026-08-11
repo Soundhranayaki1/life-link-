@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Organization Operations Dashboard – LIFE LINK</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <script src="js/mockData.js" defer></script>
+  <script src="js/mockAuth.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+
+  <!-- Site Navigation -->
+  <header class="site-header">
+    <div class="nav-wrapper">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-mark">✚</div>
+        <span>LIFE LINK</span>
+      </a>
+
+      <div class="nav-actions" id="navAuthArea"></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Header Card -->
+    <div class="card card-body" style="margin-bottom: 2rem; border-left: 4px solid #2563EB;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.35rem;">
+            <h1 style="font-size: 1.8rem;" id="orgDashboardTitle">XYZ Government Hospital</h1>
+            <span class="badge badge-success">✓ VERIFIED ORGANIZATION</span>
+          </div>
+          <div style="color: var(--navy-muted); font-size: 0.9rem;">
+            📜 Certification #: <strong>GOVT-HOSP-2026-991</strong> • Representative: <strong>Dr. S. K. Mehta</strong> • 📍 Mumbai
+          </div>
+        </div>
+
+        <a href="emergency-requests.html" class="btn btn-primary">
+          📢 Broadcast New Blood Request
+        </a>
+      </div>
+    </div>
+
+    <!-- Operations KPI Grid -->
+    <div class="grid-4" style="margin-bottom: 2.5rem;">
+      <div class="card card-body" style="text-align: center;">
+        <div style="font-size: 0.85rem; color: var(--navy-muted);">Active Blood Requests</div>
+        <div style="font-family: var(--font-heading); font-size: 2.2rem; font-weight: 800; color: var(--navy-dark);">2</div>
+        <div style="font-size: 0.78rem; color: var(--status-warning);">1 Critical Requirement</div>
+      </div>
+
+      <div class="card card-body" style="text-align: center;">
+        <div style="font-size: 0.85rem; color: var(--navy-muted);">Donors Notified</div>
+        <div style="font-family: var(--font-heading); font-size: 2.2rem; font-weight: 800; color: #2563EB;">42</div>
+        <div style="font-size: 0.78rem; color: var(--navy-muted);">Within 8 km radius</div>
+      </div>
+
+      <div class="card card-body" style="text-align: center;">
+        <div style="font-size: 0.85rem; color: var(--navy-muted);">Donors Responded</div>
+        <div style="font-family: var(--font-heading); font-size: 2.2rem; font-weight: 800; color: var(--status-success);">6</div>
+        <div style="font-size: 0.78rem; color: var(--status-success);">Ready to donate</div>
+      </div>
+
+      <div class="card card-body" style="text-align: center;">
+        <div style="font-size: 0.85rem; color: var(--navy-muted);">Fulfilled Requests</div>
+        <div style="font-family: var(--font-heading); font-size: 2.2rem; font-weight: 800; color: var(--crimson-red);">18</div>
+        <div style="font-size: 0.78rem; color: var(--navy-muted);">Completed this month</div>
+      </div>
+    </div>
+
+    <!-- Active Broadcasts Grid -->
+    <h2 style="font-size: 1.5rem; margin-bottom: 1.25rem;">Active Broadcasted Requirements</h2>
+
+    <div id="orgRequestsGrid" class="grid-cards">
+      <!-- Rendered dynamically -->
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <p>© 2026 LIFE LINK Healthcare System</p>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = MockAuth.getCurrentUser();
+      if (user && user.name) {
+        document.getElementById('orgDashboardTitle').textContent = user.name;
+      }
+      renderOrgRequests();
+    });
+
+    function renderOrgRequests() {
+      const container = document.getElementById('orgRequestsGrid');
+      if (!container) return;
+
+      container.innerHTML = MockData.emergencyRequests.map(r => `
+        <div class="card card-body card-hover">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+            <h3 style="font-size: 1.2rem;">${r.patientName}</h3>
+            <span class="badge ${r.urgency === 'CRITICAL' ? 'badge-critical' : 'badge-warning'}">${r.urgency}</span>
+          </div>
+
+          <p style="color: var(--navy-muted); font-size: 0.88rem; margin-bottom: 0.35rem;">🏥 ${r.hospitalLocation}</p>
+          <p style="color: var(--navy-muted); font-size: 0.88rem; margin-bottom: 1rem;">
+            Blood Needed: <strong style="color: var(--crimson-red);">${r.unitsNeeded} Units (${r.bloodGroup})</strong>
+          </p>
+
+          <div style="border-top: 1px solid var(--navy-border); padding-top: 0.85rem; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+            <span>Donors Responded: <strong>${r.responsesCount} Donor(s)</strong></span>
+            <button onclick="alert('Viewing responded voluntary donor details for ${r.patientName}')" class="btn btn-secondary btn-sm">
+              View Responded Donors
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+  </script>
+
+</body>
+</html>

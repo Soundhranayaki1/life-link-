@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blood Banks & Live Inventory – LIFE LINK</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <script src="js/mockData.js" defer></script>
+  <script src="js/mockAuth.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+
+  <!-- Site Navigation -->
+  <header class="site-header">
+    <div class="nav-wrapper">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-mark">✚</div>
+        <span>LIFE LINK</span>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-item">Home</a></li>
+        <li><a href="find-donors.html" class="nav-item">Find Donors</a></li>
+        <li><a href="emergency-requests.html" class="nav-item">Emergency Requests</a></li>
+        <li><a href="blood-banks.html" class="nav-item active">Blood Banks & Stock</a></li>
+      </ul>
+
+      <div class="nav-actions" id="navAuthArea"></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div style="margin-bottom: 2.5rem;">
+      <span class="badge badge-success" style="margin-bottom: 0.5rem;">VERIFIED FACILITIES</span>
+      <h1 style="font-size: 2.2rem;">Blood Banks & Live Inventory</h1>
+      <p style="color: var(--navy-muted);">Government-certified blood banks and real-time available stock levels</p>
+    </div>
+
+    <!-- Blood Banks List -->
+    <div id="bloodBanksListGrid" class="grid-cards" style="margin-bottom: 3.5rem;">
+      <!-- Loaded dynamically -->
+    </div>
+
+    <!-- Full Inventory Breakdown -->
+    <h2 style="font-size: 1.6rem; margin-bottom: 1.5rem;">Regional Blood Stock Breakdown</h2>
+    <div id="fullStockGrid" class="grid-4">
+      <!-- Loaded dynamically -->
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <p>© 2026 LIFE LINK Healthcare System</p>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderBloodBanks();
+      renderFullStock();
+    });
+
+    function renderBloodBanks() {
+      const container = document.getElementById('bloodBanksListGrid');
+      if (!container) return;
+
+      container.innerHTML = MockData.bloodBanks.map(b => `
+        <div class="card card-body card-hover">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+            <h3 style="font-size: 1.25rem;">${b.bankName}</h3>
+            <span class="badge badge-success">✓ ${b.verificationStatus}</span>
+          </div>
+
+          <p style="color: var(--navy-muted); font-size: 0.88rem; margin-bottom: 0.5rem;">🏥 ${b.address}, ${b.city}</p>
+          <p style="color: var(--navy-muted); font-size: 0.88rem; margin-bottom: 1rem;">📜 License #: <code>${b.licenseNumber}</code> • 🕒 ${b.operatingHours}</p>
+
+          <a href="tel:${b.contactPhone}" class="btn btn-secondary btn-sm" style="width: 100%;">
+            📞 Call Facility (${b.contactPhone})
+          </a>
+        </div>
+      `).join('');
+    }
+
+    function renderFullStock() {
+      const container = document.getElementById('fullStockGrid');
+      if (!container) return;
+
+      container.innerHTML = MockData.bloodStock.map(item => {
+        const fillPercent = Math.round((item.unitsAvailable / item.maxCapacity) * 100);
+        const isCritical = item.status === 'CRITICAL' || item.status === 'LOW';
+
+        return `
+          <div class="blood-meter-card">
+            <span class="badge ${isCritical ? 'badge-critical' : 'badge-success'}" style="margin-bottom: 0.5rem; font-size: 0.72rem;">${item.status}</span>
+            <div style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800;">${item.bloodGroup}</div>
+            
+            <div class="blood-vial">
+              <div class="blood-vial-fill" style="height: ${fillPercent}%;"></div>
+            </div>
+
+            <div style="font-family: var(--font-heading); font-size: 1.35rem; font-weight: 800; color: var(--crimson-red);">${item.unitsAvailable} Units</div>
+            <div style="font-size: 0.78rem; color: var(--navy-muted); margin-top: 0.25rem;">Capacity: ${item.maxCapacity} Units</div>
+          </div>
+        `;
+      }).join('');
+    }
+  </script>
+
+</body>
+</html>

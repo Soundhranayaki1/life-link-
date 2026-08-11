@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics & Donor Dashboard – LIFE LINK</title>
+  <meta name="description" content="System statistics, blood donation metrics, and user profile management.">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/dashboard.js" defer></script>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <div class="brand-icon">🩸</div>
+      <span>LIFE LINK</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="donors.html" class="nav-link">Find Donors</a></li>
+      <li><a href="requests.html" class="nav-link">Blood Requests</a></li>
+      <li><a href="inventory.html" class="nav-link">Blood Bank Stock</a></li>
+      <li><a href="dashboard.html" class="nav-link active">Dashboard</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <button class="theme-btn theme-toggle-btn" title="Toggle Theme">🌙</button>
+      <div id="navAuthContainer"></div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title">System Analytics & Profile</h1>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">
+          Real-time metrics, donor distribution, and personal profile settings.
+        </p>
+      </div>
+    </div>
+
+    <!-- User Profile Header Card -->
+    <div id="userProfileCard" class="glass-panel" style="padding: 2rem; margin-bottom: 2.5rem;">
+      <!-- Loaded dynamically by dashboard.js -->
+    </div>
+
+    <!-- KPI Summary Row -->
+    <div id="dashboardStatsRow" class="cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 2.5rem;">
+      <div class="glass-panel" style="padding: 1.5rem; text-align: center;">
+        <div style="font-size: 2rem; margin-bottom: 0.3rem;">👥</div>
+        <div id="statTotalDonors" style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--primary-red);">0</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted);">Total Donors</div>
+      </div>
+
+      <div class="glass-panel" style="padding: 1.5rem; text-align: center;">
+        <div style="font-size: 2rem; margin-bottom: 0.3rem;">🟢</div>
+        <div id="statAvailableDonors" style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--accent-green);">0</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted);">Available Donors Now</div>
+      </div>
+
+      <div class="glass-panel" style="padding: 1.5rem; text-align: center;">
+        <div style="font-size: 2rem; margin-bottom: 0.3rem;">🚨</div>
+        <div id="statActiveRequests" style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--accent-gold);">0</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted);">Active Requests</div>
+      </div>
+
+      <div class="glass-panel" style="padding: 1.5rem; text-align: center;">
+        <div style="font-size: 2rem; margin-bottom: 0.3rem;">❤️</div>
+        <div id="statFulfilledRequests" style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: #3b82f6;">0</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted);">Lives Saved / Fulfilled</div>
+      </div>
+
+      <div class="glass-panel" style="padding: 1.5rem; text-align: center;">
+        <div style="font-size: 2rem; margin-bottom: 0.3rem;">🩸</div>
+        <div id="statUnitsInStock" style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: #a855f7;">0</div>
+        <div style="font-size: 0.85rem; color: var(--text-muted);">Blood Units in Stock</div>
+      </div>
+    </div>
+
+    <!-- Chart Visualizations -->
+    <div class="glass-panel" style="padding: 2rem; margin-bottom: 2rem;">
+      <h2 style="margin-bottom: 1.5rem; font-size: 1.4rem;">📊 Registered Donors Distribution by Blood Group</h2>
+      <div style="position: relative; height: 320px; width: 100%;">
+        <canvas id="donorChart"></canvas>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 LIFE LINK – Blood Donor Management System</p>
+  </footer>
+
+</body>
+</html>

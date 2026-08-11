@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blood Bank Stock & Compatibility – LIFE LINK</title>
+  <meta name="description" content="Live blood bank inventory levels and blood group donor compatibility guide.">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/main.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/dashboard.js" defer></script>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <div class="brand-icon">🩸</div>
+      <span>LIFE LINK</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="donors.html" class="nav-link">Find Donors</a></li>
+      <li><a href="requests.html" class="nav-link">Blood Requests</a></li>
+      <li><a href="inventory.html" class="nav-link active">Blood Bank Stock</a></li>
+      <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <button class="theme-btn theme-toggle-btn" title="Toggle Theme">🌙</button>
+      <div id="navAuthContainer"></div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title">Blood Bank Stock Availability</h1>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">
+          Real-time unit availability by blood type across partner blood banks.
+        </p>
+      </div>
+    </div>
+
+    <!-- Inventory Cards Grid -->
+    <div id="inventoryGrid" class="inventory-grid">
+      <!-- Rendered dynamically by dashboard.js -->
+    </div>
+
+    <!-- Blood Compatibility Matrix Reference -->
+    <section class="glass-panel" style="padding: 2rem; margin-top: 2rem;">
+      <h2 style="margin-bottom: 1rem;">🧬 Human Blood Type Compatibility Guide</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+        Understanding who can donate blood to whom is essential during emergency transfusions.
+      </p>
+
+      <div class="table-responsive">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Blood Type</th>
+              <th>Can Donate Blood To</th>
+              <th>Can Receive Blood From</th>
+              <th>Key Characteristic</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="blood-badge" style="width:32px; height:32px; font-size:0.85rem; display:inline-flex;">O-</span></td>
+              <td><strong>Everyone (Universal Donor)</strong></td>
+              <td>O-</td>
+              <td>Emergency transfusions when blood type is unknown</td>
+            </tr>
+            <tr>
+              <td><span class="blood-badge" style="width:32px; height:32px; font-size:0.85rem; display:inline-flex;">O+</span></td>
+              <td>O+, A+, B+, AB+</td>
+              <td>O+, O-</td>
+              <td>Most common blood type in population</td>
+            </tr>
+            <tr>
+              <td><span class="blood-badge" style="width:32px; height:32px; font-size:0.85rem; display:inline-flex;">A+</span></td>
+              <td>A+, AB+</td>
+              <td>A+, A-, O+, O-</td>
+              <td>Second most common blood group</td>
+            </tr>
+            <tr>
+              <td><span class="blood-badge" style="width:32px; height:32px; font-size:0.85rem; display:inline-flex;">A-</span></td>
+              <td>A+, A-, AB+, AB-</td>
+              <td>A-, O-</td>
+              <td>Rare blood group</td>
+            </tr>
+            <tr>
+              <td><span class="blood-badge" style="width:32px; height:32px; font-size:0.85rem; display:inline-flex;">B+</span></td>
+              <td>B+, AB+</td>
+              <td>B+, B-, O+, O-</td>
+              <td>Common blood group in South Asia</td>
+            </tr>
+            <tr>
+              <td><span class="blood-badge" style="width:32px; height:32px; font-size:0.85rem; display:inline-flex;">B-</span></td>
+              <td>B+, B-, AB+, AB-</td>
+              <td>B-, O-</td>
+              <td>Rare blood group</td>
+            </tr>
+            <tr>
+              <td><span class="blood-badge" style="width:32px; height:32px; font-size:0.85rem; display:inline-flex;">AB+</span></td>
+              <td>AB+</td>
+              <td><strong>Everyone (Universal Recipient)</strong></td>
+              <td>Can receive red blood cells from any group</td>
+            </tr>
+            <tr>
+              <td><span class="blood-badge" style="width:32px; height:32px; font-size:0.85rem; display:inline-flex;">AB-</span></td>
+              <td>AB+, AB-</td>
+              <td>AB-, A-, B-, O-</td>
+              <td>Rarest blood group overall</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 LIFE LINK – Blood Donor Management System</p>
+  </footer>
+
+</body>
+</html>

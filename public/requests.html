@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emergency Blood Requests – LIFE LINK</title>
+  <meta name="description" content="View active emergency blood requests and respond as a voluntary donor.">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/main.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/requests.js" defer></script>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <div class="brand-icon">🩸</div>
+      <span>LIFE LINK</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="donors.html" class="nav-link">Find Donors</a></li>
+      <li><a href="requests.html" class="nav-link active">Blood Requests</a></li>
+      <li><a href="inventory.html" class="nav-link">Blood Bank Stock</a></li>
+      <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <button class="theme-btn theme-toggle-btn" title="Toggle Theme">🌙</button>
+      <div id="navAuthContainer"></div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title">Emergency Blood Requests</h1>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">
+          Urgent hospital blood requirements broadcasted in real-time.
+        </p>
+      </div>
+
+      <button onclick="openCreateRequestModal()" class="btn btn-primary">
+        🚨 Post Blood Request
+      </button>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="glass-panel" style="padding: 1.25rem; margin-bottom: 2rem;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">Blood Group</label>
+          <select id="reqFilterBloodGroup" class="form-select">
+            <option value="All">All Types</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">Urgency Level</label>
+          <select id="reqFilterUrgency" class="form-select">
+            <option value="All">All Urgencies</option>
+            <option value="Critical">Critical</option>
+            <option value="High">High</option>
+            <option value="Normal">Normal</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">Status</label>
+          <select id="reqFilterStatus" class="form-select">
+            <option value="All">All Statuses</option>
+            <option value="Pending" selected>Pending</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Fulfilled">Fulfilled</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">City</label>
+          <input type="text" id="reqFilterCity" class="form-control" placeholder="Search city...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Requests Feed Grid -->
+    <div id="requestsFeed" class="cards-grid">
+      <!-- Rendered dynamically via requests.js -->
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 LIFE LINK – Blood Donor Management System</p>
+  </footer>
+
+</body>
+</html>

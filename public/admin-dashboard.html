@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Research & Verification Portal – LIFE LINK</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <script src="js/services/mockData.js" defer></script>
+  <script src="js/services/mockAuth.js" defer></script>
+  <script src="js/services/fatigueService.js" defer></script>
+  <script src="js/services/matchingService.js" defer></script>
+  <script src="js/services/escalationEngine.js" defer></script>
+  <script src="js/services/auditLogger.js" defer></script>
+  <script src="js/services/analyticsService.js" defer></script>
+  <script src="js/services/stockService.js" defer></script>
+  <script src="js/app.js" defer></script>
+  <style>
+    .admin-layout { display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 60px); }
+    .admin-sidebar { background: var(--navy-dark); color: #ffffff; padding: 1.5rem 1rem; border-right: 1px solid rgba(255,255,255,0.08); }
+    .admin-nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 1rem; color: rgba(255,255,255,0.7); border-radius: var(--radius-sm); font-size: 0.88rem; font-weight: 600; margin-bottom: 0.35rem; cursor: pointer; }
+    .admin-nav-item:hover, .admin-nav-item.active { background: rgba(255,255,255,0.12); color: #ffffff; }
+    .tab-section { display: none; }
+    .tab-section.active { display: block; }
+    @media (max-width: 900px) { .admin-layout { grid-template-columns: 1fr; } .admin-sidebar { display: none; } }
+  </style>
+</head>
+<body>
+
+  <!-- Site Navigation -->
+  <header class="site-header">
+    <div class="nav-wrapper">
+      <a href="admin-dashboard.html" class="brand-logo">
+        <div class="brand-mark">✚</div>
+        <span>LIFE LINK</span>
+      </a>
+
+      <ul class="nav-menu" id="roleNavMenu">
+        <!-- Rendered dynamically -->
+      </ul>
+
+      <div class="nav-actions" id="navAuthArea"></div>
+    </div>
+  </header>
+
+  <div class="admin-layout">
+    <!-- Admin Sidebar Navigation -->
+    <aside class="admin-sidebar">
+      <div style="font-size: 0.72rem; font-weight: 700; color: rgba(255,255,255,0.4); text-transform: uppercase; margin-bottom: 1rem; padding-left: 0.5rem;">
+        RESEARCH & OVERVIEW
+      </div>
+
+      <div class="admin-nav-item active" onclick="switchAdminView('overview', this)">📊 Overview</div>
+      <div class="admin-nav-item" onclick="switchAdminView('ieeeMetrics', this)">📈 IEEE Research Metrics</div>
+      <div class="admin-nav-item" onclick="switchAdminView('coverageMap', this)">🗺️ Emergency Coverage Map</div>
+      <div class="admin-nav-item" onclick="switchAdminView('forecasting', this)">🔮 Demand Forecasting</div>
+      <div class="admin-nav-item" onclick="switchAdminView('organizations', this)">🏢 Organizations</div>
+      <div class="admin-nav-item" onclick="switchAdminView('auditLogs', this)">📜 Emergency Audit Logs</div>
+    </aside>
+
+    <!-- Main Admin Workspace -->
+    <main style="padding: 2rem; background: var(--bg-soft-gray);">
+      <div style="margin-bottom: 2rem;">
+        <h1 style="font-size: 1.8rem;" id="tabTitleHeader">System Overview</h1>
+        <p style="color: var(--navy-muted); font-size: 0.9rem;">Platform verification applications, emergency dispatch metrics, and experimental logs</p>
+      </div>
+
+      <!-- TAB 1: OVERVIEW & KPIS -->
+      <div id="tabOverview" class="tab-section active">
+        <div class="grid-4" style="margin-bottom: 2rem;">
+          <div class="card card-body" style="text-align: center;">
+            <div style="font-size: 0.82rem; color: var(--navy-muted);">Registered Donors</div>
+            <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800;">2,846</div>
+          </div>
+          <div class="card card-body" style="text-align: center;">
+            <div style="font-size: 0.82rem; color: var(--navy-muted);">Available Donors</div>
+            <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--status-success);">1,420</div>
+          </div>
+          <div class="card card-body" style="text-align: center;">
+            <div style="font-size: 0.82rem; color: var(--navy-muted);">Pending Organizations</div>
+            <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--status-warning);">3</div>
+          </div>
+          <div class="card card-body" style="text-align: center;">
+            <div style="font-size: 0.82rem; color: var(--navy-muted);">Fulfilled Requests</div>
+            <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--crimson-red);">642</div>
+          </div>
+        </div>
+
+        <div class="card card-body">
+          <h3 style="font-size: 1.2rem; margin-bottom: 1rem;">Recent Emergency Broadcasts</h3>
+          <div id="overviewRequestsPreview"></div>
+        </div>
+      </div>
+
+      <!-- TAB 2: IEEE RESEARCH PERFORMANCE METRICS -->
+      <div id="tabIeeeMetrics" class="tab-section">
+        <div class="card card-body" style="margin-bottom: 2rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <div>
+              <span class="badge badge-neutral" style="margin-bottom: 0.35rem;">IEEE BASE PAPER PARAMETERS</span>
+              <h2 style="font-size: 1.5rem;">Emergency Response Performance Metrics</h2>
+            </div>
+            <span class="badge badge-success">EXPERIMENTAL MEASUREMENTS</span>
+          </div>
+
+          <div class="grid-4" style="text-align: center; gap: 1.5rem;">
+            <div style="background: var(--bg-warm-ivory); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--navy-border);">
+              <div style="font-family: var(--font-heading); font-size: 2.4rem; font-weight: 800; color: var(--navy-dark);" id="metricNotifCount">18.4</div>
+              <div style="font-size: 0.85rem; font-weight: 700; color: var(--navy-muted);">AVG DONORS NOTIFIED</div>
+            </div>
+
+            <div style="background: var(--bg-warm-ivory); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--navy-border);">
+              <div style="font-family: var(--font-heading); font-size: 2.4rem; font-weight: 800; color: var(--status-warning);" id="metricRounds">1.6</div>
+              <div style="font-size: 0.85rem; font-weight: 700; color: var(--navy-muted);">AVG WAVE ROUNDS</div>
+            </div>
+
+            <div style="background: var(--bg-warm-ivory); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--navy-border);">
+              <div style="font-family: var(--font-heading); font-size: 2.4rem; font-weight: 800; color: var(--status-success);" id="metricRespTime">8.4m</div>
+              <div style="font-size: 0.85rem; font-weight: 700; color: var(--navy-muted);">AVG RESPONSE TIME</div>
+            </div>
+
+            <div style="background: var(--bg-warm-ivory); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--navy-border);">
+              <div style="font-family: var(--font-heading); font-size: 2.4rem; font-weight: 800; color: var(--crimson-red);" id="metricFulfillRate">88.5%</div>
+              <div style="font-size: 0.85rem; font-weight: 700; color: var(--navy-muted);">FULFILLMENT RATE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: EMERGENCY COVERAGE MAP -->
+      <div id="tabCoverageMap" class="tab-section">
+        <div class="card card-body" style="margin-bottom: 2rem;">
+          <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Regional Donor Coverage Density Map</h2>
+          <p style="color: var(--navy-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Approximate coverage density zones without exposing donor residential addresses</p>
+
+          <div class="map-visualization-box" style="height: 380px;">
+            <div style="position: absolute; top: 20px; left: 25px; font-size: 0.85rem; font-weight: 700;">
+              COVERAGE ZONE DENSITY: MUMBAI SUBURBAN
+            </div>
+
+            <div class="map-radar-circle" style="width: 280px; height: 280px;">
+              <div class="map-radar-circle r2" style="width: 180px; height: 180px;">
+                <div class="map-center-node"></div>
+              </div>
+
+              <div class="map-marker-pin" style="top: 15%; left: 20%; background: #DCFCE7; color: #16A34A;">
+                🟢 High Coverage Zone (Andheri)
+              </div>
+              <div class="map-marker-pin" style="bottom: 20%; right: 25%; background: #FEF3C7; color: #D97706;">
+                🟡 Moderate Zone (Bandra)
+              </div>
+              <div class="map-marker-pin" style="top: 60%; left: 10%; background: #FEE2E2; color: #DC2626;">
+                🔴 Low Coverage Zone (Worli)
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: BLOOD DEMAND FORECASTING -->
+      <div id="tabForecasting" class="tab-section">
+        <div class="card card-body">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <div>
+              <span class="badge badge-warning" style="margin-bottom: 0.35rem;">DEMAND PREDICTION MODEL</span>
+              <h2 style="font-size: 1.5rem;">Prototype Blood Demand Forecasting</h2>
+            </div>
+            <span class="badge badge-neutral">PROTOTYPE PREDICTIONS</span>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+              <thead>
+                <tr style="background: var(--bg-soft-gray); border-bottom: 1px solid var(--navy-border);">
+                  <th style="padding: 0.75rem 1rem;">Blood Group</th>
+                  <th style="padding: 0.75rem 1rem;">Current Demand</th>
+                  <th style="padding: 0.75rem 1rem;">Expected Demand</th>
+                  <th style="padding: 0.75rem 1rem;">Trend</th>
+                  <th style="padding: 0.75rem 1rem;">Urgency Level</th>
+                </tr>
+              </thead>
+              <tbody id="forecastTableBody">
+                <!-- Loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: ORGANIZATIONS VERIFICATION -->
+      <div id="tabOrganizations" class="tab-section">
+        <div class="card card-body">
+          <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">Healthcare Organization Verification Applications</h2>
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+              <thead>
+                <tr style="background: var(--bg-soft-gray); border-bottom: 1px solid var(--navy-border);">
+                  <th style="padding: 0.75rem 1rem;">Organization Name</th>
+                  <th style="padding: 0.75rem 1rem;">Type</th>
+                  <th style="padding: 0.75rem 1rem;">Certification #</th>
+                  <th style="padding: 0.75rem 1rem;">Representative</th>
+                  <th style="padding: 0.75rem 1rem;">Status</th>
+                  <th style="padding: 0.75rem 1rem; text-align: right;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="adminOrgTableBody">
+                <!-- Loaded dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 6: EMERGENCY AUDIT LOGS -->
+      <div id="tabAuditLogs" class="tab-section">
+        <div class="card card-body">
+          <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">Emergency Request Lifecycle Audit Log</h2>
+          <div id="auditLogContainer">
+            <!-- Loaded dynamically -->
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <p>© 2026 LIFE LINK Healthcare System</p>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      MockAuth.renderRoleNavigation('admin');
+      renderOverview();
+      renderIeeeMetrics();
+      renderForecastTable();
+      renderAdminOrgTable();
+      renderAuditLogs();
+    });
+
+    function switchAdminView(viewName, element) {
+      document.querySelectorAll('.admin-nav-item').forEach(el => el.classList.remove('active'));
+      if (element) element.classList.add('active');
+
+      document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
+
+      const target = document.getElementById('tab' + viewName.charAt(0).toUpperCase() + viewName.slice(1));
+      if (target) target.classList.add('active');
+
+      document.getElementById('tabTitleHeader').textContent = element ? element.textContent.replace(/^[^\s]+\s*/, '') : 'Admin Portal';
+    }
+
+    function renderOverview() {
+      const container = document.getElementById('overviewRequestsPreview');
+      if (!container) return;
+      container.innerHTML = MockData.emergencyRequests.map(r => `
+        <div style="padding: 0.85rem 0; border-bottom: 1px solid var(--navy-border); display: flex; justify-content: space-between;">
+          <div>
+            <strong>${r.patientName} (${r.bloodGroup})</strong> — ${r.orgName}
+            <div style="font-size: 0.82rem; color: var(--navy-muted);">Status: ${r.status} • Radius: ${r.searchRadiusKm} km</div>
+          </div>
+          <span class="badge ${r.urgency === 'CRITICAL' ? 'badge-critical' : 'badge-warning'}">${r.urgency}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderIeeeMetrics() {
+      if (typeof AnalyticsService === 'undefined') return;
+      const m = AnalyticsService.getResearchMetrics();
+      if (document.getElementById('metricNotifCount')) document.getElementById('metricNotifCount').textContent = m.donorsNotifiedAverage;
+      if (document.getElementById('metricRounds')) document.getElementById('metricRounds').textContent = m.notificationRoundsAverage;
+      if (document.getElementById('metricRespTime')) document.getElementById('metricRespTime').textContent = m.averageResponseTimeMins + 'm';
+      if (document.getElementById('metricFulfillRate')) document.getElementById('metricFulfillRate').textContent = m.fulfillmentRatePercent + '%';
+    }
+
+    function renderForecastTable() {
+      const tbody = document.getElementById('forecastTableBody');
+      if (!tbody || typeof AnalyticsService === 'undefined') return;
+      const forecasts = AnalyticsService.getDemandForecast();
+      tbody.innerHTML = forecasts.map(f => `
+        <tr style="border-bottom: 1px solid var(--navy-border);">
+          <td style="padding: 0.75rem 1rem;"><strong>${f.bloodGroup}</strong></td>
+          <td style="padding: 0.75rem 1rem;"><span class="badge ${f.currentDemand === 'HIGH' ? 'badge-critical' : 'badge-neutral'}">${f.currentDemand}</span></td>
+          <td style="padding: 0.75rem 1rem;"><span class="badge ${f.expectedDemand === 'HIGH' || f.expectedDemand === 'CRITICAL' ? 'badge-critical' : 'badge-warning'}">${f.expectedDemand}</span></td>
+          <td style="padding: 0.75rem 1rem;">${f.trend}</td>
+          <td style="padding: 0.75rem 1rem;"><span class="badge badge-neutral">${f.urgencyLevel}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    function renderAdminOrgTable() {
+      const tbody = document.getElementById('adminOrgTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = MockData.organizations.map(org => `
+        <tr style="border-bottom: 1px solid var(--navy-border);">
+          <td style="padding: 0.85rem 1rem;"><strong>${org.orgName}</strong></td>
+          <td style="padding: 0.85rem 1rem;"><span class="badge badge-neutral">${org.orgType}</span></td>
+          <td style="padding: 0.85rem 1rem;"><code>${org.certificationNumber}</code></td>
+          <td style="padding: 0.85rem 1rem;">${org.representativeName}</td>
+          <td style="padding: 0.85rem 1rem;"><span class="badge ${org.verificationStatus === 'VERIFIED' ? 'badge-success' : 'badge-warning'}">${org.verificationStatus}</span></td>
+          <td style="padding: 0.85rem 1rem; text-align: right;">
+            <button onclick="alert('Updating org status')" class="btn btn-secondary btn-sm">Review</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderAuditLogs() {
+      const container = document.getElementById('auditLogContainer');
+      if (!container || typeof AuditLogger === 'undefined') return;
+      const logs = AuditLogger.getAuditTrail('REQ-8821');
+      container.innerHTML = logs.map(l => `
+        <div style="padding: 0.85rem; border-bottom: 1px solid var(--navy-border); display: flex; justify-content: space-between;">
+          <div>
+            <strong style="font-size: 0.95rem;">${l.event}</strong>
+            <div style="font-size: 0.85rem; color: var(--navy-muted);">${l.description}</div>
+          </div>
+          <span style="font-size: 0.8rem; color: var(--navy-muted);">${l.timestamp}</span>
+        </div>
+      `).join('');
+    }
+  </script>
+
+</body>
+</html>

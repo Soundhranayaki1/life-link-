@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LIFE LINK – Every Drop. Every Connection. Every Life.</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <script src="js/mockData.js" defer></script>
+  <script src="js/mockAuth.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+
+  <!-- Minimal Editorial Navigation -->
+  <header class="site-header">
+    <div class="nav-wrapper">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-mark">✚</div>
+        <span>LIFE LINK</span>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-item active">Home</a></li>
+        <li><a href="find-donors.html" class="nav-item">Find Donors</a></li>
+        <li><a href="emergency-requests.html" class="nav-item">Emergency Requests</a></li>
+        <li><a href="blood-banks.html" class="nav-item">Blood Stock</a></li>
+      </ul>
+
+      <div class="nav-actions" id="navAuthArea"></div>
+    </div>
+  </header>
+
+  <!-- Editorial Hero Section -->
+  <section class="section-warm hero-editorial">
+    <div class="container hero-editorial-grid">
+      <div>
+        <div style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.85rem; background: var(--crimson-light); color: var(--crimson-red); border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 700; text-transform: uppercase; margin-bottom: 1.25rem;">
+          ● HUMANITARIAN DONATION NETWORK
+        </div>
+
+        <h1 class="display-title" style="margin-bottom: 1.25rem;">
+          Every Drop.<br>
+          Every Connection.<br>
+          <span style="color: var(--crimson-red);">Every Life.</span>
+        </h1>
+
+        <p style="font-size: 1.2rem; color: var(--navy-muted); margin-bottom: 2rem; max-width: 540px;">
+          One registered donor can become someone's lifeline when every minute matters.
+        </p>
+
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2rem;">
+          <a href="register.html" class="btn btn-primary btn-lg">BECOME A DONOR</a>
+          <a href="find-donors.html" class="btn btn-secondary btn-lg">FIND BLOOD</a>
+        </div>
+
+        <div style="font-size: 0.9rem; color: var(--navy-muted); display: flex; align-items: center; gap: 0.5rem;">
+          <span style="color: var(--status-success);">●</span> <strong>2,846 people</strong> are currently part of the LIFE LINK donor network.
+        </div>
+      </div>
+
+      <!-- Hero Visual with Overlay Badges -->
+      <div style="position: relative; border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-lg);">
+        <img src="assets/images/hero_blood_donor.png" alt="Voluntary blood donor" style="width: 100%; height: 480px; object-fit: cover; display: block;" onerror="this.src='https://images.unsplash.com/photo-1615461066841-6116e61058f4?q=80&w=1000&auto=format&fit=crop'">
+
+        <div class="floating-overlay-card top-right">
+          <span>🩸</span> 2,846 Registered Donors
+        </div>
+
+        <div class="floating-overlay-card bottom-left">
+          <span style="color: var(--status-success);">🟢</span> O+ 18 Nearby • 3.4 km Away
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NARRATIVE VISUAL STORYTELLING SCROLL EXPERIENCE -->
+
+  <!-- SECTION 1: Someone needs blood. -->
+  <section class="section-gray" style="padding: 4.5rem 0;">
+    <div class="container">
+      <div style="max-width: 680px; margin-bottom: 2.5rem;">
+        <span class="badge badge-critical" style="margin-bottom: 0.5rem;">ACT I — THE REQUIREMENT</span>
+        <h2 class="section-title">1. Someone needs blood.</h2>
+        <p class="text-muted" style="font-size: 1.1rem;">
+          In an emergency ICU ward, a patient requires specific blood group units immediately.
+        </p>
+      </div>
+
+      <div class="card card-body" style="border-left: 4px solid var(--status-critical); display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: center;">
+        <div>
+          <span class="badge badge-success" style="margin-bottom: 0.5rem;">✓ Verified Government Hospital</span>
+          <h3 style="font-size: 1.4rem; margin-bottom: 0.5rem;">Karan Malhotra — Needs 2 Units of O+ Blood</h3>
+          <p style="color: var(--navy-muted); font-size: 0.95rem;">🏥 XYZ Government Hospital, Worli • 📍 ~3.4 km away</p>
+        </div>
+
+        <div style="text-align: right;">
+          <span class="badge badge-critical">CRITICAL</span>
+          <div style="font-family: var(--font-heading); font-size: 1.3rem; font-weight: 800; color: var(--crimson-red); margin-top: 0.35rem;">
+            01:42:18
+          </div>
+          <div style="font-size: 0.78rem; color: var(--navy-muted);">Time Remaining</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: A verified hospital creates a request. -->
+  <section class="container" style="padding: 4.5rem 1.5rem;">
+    <div style="max-width: 680px; margin-bottom: 2.5rem;">
+      <span class="badge badge-neutral" style="margin-bottom: 0.5rem;">ACT II — THE BROADCAST</span>
+      <h2 class="section-title">2. A verified hospital creates a request.</h2>
+      <p class="text-muted" style="font-size: 1.1rem;">
+        Only government-certified healthcare organizations can broadcast emergency blood requirements.
+      </p>
+    </div>
+
+    <div class="card card-body" style="background: var(--bg-soft-gray); border-color: var(--navy-border);">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div style="width: 48px; height: 48px; background: #2563EB; color: #ffffff; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800;">🏥</div>
+          <div>
+            <h4 style="font-size: 1.15rem;">XYZ Government Hospital</h4>
+            <div style="font-size: 0.85rem; color: var(--navy-muted);">📜 License #: GOVT-HOSP-2026-991 • Authorized Broadcast</div>
+          </div>
+        </div>
+
+        <span class="badge badge-success">✓ VERIFIED ORGANIZATION</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: Nearby donors receive an alert. -->
+  <section class="section-dark" style="padding: 5rem 0;">
+    <div class="container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: center;">
+      <div>
+        <span class="badge badge-warning" style="margin-bottom: 1rem;">ACT III — THE NOTIFICATION</span>
+        <h2 style="font-size: 2.5rem; color: #ffffff; margin-bottom: 1rem;">
+          3. Nearby donors receive an alert.
+        </h2>
+        <p style="color: var(--navy-muted); font-size: 1.1rem; margin-bottom: 1.5rem;">
+          The system matches blood group and proximity radius, delivering an instant alert to verified voluntary donors nearby.
+        </p>
+
+        <div style="font-size: 0.9rem; color: var(--navy-muted);">
+          ⚡ 18 nearby O+ donors notified within 8 km radius.
+        </div>
+      </div>
+
+      <div style="position: relative; border-radius: var(--radius-xl); overflow: hidden;">
+        <img src="assets/images/hospital_care.png" alt="Hospital emergency alert" style="width: 100%; height: 360px; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=1000&auto=format&fit=crop'">
+        
+        <div style="position: absolute; bottom: 20px; left: 20px; right: 20px; background: rgba(255,255,255,0.96); backdrop-filter: blur(10px); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--navy-border);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong style="font-size: 0.95rem; color: var(--navy-dark); display: block;">🚨 URGENT BLOOD REQUEST ALERT</strong>
+              <div style="font-size: 0.82rem; color: var(--navy-muted);">O+ Blood Required • XYZ Govt Hospital (3.4 km)</div>
+            </div>
+            <span class="badge badge-critical">CRITICAL</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: A donor responds. -->
+  <section class="container" style="padding: 4.5rem 1.5rem;">
+    <div style="max-width: 680px; margin-bottom: 2.5rem;">
+      <span class="badge badge-neutral" style="margin-bottom: 0.5rem;">ACT IV — THE COMMITMENT</span>
+      <h2 class="section-title">4. A donor responds.</h2>
+      <p class="text-muted" style="font-size: 1.1rem;">
+        Arun receives the alert, verifies his willingness, and responds with a single tap.
+      </p>
+    </div>
+
+    <div class="card card-body" style="max-width: 580px; margin: 0 auto; text-align: center; padding: 2.5rem;">
+      <div style="font-size: 1.1rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 1rem;">
+        "I can donate blood at XYZ Government Hospital."
+      </div>
+
+      <div style="display: flex; justify-content: center; gap: 1rem;">
+        <button class="btn btn-primary btn-lg">I CAN DONATE</button>
+        <button class="btn btn-secondary btn-lg">NOT AVAILABLE</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 5: The donor reaches the hospital. -->
+  <section class="section-warm" style="padding: 4.5rem 0;">
+    <div class="container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: center;">
+      <img src="assets/images/community_care.png" alt="Donor at hospital" style="width: 100%; height: 380px; object-fit: cover; border-radius: var(--radius-xl); box-shadow: var(--shadow-lg);" onerror="this.src='https://images.unsplash.com/photo-1579154204601-01588f351e67?q=80&w=1000&auto=format&fit=crop'">
+
+      <div>
+        <span class="badge badge-success" style="margin-bottom: 1rem;">ACT V — THE ARRIVAL</span>
+        <h2 class="section-title">5. The donor reaches the hospital.</h2>
+        <p class="text-muted" style="font-size: 1.1rem; margin-bottom: 1.5rem;">
+          Arun arrives at the hospital donor center where healthcare professionals process the voluntary donation safely.
+        </p>
+        <div style="font-size: 0.95rem; color: var(--navy-muted);">
+          ✓ Safe clinical environment • Fast donor verification process.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 6: Closing Statement -->
+  <section class="container" style="padding: 5rem 1.5rem; text-align: center;">
+    <div style="max-width: 680px; margin: 0 auto;">
+      <span class="badge badge-critical" style="margin-bottom: 1rem;">EPILOGUE</span>
+      <h2 style="font-size: 2.8rem; margin-bottom: 1rem; line-height: 1.2;">
+        One connection made a difference.
+      </h2>
+      <p style="font-size: 1.2rem; color: var(--navy-muted); margin-bottom: 2.5rem;">
+        Be there when someone needs blood. Join thousands of voluntary donors across the community.
+      </p>
+
+      <a href="register.html" class="btn btn-primary btn-lg">BECOME A DONOR TODAY</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <p>© 2026 LIFE LINK Healthcare System. All rights reserved.</p>
+      <p>Every Drop. Every Connection. Every Life.</p>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MY LIFE LINK – Donor Dashboard</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <script src="js/mockData.js" defer></script>
+  <script src="js/mockAuth.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+
+  <!-- Role-Based Navigation Header -->
+  <header class="site-header">
+    <div class="nav-wrapper">
+      <a href="donor-dashboard.html" class="brand-logo">
+        <div class="brand-mark">✚</div>
+        <span>LIFE LINK</span>
+      </a>
+
+      <!-- Donor-Specific Menu (No general admin/donor directory search links) -->
+      <ul class="nav-menu" id="roleNavMenu">
+        <!-- Rendered dynamically by MockAuth.renderRoleNavigation -->
+      </ul>
+
+      <div class="nav-actions" id="navAuthArea"></div>
+    </div>
+  </header>
+
+  <main>
+    <!-- SECTION 1: REFINED PERSONAL WELCOME & STATUS HERO -->
+    <section class="section-warm" style="padding: 3.5rem 0 2.5rem;">
+      <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 2rem;">
+          <div>
+            <div style="font-size: 0.82rem; font-weight: 700; color: var(--navy-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">
+              MY DONOR PROFILE
+            </div>
+
+            <h1 style="font-size: 2.6rem; letter-spacing: -1px; margin-bottom: 0.5rem;" id="donorGreeting">
+              Good evening, Arun.
+            </h1>
+
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+              <span class="badge badge-neutral" style="font-size: 0.95rem; font-weight: 800; color: var(--crimson-red); background: var(--crimson-light);" id="donorBloodPill">
+                O+ DONOR
+              </span>
+              <span style="color: var(--navy-muted); font-size: 0.95rem;" id="donorCitySub">📍 Mumbai • Verified Donor</span>
+            </div>
+          </div>
+
+          <!-- Availability Status Banner Component -->
+          <div class="card card-body" style="background: #ffffff; border-left: 4px solid var(--status-success); max-width: 420px; width: 100%;" id="availCardBox">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+              <span class="badge badge-success" id="statusBadgeTag">● AVAILABLE TO HELP</span>
+            </div>
+
+            <p style="font-size: 0.88rem; color: var(--navy-muted); margin-bottom: 1rem;" id="statusDescText">
+              "You're currently visible to nearby emergency blood requests within 8 km."
+            </p>
+
+            <button id="toggleStatusBtn" onclick="toggleStatusState()" class="btn btn-secondary btn-sm" style="width: 100%;">
+              PAUSE DONATION REQUESTS
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: MOST IMPORTANT SECTION — NEARBY BLOOD REQUESTS CAROUSEL -->
+    <section class="container" style="padding: 2.5rem 1.5rem 3.5rem;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1rem;">
+        <div>
+          <span class="badge badge-critical" style="margin-bottom: 0.35rem;">RELEVANT TO YOUR BLOOD GROUP</span>
+          <h2 style="font-size: 2.2rem; letter-spacing: -0.5px;">Someone nearby needs your blood.</h2>
+          <p style="color: var(--navy-muted); font-size: 0.95rem;">Emergency requirements matching your blood group in your area</p>
+        </div>
+
+        <!-- Desktop Carousel Prev/Next Controls -->
+        <div class="carousel-controls">
+          <button onclick="scrollCarousel('left')" class="carousel-btn" title="Previous Request">←</button>
+          <button onclick="scrollCarousel('right')" class="carousel-btn" title="Next Request">→</button>
+        </div>
+      </div>
+
+      <!-- Horizontal Carousel Container -->
+      <div class="carousel-wrapper">
+        <div class="carousel-track" id="emergencyCarouselTrack">
+          <!-- Loaded dynamically via app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: PERSONAL IMPACT TIMELINE -->
+    <section class="section-gray" style="padding: 3.5rem 0;" id="impactSection">
+      <div class="container">
+        <div style="margin-bottom: 1.5rem;">
+          <span class="badge badge-neutral" style="margin-bottom: 0.35rem;">PERSONAL STORY</span>
+          <h2 style="font-size: 2rem;">Your Impact</h2>
+        </div>
+
+        <div class="impact-journey">
+          <div class="impact-stats-row">
+            <div>
+              <div class="impact-val" id="valDonationsCount">04</div>
+              <div class="impact-label">DONATIONS</div>
+            </div>
+
+            <div>
+              <div class="impact-val" style="color: var(--status-success);" id="valLivesCount">12</div>
+              <div class="impact-label">LIVES POTENTIALLY HELPED</div>
+            </div>
+          </div>
+
+          <h4 style="font-size: 1rem; color: var(--navy-dark); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">
+            Personal Donation Journey
+          </h4>
+
+          <div class="journey-timeline">
+            <div class="journey-node">
+              <span class="badge badge-neutral" style="font-size: 0.7rem; margin-bottom: 0.35rem;">AUG 2026</span>
+              <strong style="font-size: 0.95rem; display: block;">Blood Donation</strong>
+              <div style="font-size: 0.82rem; color: var(--navy-muted);">XYZ Government Hospital</div>
+            </div>
+
+            <div class="journey-node">
+              <span class="badge badge-neutral" style="font-size: 0.7rem; margin-bottom: 0.35rem;">MAR 2026</span>
+              <strong style="font-size: 0.95rem; display: block;">Blood Donation</strong>
+              <div style="font-size: 0.82rem; color: var(--navy-muted);">ABC Regional Blood Bank</div>
+            </div>
+
+            <div class="journey-node">
+              <span class="badge badge-neutral" style="font-size: 0.7rem; margin-bottom: 0.35rem;">NOV 2025</span>
+              <strong style="font-size: 0.7rem; margin-bottom: 0.35rem; display: block;">Community Drive</strong>
+              <div style="font-size: 0.82rem; color: var(--navy-muted);">City Central Center</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: LOCATION VISUALIZATION (YOUR DONATION RADIUS) -->
+    <section class="container" style="padding: 3.5rem 1.5rem;">
+      <div style="margin-bottom: 1.5rem;">
+        <span class="badge badge-neutral" style="margin-bottom: 0.35rem;">PRIVACY SAFEGUARDED RADAR</span>
+        <h2 style="font-size: 2rem;">Your Donation Radius</h2>
+        <p style="color: var(--navy-muted); font-size: 0.95rem;">You are within the requested 8 km donation area around hospitals</p>
+      </div>
+
+      <div class="map-visualization-box">
+        <div style="position: absolute; top: 20px; left: 25px; font-size: 0.85rem; font-weight: 700; color: rgba(255,255,255,0.7);">
+          RADAR COVERAGE: 8 KM
+        </div>
+
+        <div class="map-radar-circle">
+          <div class="map-radar-circle r2">
+            <div class="map-radar-circle r1">
+              <div class="map-center-node" title="Your Location"></div>
+            </div>
+          </div>
+
+          <div class="map-marker-pin" style="top: 20%; left: 15%;">
+            <span>🔴</span> XYZ Govt Hospital (3.4 km)
+          </div>
+          <div class="map-marker-pin" style="bottom: 25%; right: 20%;">
+            <span>🏥</span> Apollo Hospital (5.1 km)
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 1.75rem; font-size: 0.85rem;">
+          <div style="display: flex; align-items: center; gap: 0.4rem;">
+            <span style="color: var(--crimson-red);">●</span> You (Center)
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.4rem;">
+            <span style="color: var(--status-critical);">🔴</span> Emergency Request
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.4rem;">
+            <span>🏥</span> Hospital Location
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Notification Drawer Slide-In Panel -->
+  <div class="notification-drawer-overlay" id="notificationOverlay" onclick="toggleNotificationDrawer()"></div>
+  <div class="notification-drawer" id="notificationDrawer">
+    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--navy-border); display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="font-size: 1.2rem;">My Notifications</h3>
+      <button onclick="toggleNotificationDrawer()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--navy-muted);">&times;</button>
+    </div>
+
+    <div id="notificationListContainer" style="overflow-y: auto; flex: 1;">
+      <!-- Loaded dynamically -->
+    </div>
+  </div>
+
+  <!-- Detailed Request View Modal -->
+  <div class="modal-backdrop" id="requestDetailModal">
+    <div class="modal-card" id="requestDetailModalBody">
+      <!-- Loaded dynamically via app.js -->
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="mobile-bottom-nav">
+    <a href="donor-dashboard.html" class="mobile-nav-link active">
+      <span class="mobile-nav-icon">🏠</span>
+      <span>Home</span>
+    </a>
+    <a href="emergency-requests.html" class="mobile-nav-link">
+      <span class="mobile-nav-icon">🚨</span>
+      <span>Requests</span>
+    </a>
+    <a href="#impactSection" onclick="scrollToImpact()" class="mobile-nav-link">
+      <span class="mobile-nav-icon">🩸</span>
+      <span>Donations</span>
+    </a>
+    <a href="javascript:void(0)" onclick="toggleNotificationDrawer()" class="mobile-nav-link">
+      <span class="mobile-nav-icon">🔔</span>
+      <span>Alerts</span>
+    </a>
+    <a href="donor-profile.html" class="mobile-nav-link">
+      <span class="mobile-nav-icon">👤</span>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <p>© 2026 LIFE LINK Healthcare System</p>
+      <p>Every Drop. Every Connection. Every Life.</p>
+    </div>
+  </footer>
+
+  <script>
+    let currentAvailable = true;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = MockAuth.getCurrentUser();
+      if (user) {
+        document.getElementById('donorGreeting').textContent = 'Good evening, ' + (user.name.split(' ')[0] || 'Arun') + '.';
+        if (user.bloodGroup) document.getElementById('donorBloodPill').textContent = user.bloodGroup + ' DONOR';
+        if (user.city) document.getElementById('donorCitySub').textContent = '📍 ' + user.city + ' • Verified Donor';
+      }
+    });
+
+    function toggleStatusState() {
+      currentAvailable = !currentAvailable;
+      const box = document.getElementById('availCardBox');
+      const badge = document.getElementById('statusBadgeTag');
+      const desc = document.getElementById('statusDescText');
+      const btn = document.getElementById('toggleStatusBtn');
+
+      if (currentAvailable) {
+        box.style.borderLeftColor = 'var(--status-success)';
+        badge.className = 'badge badge-success';
+        badge.textContent = '● AVAILABLE TO HELP';
+        desc.textContent = '"You\'re currently visible to nearby emergency blood requests within 8 km."';
+        btn.textContent = 'PAUSE DONATION REQUESTS';
+        btn.className = 'btn btn-secondary btn-sm';
+      } else {
+        box.style.borderLeftColor = 'var(--navy-muted)';
+        badge.className = 'badge badge-neutral';
+        badge.textContent = '🔴 PAUSED (UNAVAILABLE)';
+        desc.textContent = '"Your availability is paused. You will not receive emergency alerts."';
+        btn.textContent = 'RESUME AVAILABILITY';
+        btn.className = 'btn btn-primary btn-sm';
+      }
+    }
+  </script>
+
+</body>
+</html>

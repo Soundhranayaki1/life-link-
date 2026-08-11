@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In – LIFE LINK</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <script src="js/mockData.js" defer></script>
+  <script src="js/mockAuth.js" defer></script>
+  <style>
+    /* Clean Viewport-Constrained 2-Column Login Page Styling */
+    html, body {
+      height: 100%;
+      overflow-x: hidden;
+    }
+
+    .login-header {
+      height: 60px;
+      background: rgba(253, 251, 247, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--navy-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      z-index: 50;
+    }
+
+    .login-container {
+      display: grid;
+      grid-template-columns: 45% 55%;
+      height: calc(100vh - 60px);
+      min-height: 580px;
+      max-height: 1080px;
+      overflow: hidden;
+    }
+
+    /* Left Visual Section */
+    .login-visual-panel {
+      position: relative;
+      background: var(--navy-dark);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 3rem;
+      overflow: hidden;
+    }
+
+    .login-visual-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+      opacity: 0.65;
+      transition: transform 0.6s ease;
+    }
+
+    .login-visual-panel:hover .login-visual-img {
+      transform: scale(1.02);
+    }
+
+    .login-visual-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.2) 0%, rgba(15, 23, 42, 0.88) 100%);
+    }
+
+    .login-visual-content {
+      position: relative;
+      z-index: 10;
+      color: #ffffff;
+      max-width: 440px;
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    /* Right Form Section */
+    .login-form-panel {
+      background: var(--bg-warm-ivory);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 2.5rem;
+      overflow-y: auto;
+    }
+
+    .login-form-card {
+      width: 100%;
+      max-width: 400px;
+      animation: fadeInUp 0.5s ease-out;
+    }
+
+    /* Input Focus Styles */
+    .form-control:focus {
+      border-color: var(--crimson-red);
+      box-shadow: 0 0 0 3px rgba(217, 4, 41, 0.12);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Mobile Responsive Recomposition */
+    @media (max-width: 850px) {
+      .login-header {
+        padding: 0 1.25rem;
+      }
+      .login-container {
+        grid-template-columns: 1fr;
+        height: auto;
+        min-height: auto;
+      }
+      .login-visual-panel {
+        height: 200px;
+        padding: 1.5rem;
+        justify-content: center;
+      }
+      .login-visual-content {
+        max-width: 100%;
+      }
+      .login-visual-content h2 {
+        font-size: 1.3rem !important;
+        margin-bottom: 0.25rem !important;
+      }
+      .login-visual-content p {
+        display: none;
+      }
+      .login-form-panel {
+        padding: 2rem 1.25rem 3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Minimal Top Header -->
+  <header class="login-header">
+    <a href="index.html" class="brand-logo">
+      <div class="brand-mark">✚</div>
+      <span>LIFE LINK</span>
+    </a>
+
+    <div style="font-size: 0.88rem;">
+      <span style="color: var(--navy-muted);">Don't have an account?</span>
+      <a href="register.html" style="font-weight: 700; color: var(--crimson-red); margin-left: 0.35rem;">BECOME A DONOR</a>
+    </div>
+  </header>
+
+  <!-- Viewport-Constrained 2-Column Login Container -->
+  <div class="login-container">
+    
+    <!-- LEFT SIDE: VISUAL STORY -->
+    <div class="login-visual-panel">
+      <img src="assets/images/hero_blood_donor.png" alt="Voluntary blood donor" class="login-visual-img" onerror="this.src='https://images.unsplash.com/photo-1615461066841-6116e61058f4?q=80&w=1000&auto=format&fit=crop'">
+      <div class="login-visual-overlay"></div>
+
+      <div class="login-visual-content">
+        <div style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0.65rem; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(4px); color: #ffffff; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 1rem;">
+          HUMANITARIAN NETWORK
+        </div>
+
+        <h2 style="font-size: 1.9rem; color: #ffffff; font-weight: 800; line-height: 1.25; margin-bottom: 0.65rem;">
+          "Connecting willing donors with people who need them."
+        </h2>
+
+        <p style="color: rgba(255, 255, 255, 0.85); font-size: 0.95rem;">
+          Every connection can make a difference.
+        </p>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE: LOGIN FORM -->
+    <div class="login-form-panel">
+      <div class="login-form-card">
+        
+        <div style="margin-bottom: 1.75rem;">
+          <h1 style="font-size: 1.85rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.35rem; color: var(--navy-dark);">
+            WELCOME BACK
+          </h1>
+          <p style="color: var(--navy-muted); font-size: 0.92rem;">
+            Sign in to your LIFE LINK account. Use your mobile number or email to continue.
+          </p>
+        </div>
+
+        <form id="signInForm" onsubmit="handleFormLogin(event)">
+          <div class="form-group">
+            <label class="form-label">Mobile Number / Email</label>
+            <input type="text" id="loginId" class="form-control" placeholder="+91 98765 43210 or email@domain.com" required value="+91 98765 43210">
+          </div>
+
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+              <label class="form-label" style="margin: 0;">Password / PIN</label>
+              <a href="#" style="font-size: 0.82rem; color: var(--navy-muted); font-weight: 500;">Forgot password?</a>
+            </div>
+            <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required value="password123">
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem; padding: 0.85rem; font-size: 1rem;">
+            SIGN IN
+          </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 1.25rem; font-size: 0.88rem; color: var(--navy-muted);">
+          Don't have an account?
+          <a href="register.html" style="font-weight: 700; color: var(--crimson-red); margin-left: 0.25rem;">BECOME A DONOR</a>
+        </div>
+
+        <!-- COMPACT DEVELOPMENT DEMO ACCESS -->
+        <div style="margin-top: 2rem; padding-top: 1.25rem; border-top: 1px dashed var(--navy-border);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem;">
+            <span style="font-size: 0.72rem; font-weight: 700; color: var(--navy-muted); letter-spacing: 0.5px; text-transform: uppercase;">
+              DEMO ACCESS
+            </span>
+            <span style="font-size: 0.7rem; color: var(--navy-muted); background: var(--bg-soft-gray); padding: 0.15rem 0.5rem; border-radius: var(--radius-full); border: 1px solid var(--navy-border);">
+              Development mode
+            </span>
+          </div>
+
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button type="button" onclick="handleQuickDemo('Donor')" class="btn btn-secondary btn-sm" style="flex: 1; padding: 0.4rem 0.5rem; font-size: 0.8rem; justify-content: center;">
+              Donor Demo
+            </button>
+            <button type="button" onclick="handleQuickDemo('Organization')" class="btn btn-secondary btn-sm" style="flex: 1; padding: 0.4rem 0.5rem; font-size: 0.8rem; justify-content: center;">
+              Organization Demo
+            </button>
+            <button type="button" onclick="handleQuickDemo('Admin')" class="btn btn-secondary btn-sm" style="flex: 1; padding: 0.4rem 0.5rem; font-size: 0.8rem; justify-content: center;">
+              Admin Demo
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function handleFormLogin(e) {
+      e.preventDefault();
+      const id = document.getElementById('loginId').value;
+      const pwd = document.getElementById('loginPassword').value;
+
+      MockAuth.login(id, pwd, 'Donor');
+      window.location.href = 'donor-dashboard.html';
+    }
+
+    function handleQuickDemo(role) {
+      const user = MockAuth.quickDemoLogin(role);
+      const redirectUrl = {
+        'Donor': 'donor-dashboard.html',
+        'Organization': 'requester-dashboard.html',
+        'BloodBank': 'blood-bank-dashboard.html',
+        'Admin': 'admin-dashboard.html'
+      }[role] || 'donor-dashboard.html';
+
+      window.location.href = redirectUrl;
+    }
+  </script>
+
+</body>
+</html>

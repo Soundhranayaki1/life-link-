@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emergency Requests & Escalation – LIFE LINK</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <script src="js/services/mockData.js" defer></script>
+  <script src="js/services/mockAuth.js" defer></script>
+  <script src="js/services/fatigueService.js" defer></script>
+  <script src="js/services/matchingService.js" defer></script>
+  <script src="js/services/escalationEngine.js" defer></script>
+  <script src="js/services/auditLogger.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+
+  <!-- Minimal Role-Specific Navigation -->
+  <header class="site-header">
+    <div class="nav-wrapper">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-mark">✚</div>
+        <span>LIFE LINK</span>
+      </a>
+
+      <ul class="nav-menu" id="roleNavMenu">
+        <!-- Rendered dynamically -->
+      </ul>
+
+      <div class="nav-actions" id="navAuthArea"></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <span class="badge badge-critical" style="margin-bottom: 0.5rem;">EMERGENCY BROADCAST FEED</span>
+        <h1 style="font-size: 2.2rem;">Active Blood Requirements</h1>
+        <p style="color: var(--navy-muted);">Broadcasted by verified healthcare facilities with dynamic radius escalation</p>
+      </div>
+
+      <button onclick="openRequestModal()" class="btn btn-primary">
+        📢 Create Emergency Request (Authorized Org)
+      </button>
+    </div>
+
+    <!-- Request Feed Cards Grid -->
+    <div id="requestsFeedGrid" class="grid-cards" style="margin-bottom: 3.5rem;">
+      <!-- Loaded dynamically via script -->
+    </div>
+
+    <!-- EMERGENCY ESCALATION ENGINE DEMO SECTION -->
+    <section class="card card-body" style="background: #ffffff; border-color: var(--navy-border);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <span class="badge badge-warning" style="margin-bottom: 0.35rem;">CONTROLLED NOTIFICATION WAVES</span>
+          <h2 style="font-size: 1.6rem;">Controlled Radius Escalation Engine</h2>
+          <p style="color: var(--navy-muted); font-size: 0.9rem;">Demonstrating dynamic wave expansion (0–3km ➔ 3–5km ➔ 5–8km) to prevent alert fatigue</p>
+        </div>
+
+        <button onclick="triggerNextWaveEscalation()" class="btn btn-primary" id="waveEscalateBtn">
+          [ EXPAND RADIUS TO ROUND 2 (3–5 KM) ]
+        </button>
+      </div>
+
+      <div class="impact-journey" style="margin: 0; padding: 1.5rem;">
+        <div id="escalationWaveLog">
+          <div style="margin-bottom: 1rem; border-left: 3px solid var(--status-success); padding-left: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <strong style="font-size: 1.05rem;">ROUND 1 — 0 to 3 km Radius Broadcast</strong>
+              <span class="badge badge-success">COMPLETED ✓</span>
+            </div>
+            <div style="color: var(--navy-muted); font-size: 0.88rem; margin-top: 0.2rem;">
+              Highest-priority donors notified: 8 Donors • 2 Responses Received
+            </div>
+          </div>
+
+          <div id="round2WaveBox" style="margin-bottom: 1rem; border-left: 3px solid var(--status-warning); padding-left: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <strong style="font-size: 1.05rem;">ROUND 2 — 3 to 5 km Radius Expansion</strong>
+              <span class="badge badge-warning" id="round2WaveBadge">READY FOR DISPATCH</span>
+            </div>
+            <div style="color: var(--navy-muted); font-size: 0.88rem; margin-top: 0.2rem;" id="round2WaveDesc">
+              Expands notification pool to 14 additional suitable donors in secondary radius.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Create Request Modal -->
+  <div id="requestModal" style="display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 200; align-items: center; justify-content: center; padding: 1.5rem;">
+    <div class="card card-body" style="width: 100%; max-width: 580px; max-height: 90vh; overflow-y: auto;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h3 style="font-size: 1.35rem;">Create Emergency Blood Request</h3>
+        <button onclick="closeRequestModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--navy-muted);">&times;</button>
+      </div>
+
+      <form onsubmit="handleCreateRequestSubmit(event)">
+        <div class="badge badge-success" style="width: 100%; justify-content: center; margin-bottom: 1.25rem;">
+          ✓ AUTHORIZED ORGANIZATION VERIFICATION
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Patient Name</label>
+          <input type="text" id="reqPatient" class="form-control" placeholder="Karan Malhotra" required value="Karan Malhotra">
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Hospital / Organization</label>
+            <input type="text" id="reqHospital" class="form-control" placeholder="XYZ Government Hospital" required value="XYZ Government Hospital">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Hospital Location</label>
+            <input type="text" id="reqLocation" class="form-control" placeholder="Worli, Mumbai" required value="Worli, Mumbai">
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="form-group">
+            <label class="form-label">Blood Group</label>
+            <select id="reqBloodGroup" class="form-select">
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Units Required</label>
+            <input type="number" id="reqUnits" class="form-control" min="1" value="2" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Urgency</label>
+            <select id="reqUrgency" class="form-select">
+              <option value="CRITICAL">CRITICAL</option>
+              <option value="URGENT">URGENT</option>
+              <option value="STANDARD">STANDARD</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Initial Radius (Round 1)</label>
+          <select id="reqRadius" class="form-select">
+            <option value="3">Round 1: 0–3 km</option>
+            <option value="5">Round 1: 0–5 km</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+          BROADCAST EMERGENCY REQUEST
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Notification Drawer Slide-In Panel -->
+  <div class="notification-drawer-overlay" id="notificationOverlay" onclick="toggleNotificationDrawer()"></div>
+  <div class="notification-drawer" id="notificationDrawer">
+    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--navy-border); display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="font-size: 1.2rem;">Notifications</h3>
+      <button onclick="toggleNotificationDrawer()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--navy-muted);">&times;</button>
+    </div>
+
+    <div id="notificationListContainer" style="overflow-y: auto; flex: 1;">
+      <!-- Loaded dynamically -->
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <p>© 2026 LIFE LINK Healthcare System</p>
+    </div>
+  </footer>
+
+  <script>
+    let currentWave = 1;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      MockAuth.renderRoleNavigation('requests');
+      renderRequestsFeed();
+    });
+
+    function renderRequestsFeed() {
+      const container = document.getElementById('requestsFeedGrid');
+      if (!container) return;
+
+      container.innerHTML = MockData.emergencyRequests.map(r => `
+        <div class="card card-body card-hover" style="border-left: 4px solid ${r.urgency === 'CRITICAL' ? 'var(--status-critical)' : 'var(--crimson-red)'}">
+          <div style="margin-bottom: 0.75rem;">
+            <span class="badge badge-success" style="font-size: 0.72rem;">✓ Verified Government Hospital</span>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <div class="blood-badge-square">${r.bloodGroup}</div>
+              <div>
+                <h3 style="font-size: 1.25rem;">${r.patientName}</h3>
+                <div style="color: var(--navy-muted); font-size: 0.85rem;">🏥 ${r.hospitalLocation} • 📍 ${r.humanDistance}</div>
+              </div>
+            </div>
+
+            <span class="badge ${r.urgency === 'CRITICAL' ? 'badge-critical' : 'badge-warning'}">${r.urgency}</span>
+          </div>
+
+          <div style="background: var(--bg-soft-gray); padding: 0.85rem; border-radius: var(--radius-sm); margin-bottom: 1rem; font-size: 0.9rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+            <div>
+              <span style="color: var(--navy-muted);">Required:</span>
+              <strong style="color: var(--crimson-red); font-size: 1.1rem; display: block;">${r.unitsNeeded} Units (${r.bloodGroup})</strong>
+            </div>
+            <div>
+              <span style="color: var(--navy-muted);">Time Remaining:</span>
+              <strong style="display: block; font-size: 0.95rem;">${r.timeRemaining}</strong>
+            </div>
+          </div>
+
+          <div id="responseArea_${r.id}" style="display: flex; gap: 0.5rem;">
+            <button onclick="handleDonateResponse('${r.id}', true)" class="btn btn-primary" style="flex: 1;">
+              I CAN DONATE
+            </button>
+            <button onclick="handleDonateResponse('${r.id}', false)" class="btn btn-secondary" style="flex: 1;">
+              NOT AVAILABLE
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function handleDonateResponse(reqId, canDonate) {
+      const area = document.getElementById('responseArea_' + reqId);
+      if (!area) return;
+
+      if (typeof FatigueService !== 'undefined') {
+        FatigueService.recordResponse('donor_demo_1', reqId, canDonate ? 'ACCEPTED' : 'DECLINED');
+      }
+
+      if (typeof AuditLogger !== 'undefined') {
+        AuditLogger.logEvent(reqId, 'DONOR_RESPONDED', canDonate ? 'Donor accepted emergency request.' : 'Donor declined.');
+      }
+
+      if (canDonate) {
+        area.innerHTML = `
+          <div style="width: 100%; padding: 0.75rem; background: var(--status-success-bg); color: var(--status-success); border-radius: var(--radius-sm); text-align: center; font-weight: 600; font-size: 0.88rem;">
+            ✓ Thank you. Your response has been sent to the authorized organization.
+          </div>
+        `;
+      } else {
+        area.innerHTML = `
+          <div style="width: 100%; padding: 0.75rem; background: var(--bg-soft-gray); color: var(--navy-muted); border-radius: var(--radius-sm); text-align: center; font-size: 0.88rem;">
+            Your availability has been updated.
+          </div>
+        `;
+      }
+    }
+
+    function triggerNextWaveEscalation() {
+      const badge = document.getElementById('round2WaveBadge');
+      const desc = document.getElementById('round2WaveDesc');
+      const btn = document.getElementById('waveEscalateBtn');
+
+      if (badge) badge.className = 'badge badge-success';
+      if (badge) badge.textContent = 'DISPATCHED ✓';
+      if (desc) desc.textContent = 'Round 2 escalation dispatched to 14 additional donors in 3–5 km radius.';
+      if (btn) btn.textContent = 'Radius Expanded to 5 KM ✓';
+
+      if (typeof AuditLogger !== 'undefined') {
+        AuditLogger.logEvent('REQ-8821', 'ROUND_2_DISPATCHED', 'Wave 2 escalation dispatched (3–5 km radius).');
+      }
+
+      alert('Round 2 Wave Escalation Triggered!\nRadius expanded to 5 km.\n14 additional suitable donors notified.');
+    }
+
+    function openRequestModal() { document.getElementById('requestModal').style.display = 'flex'; }
+    function closeRequestModal() { document.getElementById('requestModal').style.display = 'none'; }
+
+    function handleCreateRequestSubmit(e) {
+      e.preventDefault();
+      const newReq = {
+        id: 'REQ-' + Math.floor(1000 + Math.random() * 9000),
+        patientName: document.getElementById('reqPatient').value,
+        bloodGroup: document.getElementById('reqBloodGroup').value,
+        unitsNeeded: document.getElementById('reqUnits').value,
+        unitsFulfilled: 0,
+        orgName: document.getElementById('reqHospital').value,
+        isVerifiedOrg: true,
+        hospitalLocation: document.getElementById('reqLocation').value,
+        distanceKm: 2.5,
+        humanDistance: '2.5 km from hospital',
+        timeRemaining: 'Required within 3 hours',
+        urgency: document.getElementById('reqUrgency').value,
+        searchRadiusKm: document.getElementById('reqRadius').value,
+        donorsNotified: 8,
+        status: 'ACTIVE',
+        additionalNotes: 'Urgent surgery requirement.'
+      };
+
+      MockData.emergencyRequests.unshift(newReq);
+      closeRequestModal();
+      renderRequestsFeed();
+      alert('Emergency blood request broadcasted!\nRequest ID: ' + newReq.id + '\nWave 1 Radius: 3 km');
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Become a Donor – LIFE LINK</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <script src="js/mockData.js" defer></script>
+  <script src="js/mockAuth.js" defer></script>
+</head>
+<body>
+
+  <!-- Header Navigation -->
+  <header class="site-header">
+    <div class="nav-wrapper">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-mark">✚</div>
+        <span>LIFE LINK</span>
+      </a>
+
+      <div style="font-size: 0.9rem;">
+        <span style="color: var(--navy-muted);">Already registered?</span>
+        <a href="login.html" style="font-weight: 600; margin-left: 0.35rem;">Sign In</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" style="max-width: 680px; padding-top: 2.5rem; padding-bottom: 4rem;">
+
+    <!-- Wizard Step Nodes Bar -->
+    <div class="wizard-progress" id="wizardProgress">
+      <div class="wizard-step-node active" id="node1">01</div>
+      <div class="wizard-step-node" id="node2">02</div>
+      <div class="wizard-step-node" id="node3">03</div>
+      <div class="wizard-step-node" id="node4">04</div>
+      <div class="wizard-step-node" id="node5">05</div>
+    </div>
+
+    <!-- ================= STAGE 0: MOBILE INPUT ================= -->
+    <div id="stageMobile" class="card card-body">
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <span class="badge badge-neutral" style="margin-bottom: 0.5rem;">START REGISTRATION</span>
+        <h2 style="font-size: 2rem; margin-bottom: 0.5rem;">Join LIFE LINK</h2>
+        <p style="color: var(--navy-muted);">Register as a blood donor and be there when someone needs you.</p>
+      </div>
+
+      <form onsubmit="handleMobileSubmit(event)" style="max-width: 420px; margin: 0 auto;">
+        <div class="form-group">
+          <label class="form-label">Mobile Number</label>
+          <div style="display: flex; gap: 0.5rem;">
+            <div style="padding: 0.75rem 0.9rem; background: var(--bg-light); border: 1px solid var(--navy-border); border-radius: var(--radius-sm); font-weight: 700;">+91</div>
+            <input type="tel" id="mobileInput" class="form-control" placeholder="98765 43210" required maxlength="10" value="9876543210">
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+          CONTINUE →
+        </button>
+      </form>
+    </div>
+
+    <!-- ================= STAGE 0.5: OTP VERIFICATION ================= -->
+    <div id="stageOtp" class="card card-body" style="display: none;">
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <span class="badge badge-neutral" style="margin-bottom: 0.5rem;">SECURITY VERIFICATION</span>
+        <h2 style="font-size: 1.85rem; margin-bottom: 0.5rem;">Verify your mobile number</h2>
+        <p style="color: var(--navy-muted); font-size: 0.95rem;">We sent a verification code to <strong id="dispMobile">+91 98765 43210</strong></p>
+      </div>
+
+      <form onsubmit="handleOtpSubmit(event)" style="max-width: 380px; margin: 0 auto;">
+        <div class="form-group">
+          <label class="form-label" style="text-align: center;">Enter 6-Digit OTP Code</label>
+          <input type="text" id="otpInput" class="form-control" placeholder="123456" maxlength="6" style="letter-spacing: 6px; font-weight: 800; font-size: 1.4rem; text-align: center;" value="123456" required>
+        </div>
+
+        <div style="text-align: center; font-size: 0.78rem; color: var(--navy-muted); margin-bottom: 1.5rem;">
+          Demo mode — any OTP is accepted.
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%;">
+          VERIFY & CONTINUE
+        </button>
+      </form>
+    </div>
+
+    <!-- ================= STAGE 1: PERSONAL DETAILS ================= -->
+    <div id="stagePersonal" class="card card-body" style="display: none;">
+      <h3 style="margin-bottom: 1.5rem; font-size: 1.35rem;">01. Personal Information</h3>
+
+      <form onsubmit="handlePersonalSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" id="regName" class="form-control" placeholder="Rahul Sharma" required value="Arun Kumar">
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Date of Birth</label>
+            <input type="date" id="regDob" class="form-control" required value="1998-05-14">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Gender</label>
+            <select id="regGender" class="form-select">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" id="regEmail" class="form-control" placeholder="arun.kumar@example.com" required value="arun.kumar@example.com">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+          NEXT: BLOOD GROUP →
+        </button>
+      </form>
+    </div>
+
+    <!-- ================= STAGE 2: BLOOD DETAILS ================= -->
+    <div id="stageBlood" class="card card-body" style="display: none;">
+      <h3 style="margin-bottom: 1.5rem; font-size: 1.35rem;">02. Blood Details</h3>
+
+      <form onsubmit="handleBloodSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Select Blood Group</label>
+          <select id="regBloodGroup" class="form-select" style="font-size: 1.1rem; font-weight: 700; color: var(--crimson-red);">
+            <option value="O+">O+</option>
+            <option value="O-">O- (Universal Donor)</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Last Blood Donation Date (Optional)</label>
+          <input type="date" id="regLastDonation" class="form-control" value="2025-11-10">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+          NEXT: LOCATION →
+        </button>
+      </form>
+    </div>
+
+    <!-- ================= STAGE 3: LOCATION DETAILS ================= -->
+    <div id="stageLocation" class="card card-body" style="display: none;">
+      <h3 style="margin-bottom: 1.5rem; font-size: 1.35rem;">03. Location Details</h3>
+
+      <form onsubmit="handleLocationSubmit(event)">
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">City</label>
+            <input type="text" id="regCity" class="form-control" placeholder="Mumbai" required value="Mumbai">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Area / Sector</label>
+            <input type="text" id="regArea" class="form-control" placeholder="Andheri East" required value="Andheri East">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Preferred Search Radius</label>
+          <select id="regSearchRadius" class="form-select">
+            <option value="5">Within 5 km</option>
+            <option value="8" selected>Within 8 km</option>
+            <option value="10">Within 10 km</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+          NEXT: AVAILABILITY →
+        </button>
+      </form>
+    </div>
+
+    <!-- ================= STAGE 4: AVAILABILITY SETTINGS ================= -->
+    <div id="stageAvailability" class="card card-body" style="display: none;">
+      <h3 style="margin-bottom: 1.5rem; font-size: 1.35rem;">04. Availability & Notification Preferences</h3>
+
+      <form onsubmit="handleAvailabilitySubmit(event)">
+        <div style="background: var(--bg-light); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--navy-border); margin-bottom: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <div>
+              <strong style="display: block;">Willing to donate blood</strong>
+              <span style="font-size: 0.85rem; color: var(--navy-muted);">Toggles whether your profile is eligible for emergency matching</span>
+            </div>
+            <input type="checkbox" id="toggleWilling" checked style="width: 20px; height: 20px; accent-color: var(--crimson-red);">
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong style="display: block;">Receive nearby emergency blood requests</strong>
+              <span style="font-size: 0.85rem; color: var(--navy-muted);">Receive alerts from verified hospitals nearby</span>
+            </div>
+            <input type="checkbox" id="toggleAlerts" checked style="width: 20px; height: 20px; accent-color: var(--crimson-red);">
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Emergency Contact Name</label>
+            <input type="text" id="emContactName" class="form-control" placeholder="Contact Person" value="Sunita Kumar">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Emergency Contact Mobile</label>
+            <input type="tel" id="emContactPhone" class="form-control" placeholder="+91 98000 11122" value="+91 98000 11122">
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+          CREATE DONOR PROFILE
+        </button>
+      </form>
+    </div>
+
+    <!-- ================= STAGE 5: SUCCESS STATE ================= -->
+    <div id="stageComplete" class="card card-body" style="display: none; text-align: center; padding: 3.5rem 2rem;">
+      <div style="width: 64px; height: 64px; background: var(--status-success-bg); color: var(--status-success); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1.5rem;">✓</div>
+
+      <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem;">Donor Profile Created</h2>
+      <h4 style="color: var(--crimson-red); font-size: 1.15rem; margin-bottom: 1rem;">Welcome to LIFE LINK.</h4>
+
+      <p style="color: var(--navy-muted); max-width: 480px; margin: 0 auto 2.5rem; font-size: 1rem;">
+        "You're ready to make a difference. Your willingness to donate can help someone nearby when every minute matters."
+      </p>
+
+      <button onclick="goToDashboard()" class="btn btn-primary btn-lg">
+        GO TO DASHBOARD →
+      </button>
+    </div>
+
+  </main>
+
+  <script>
+    let regData = {};
+
+    function updateNodes(activeNum) {
+      for (let i = 1; i <= 5; i++) {
+        const node = document.getElementById('node' + i);
+        if (i < activeNum) {
+          node.className = 'wizard-step-node completed';
+          node.textContent = '✓';
+        } else if (i === activeNum) {
+          node.className = 'wizard-step-node active';
+          node.textContent = '0' + i;
+        } else {
+          node.className = 'wizard-step-node';
+          node.textContent = '0' + i;
+        }
+      }
+    }
+
+    function handleMobileSubmit(e) {
+      e.preventDefault();
+      const mobile = document.getElementById('mobileInput').value;
+      regData.mobile = '+91 ' + mobile;
+      document.getElementById('dispMobile').textContent = regData.mobile;
+
+      document.getElementById('stageMobile').style.display = 'none';
+      document.getElementById('stageOtp').style.display = 'block';
+    }
+
+    function handleOtpSubmit(e) {
+      e.preventDefault();
+      document.getElementById('stageOtp').style.display = 'none';
+      document.getElementById('stagePersonal').style.display = 'block';
+      updateNodes(1);
+    }
+
+    function handlePersonalSubmit(e) {
+      e.preventDefault();
+      regData.name = document.getElementById('regName').value;
+      regData.dob = document.getElementById('regDob').value;
+      regData.gender = document.getElementById('regGender').value;
+      regData.email = document.getElementById('regEmail').value;
+
+      document.getElementById('stagePersonal').style.display = 'none';
+      document.getElementById('stageBlood').style.display = 'block';
+      updateNodes(2);
+    }
+
+    function handleBloodSubmit(e) {
+      e.preventDefault();
+      regData.bloodGroup = document.getElementById('regBloodGroup').value;
+      regData.lastDonation = document.getElementById('regLastDonation').value;
+
+      document.getElementById('stageBlood').style.display = 'none';
+      document.getElementById('stageLocation').style.display = 'block';
+      updateNodes(3);
+    }
+
+    function handleLocationSubmit(e) {
+      e.preventDefault();
+      regData.city = document.getElementById('regCity').value;
+      regData.area = document.getElementById('regArea').value;
+      regData.radius = document.getElementById('regSearchRadius').value;
+
+      document.getElementById('stageLocation').style.display = 'none';
+      document.getElementById('stageAvailability').style.display = 'block';
+      updateNodes(4);
+    }
+
+    function handleAvailabilitySubmit(e) {
+      e.preventDefault();
+      regData.isAvailable = document.getElementById('toggleWilling').checked;
+      regData.alertsEnabled = document.getElementById('toggleAlerts').checked;
+      regData.emContactName = document.getElementById('emContactName').value;
+      regData.emContactPhone = document.getElementById('emContactPhone').value;
+
+      // Save user to mock session
+      const newDonorUser = {
+        id: 'donor_' + Date.now(),
+        name: regData.name,
+        email: regData.email,
+        phone: regData.mobile,
+        role: 'Donor',
+        bloodGroup: regData.bloodGroup,
+        city: regData.city,
+        isAvailable: regData.isAvailable,
+        totalDonations: 0,
+        livesHelped: 0,
+        status: 'VERIFIED'
+      };
+
+      MockAuth.setCurrentUser(newDonorUser);
+
+      document.getElementById('stageAvailability').style.display = 'none';
+      document.getElementById('stageComplete').style.display = 'block';
+      updateNodes(5);
+    }
+
+    function goToDashboard() {
+      window.location.href = 'donor-dashboard.html';
+    }
+  </script>
+
+</body>
+</html>

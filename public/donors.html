@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find Blood Donors – LIFE LINK</title>
+  <meta name="description" content="Search verified voluntary blood donors by blood group, location, and availability.">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/main.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/search.js" defer></script>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <div class="brand-icon">🩸</div>
+      <span>LIFE LINK</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="donors.html" class="nav-link active">Find Donors</a></li>
+      <li><a href="requests.html" class="nav-link">Blood Requests</a></li>
+      <li><a href="inventory.html" class="nav-link">Blood Bank Stock</a></li>
+      <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <button class="theme-btn theme-toggle-btn" title="Toggle Theme">🌙</button>
+      <div id="navAuthContainer"></div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="section-header">
+      <div>
+        <h1 class="section-title">Verified Blood Donors</h1>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;" id="donorCountBadge">
+          Loading donor directory...
+        </p>
+      </div>
+
+      <button onclick="openAuthModal('register')" class="btn btn-primary">
+        ❤️ Register as a Donor
+      </button>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 2rem;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; align-items: end;">
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">Blood Group</label>
+          <select id="filterBloodGroup" class="form-select">
+            <option value="All">All Blood Types</option>
+            <option value="O+">O+</option>
+            <option value="O-">O- (Universal Donor)</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">City / Location</label>
+          <input type="text" id="filterCity" class="form-control" placeholder="Search city...">
+        </div>
+
+        <div class="form-group" style="margin:0;">
+          <label class="form-label">Search Donor Name</label>
+          <input type="text" id="filterSearchInput" class="form-control" placeholder="Search name...">
+        </div>
+
+        <div class="form-group" style="margin:0; display: flex; align-items: center; gap: 0.5rem; padding-bottom: 0.5rem;">
+          <input type="checkbox" id="filterAvailableOnly" checked style="width: 18px; height: 18px; accent-color: var(--primary-red); cursor: pointer;">
+          <label for="filterAvailableOnly" style="cursor: pointer; font-size: 0.9rem; font-weight: 500;">
+            Available Donors Only
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Donors Cards Grid -->
+    <div id="donorGrid" class="cards-grid">
+      <!-- Loaded dynamically via search.js -->
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 LIFE LINK – Blood Donor Management System</p>
+  </footer>
+
+  <script>
+    // Read URL query parameters if coming from home quick search
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const bgParam = urlParams.get('bloodGroup');
+      const cityParam = urlParams.get('city');
+
+      if (bgParam && document.getElementById('filterBloodGroup')) {
+        document.getElementById('filterBloodGroup').value = bgParam;
+      }
+      if (cityParam && document.getElementById('filterCity')) {
+        document.getElementById('filterCity').value = cityParam;
+      }
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile – LIFE LINK</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <script src="js/mockData.js" defer></script>
+  <script src="js/mockAuth.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+
+  <!-- Role-Based Navigation Header -->
+  <header class="site-header">
+    <div class="nav-wrapper">
+      <a href="donor-dashboard.html" class="brand-logo">
+        <div class="brand-mark">✚</div>
+        <span>LIFE LINK</span>
+      </a>
+
+      <ul class="nav-menu" id="roleNavMenu">
+        <!-- Rendered dynamically -->
+      </ul>
+
+      <div class="nav-actions" id="navAuthArea"></div>
+    </div>
+  </header>
+
+  <main class="container" style="max-width: 720px;">
+    <div style="margin-bottom: 2rem;">
+      <span class="badge badge-neutral" style="margin-bottom: 0.35rem;">MY LIFE LINK</span>
+      <h1 style="font-size: 2.2rem;">Donor Profile & Privacy</h1>
+      <p style="color: var(--navy-muted);">Manage your personal details, donation availability, and notification preferences</p>
+    </div>
+
+    <!-- Personal Profile Form -->
+    <div class="card card-body" style="margin-bottom: 2rem;">
+      <h3 style="margin-bottom: 1.25rem; font-size: 1.25rem;">Personal Information</h3>
+
+      <form onsubmit="handleProfileUpdate(event)">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" id="profName" class="form-control" value="Arun Kumar" required>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Blood Group</label>
+            <input type="text" id="profBlood" class="form-control" value="O+" readonly style="background: var(--bg-soft-gray); font-weight: 700; color: var(--crimson-red);">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Mobile Number</label>
+            <input type="tel" id="profPhone" class="form-control" value="+91 98765 43210" required>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" id="profEmail" class="form-control" value="arun.kumar@example.com" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">City</label>
+            <input type="text" id="profCity" class="form-control" value="Mumbai" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Notification Radius</label>
+          <select id="profRadius" class="form-select">
+            <option value="5">Within 5 km</option>
+            <option value="8" selected>Within 8 km</option>
+            <option value="10">Within 10 km</option>
+          </select>
+        </div>
+
+        <!-- Privacy Controls -->
+        <h4 style="margin-top: 1.5rem; margin-bottom: 1rem; font-size: 1.05rem;">Privacy & Notification Settings</h4>
+
+        <div style="background: var(--bg-soft-gray); padding: 1rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <div>
+              <strong style="font-size: 0.9rem; display: block;">Location Privacy Safeguard</strong>
+              <span style="font-size: 0.8rem; color: var(--navy-muted);">Only approximate distance is displayed to hospitals (~3.4 km away). Exact address is never public.</span>
+            </div>
+            <span class="badge badge-success">✓ ENABLED</span>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong style="font-size: 0.9rem; display: block;">Emergency Requests Alert Notifications</strong>
+              <span style="font-size: 0.8rem; color: var(--navy-muted);">Receive alerts from verified healthcare facilities nearby</span>
+            </div>
+            <input type="checkbox" checked style="width: 18px; height: 18px; accent-color: var(--crimson-red);">
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%;">
+          SAVE PROFILE CHANGES
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="mobile-bottom-nav">
+    <a href="donor-dashboard.html" class="mobile-nav-link">
+      <span class="mobile-nav-icon">🏠</span>
+      <span>Home</span>
+    </a>
+    <a href="emergency-requests.html" class="mobile-nav-link">
+      <span class="mobile-nav-icon">🚨</span>
+      <span>Requests</span>
+    </a>
+    <a href="donor-dashboard.html#impactSection" class="mobile-nav-link">
+      <span class="mobile-nav-icon">🩸</span>
+      <span>Donations</span>
+    </a>
+    <a href="javascript:void(0)" onclick="toggleNotificationDrawer()" class="mobile-nav-link">
+      <span class="mobile-nav-icon">🔔</span>
+      <span>Alerts</span>
+    </a>
+    <a href="donor-profile.html" class="mobile-nav-link active">
+      <span class="mobile-nav-icon">👤</span>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <p>© 2026 LIFE LINK Healthcare System</p>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = MockAuth.getCurrentUser();
+      if (user) {
+        if (user.name) document.getElementById('profName').value = user.name;
+        if (user.bloodGroup) document.getElementById('profBlood').value = user.bloodGroup;
+        if (user.phone) document.getElementById('profPhone').value = user.phone;
+        if (user.email) document.getElementById('profEmail').value = user.email;
+        if (user.city) document.getElementById('profCity').value = user.city;
+      }
+    });
+
+    function handleProfileUpdate(e) {
+      e.preventDefault();
+      const user = MockAuth.getCurrentUser();
+      user.name = document.getElementById('profName').value;
+      user.phone = document.getElementById('profPhone').value;
+      user.email = document.getElementById('profEmail').value;
+      user.city = document.getElementById('profCity').value;
+
+      MockAuth.setCurrentUser(user);
+      alert('Your donor profile and privacy settings have been updated successfully.');
+    }
+  </script>
+
+</body>
+</html>

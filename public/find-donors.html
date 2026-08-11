@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Location-Based Donor Matching – LIFE LINK</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <script src="js/mockData.js" defer></script>
+  <script src="js/mockAuth.js" defer></script>
+  <script src="js/app.js" defer></script>
+</head>
+<body>
+
+  <!-- Site Navigation -->
+  <header class="site-header">
+    <div class="nav-wrapper">
+      <a href="index.html" class="brand-logo">
+        <div class="brand-mark">✚</div>
+        <span>LIFE LINK</span>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-item">Home</a></li>
+        <li><a href="find-donors.html" class="nav-item active">Find Donors</a></li>
+        <li><a href="emergency-requests.html" class="nav-item">Emergency Requests</a></li>
+        <li><a href="blood-banks.html" class="nav-item">Blood Banks & Stock</a></li>
+      </ul>
+
+      <div class="nav-actions" id="navAuthArea"></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <span class="badge badge-success" style="margin-bottom: 0.5rem;">GEOLOCATION MATCHING ENGINE</span>
+        <h1 style="font-size: 2.2rem;">Location-Based Donor Search</h1>
+        <p style="color: var(--navy-muted);">Finding willing, verified voluntary donors sorted by match score and proximity radius</p>
+      </div>
+
+      <div class="badge badge-neutral" style="font-size: 0.85rem; padding: 0.5rem 0.9rem;">
+        🔒 Privacy Safeguard: Exact addresses are protected. Distances are approximate.
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card card-body" style="margin-bottom: 2rem;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+        <div class="form-group" style="margin: 0;">
+          <label class="form-label">Blood Group</label>
+          <select id="filterBloodGroup" class="form-select" onchange="renderDonorDirectory()">
+            <option value="All">All Blood Groups</option>
+            <option value="O+" selected>O+</option>
+            <option value="O-">O-</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin: 0;">
+          <label class="form-label">City</label>
+          <input type="text" id="filterCity" class="form-control" placeholder="Search city..." value="Mumbai" oninput="renderDonorDirectory()">
+        </div>
+
+        <div class="form-group" style="margin: 0;">
+          <label class="form-label">Search Radius</label>
+          <select id="filterRadius" class="form-select" onchange="renderDonorDirectory()">
+            <option value="5">Within 5 km</option>
+            <option value="8" selected>Within 8 km</option>
+            <option value="10">Within 10 km</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin: 0;">
+          <label class="form-label">Willingness Status</label>
+          <select id="filterAvailable" class="form-select" onchange="renderDonorDirectory()">
+            <option value="All">All Statuses</option>
+            <option value="Available" selected>Available Now</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Donor Cards Grid -->
+    <div id="donorMatchingGrid" class="grid-cards">
+      <!-- Rendered dynamically -->
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <p>© 2026 LIFE LINK Healthcare System</p>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Parse query params if present
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('bloodGroup')) document.getElementById('filterBloodGroup').value = params.get('bloodGroup');
+      if (params.has('city')) document.getElementById('filterCity').value = params.get('city');
+
+      renderDonorDirectory();
+    });
+
+    function renderDonorDirectory() {
+      const container = document.getElementById('donorMatchingGrid');
+      if (!container) return;
+
+      const bg = document.getElementById('filterBloodGroup').value;
+      const city = document.getElementById('filterCity').value.trim().toLowerCase();
+      const radius = parseFloat(document.getElementById('filterRadius').value);
+
+      let list = MockData.donors.filter(d => {
+        if (bg !== 'All' && d.bloodGroup !== bg) return false;
+        if (city && !d.city.toLowerCase().includes(city)) return false;
+        if (d.distanceKm > radius) return false;
+        return true;
+      });
+
+      // Sort by highest match score
+      list.sort((a, b) => b.matchScore - a.matchScore);
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem;" class="card card-body">
+            <h3 style="margin-bottom: 0.5rem;">No Donors Found</h3>
+            <p style="color: var(--navy-muted);">No willing donors found within ${radius} km matching your filters.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = list.map((d, index) => {
+        const isBestMatch = index === 0;
+
+        return `
+          <div class="card card-body card-hover" style="position: relative; border-top: 4px solid ${isBestMatch ? 'var(--crimson-red)' : 'var(--navy-border)'}">
+            ${isBestMatch ? `
+              <div style="position: absolute; top: 12px; right: 12px;">
+                <span class="badge badge-critical">BEST MATCH</span>
+              </div>
+            ` : ''}
+
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+              <div class="blood-pill blood-pill-lg">${d.bloodGroup}</div>
+              <div>
+                <h3 style="font-size: 1.25rem; margin-bottom: 0.15rem;">${d.name}</h3>
+                <div style="font-size: 0.85rem; color: var(--navy-muted);">
+                  📍 ${d.distanceKm} km away • ${d.city}
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-light); padding: 0.75rem 1rem; border-radius: var(--radius-sm); margin-bottom: 1rem;">
+              <div>
+                <span style="font-size: 0.78rem; color: var(--navy-muted); display: block;">Match Algorithm Score</span>
+                <strong style="color: #2563EB; font-size: 1.15rem;">${d.matchScore}% Match</strong>
+              </div>
+
+              <div>
+                <span class="badge badge-success">🟢 Available</span>
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--navy-border); padding-top: 1rem;">
+              <span style="font-size: 0.82rem; color: var(--navy-muted);">✓ Mobile Verified Donor</span>
+              <button onclick="alert('Contacting ${d.name} through authorized emergency request workflow.')" class="btn btn-primary btn-sm">
+                Request Contact
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  </script>
+
+</body>
+</html>

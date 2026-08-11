@@ -1,0 +1,245 @@
+/* ==========================================================================
+   LIFE LINK – Donor Experience Components (Carousel, Modals, Drawer, Cards)
+   ========================================================================== */
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.5rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  outline: none;
+}
+
+.btn-primary {
+  background-color: var(--crimson-red);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(217, 4, 41, 0.25);
+}
+
+.btn-primary:hover {
+  background-color: var(--crimson-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(217, 4, 41, 0.35);
+}
+
+.btn-secondary {
+  background-color: #ffffff;
+  color: var(--navy-dark);
+  border-color: var(--navy-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-soft-gray);
+  border-color: var(--navy-muted);
+}
+
+.btn-sm { padding: 0.45rem 0.9rem; font-size: 0.85rem; }
+.btn-lg { padding: 1rem 2rem; font-size: 1.05rem; border-radius: var(--radius-md); }
+
+/* Horizontal Carousel for Emergency Requests */
+.carousel-wrapper {
+  position: relative;
+  margin-top: 1rem;
+}
+
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.carousel-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid var(--navy-border);
+  color: var(--navy-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.1rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.carousel-btn:hover {
+  background: var(--crimson-red);
+  color: #ffffff;
+  border-color: var(--crimson-red);
+}
+
+.carousel-track {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding: 1rem 0.25rem 1.5rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.carousel-track::-webkit-scrollbar {
+  height: 6px;
+}
+
+.carousel-track::-webkit-scrollbar-thumb {
+  background: var(--navy-border);
+  border-radius: 10px;
+}
+
+.carousel-card {
+  flex: 0 0 340px;
+  scroll-snap-align: start;
+  background: #ffffff;
+  border: 1px solid var(--navy-border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.carousel-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: var(--shadow-md);
+  border-color: var(--crimson-red);
+}
+
+/* Prominent Blood Group Badge for Cards */
+.blood-badge-square {
+  width: 52px;
+  height: 52px;
+  background: var(--crimson-red);
+  color: #ffffff;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 800;
+  box-shadow: 0 4px 10px rgba(217, 4, 41, 0.25);
+}
+
+/* Request Detail Modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(6px);
+  z-index: 280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s ease;
+}
+
+.modal-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 560px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  border: 1px solid var(--navy-border);
+  transform: translateY(12px);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-backdrop.active .modal-card {
+  transform: translateY(0);
+}
+
+/* Personal Impact Timeline */
+.impact-journey {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  border: 1px solid var(--navy-border);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 2.5rem;
+}
+
+.impact-stats-row {
+  display: flex;
+  gap: 3rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--navy-border);
+}
+
+.impact-val {
+  font-family: var(--font-heading);
+  font-size: 3.2rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--crimson-red);
+}
+
+.impact-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--navy-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 0.35rem;
+}
+
+.journey-timeline {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.journey-node {
+  flex: 0 0 220px;
+  background: var(--bg-soft-gray);
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--crimson-red);
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.badge-success { background: var(--status-success-bg); color: var(--status-success); }
+.badge-warning { background: var(--status-warning-bg); color: var(--status-warning); }
+.badge-critical { background: var(--status-critical-bg); color: var(--status-critical); }
+.badge-neutral { background: #F1F5F9; color: var(--navy-body); }
+
+@media (max-width: 600px) {
+  .carousel-card { flex: 0 0 280px; }
+  .impact-stats-row { gap: 1.5rem; }
+  .impact-val { font-size: 2.5rem; }
+}
