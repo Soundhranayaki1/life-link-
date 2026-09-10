@@ -3,312 +3,1495 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Emergency Requests & Escalation – LIFE LINK</title>
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/components.css">
-  <script src="js/services/mockData.js" defer></script>
-  <script src="js/services/mockAuth.js" defer></script>
-  <script src="js/services/fatigueService.js" defer></script>
-  <script src="js/services/matchingService.js" defer></script>
-  <script src="js/services/escalationEngine.js" defer></script>
-  <script src="js/services/auditLogger.js" defer></script>
+  <title>My Requests – LIFE LINK</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans, Inter, Caveat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script src="js/mockData.js" defer></script>
+  <script src="js/mockAuth.js" defer></script>
   <script src="js/app.js" defer></script>
+
+  <style>
+    :root {
+      --red-primary: #E6002E;
+      --red-dark: #B90022;
+      --red-soft: #FFF0F3;
+      --navy-dark: #0F172A;
+      --slate-body: #334155;
+      --slate-muted: #64748B;
+      --slate-border: #E2E8F0;
+      --font-main: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      --font-body: 'Inter', -apple-system, sans-serif;
+      --font-cursive: 'Caveat', cursive;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #FAFCFF;
+      color: var(--navy-dark);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-x: hidden;
+    }
+
+    /* TOP NAVBAR MATCHING REFERENCE */
+    .header-bar {
+      height: 72px;
+      padding: 0 4rem;
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--slate-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+    }
+
+    .brand-logo-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .brand-logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--red-primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 12px rgba(230, 0, 46, 0.25);
+    }
+
+    .brand-text-title {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+      color: var(--navy-dark);
+      line-height: 1.1;
+    }
+
+    .brand-text-sub {
+      font-size: 0.7rem;
+      color: var(--slate-muted);
+      font-weight: 600;
+    }
+
+    .nav-links-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      list-style: none;
+    }
+
+    .nav-link-item {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.5rem 1.1rem;
+      border-radius: 9999px;
+      color: var(--slate-body);
+      text-decoration: none;
+      font-family: var(--font-main);
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    .nav-link-item:hover {
+      color: var(--red-primary);
+      background: var(--red-soft);
+    }
+
+    .nav-link-item.active {
+      background: #FFEBEF;
+      color: var(--red-primary);
+      font-weight: 800;
+    }
+
+    .nav-badge-count {
+      background: var(--red-primary);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 0.15rem 0.45rem;
+      border-radius: 9999px;
+    }
+
+    .header-user-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .user-profile-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      color: var(--navy-dark);
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    .user-avatar-circle {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #E2E8F0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--navy-dark);
+      font-weight: 700;
+      font-size: 0.88rem;
+    }
+
+    .btn-signout {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 1.15rem;
+      border: 1.5px solid var(--red-primary);
+      color: var(--red-primary);
+      background: transparent;
+      border-radius: 9999px;
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-signout:hover {
+      background: var(--red-primary);
+      color: white;
+    }
+
+    /* MAIN CONTAINER WITH PAGE MARGINS */
+    .dashboard-container {
+      width: 90%;
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 2.25rem 0;
+      flex: 1;
+    }
+
+    /* HERO BANNER MATCHING REFERENCE IMAGE */
+    .hero-banner-card {
+      background: linear-gradient(135deg, #FFF0F3 0%, #FFFFFF 100%);
+      border-radius: 24px;
+      padding: 2.25rem 2.5rem;
+      border: 1px solid #FFE0E6;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+      margin-bottom: 2rem;
+      display: grid;
+      grid-template-columns: 1.35fr 1fr 0.65fr;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .section-tag-red {
+      font-family: var(--font-main);
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--red-primary);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .section-tag-red::after {
+      content: '';
+      width: 24px;
+      height: 2px;
+      background: var(--red-primary);
+    }
+
+    .hero-title {
+      font-family: var(--font-main);
+      font-size: 2.1rem;
+      font-weight: 800;
+      line-height: 1.18;
+      color: var(--navy-dark);
+      margin-bottom: 0.65rem;
+    }
+
+    .hero-subtitle {
+      font-size: 0.9rem;
+      color: var(--slate-muted);
+      line-height: 1.45;
+    }
+
+    .center-art-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .center-art-img {
+      max-width: 220px;
+      height: auto;
+      max-height: 140px;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+    }
+
+    .cursive-banner-text {
+      font-family: var(--font-cursive);
+      font-size: 1.5rem;
+      color: #991B1B;
+      margin-top: 0.25rem;
+      user-select: none;
+    }
+
+    .right-impact-box {
+      background: #FFF5F7;
+      border-radius: 16px;
+      padding: 1.25rem 1.5rem;
+      border: 1px solid #FFE2E7;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .right-impact-box .dash-line {
+      width: 20px;
+      height: 3px;
+      background: var(--red-primary);
+      border-radius: 2px;
+    }
+
+    .right-impact-text {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--navy-dark);
+      line-height: 1.35;
+    }
+
+    /* TABS & SORT ROW */
+    .tabs-sort-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .tabs-group {
+      display: flex;
+      gap: 0.65rem;
+    }
+
+    .tab-btn {
+      padding: 0.55rem 1.35rem;
+      border-radius: 9999px;
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active {
+      background: var(--red-primary);
+      color: white;
+      box-shadow: 0 4px 12px rgba(230, 0, 46, 0.25);
+    }
+
+    .tab-btn.inactive {
+      background: #E2E8F0;
+      color: var(--slate-body);
+    }
+
+    .tab-btn.inactive:hover {
+      background: #CBD5E1;
+    }
+
+    .sort-select-box {
+      padding: 0.5rem 1rem;
+      border-radius: 12px;
+      border: 1px solid var(--slate-border);
+      background: #FFFFFF;
+      font-family: var(--font-main);
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--slate-body);
+      cursor: pointer;
+      outline: none;
+    }
+
+    /* REQUEST CARDS LIST (HORIZONTAL ROW LAYOUT MATCHING REFERENCE) */
+    .requests-list-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      margin-bottom: 2.25rem;
+    }
+
+    .request-row-card {
+      background: #FFFFFF;
+      border-radius: 20px;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.03);
+      padding: 1.5rem 1.75rem;
+      display: grid;
+      grid-template-columns: 1.1fr 1.4fr 1.3fr 0.9fr;
+      align-items: center;
+      gap: 1.5rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .request-row-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    /* Left Block (Badge & Blood Group) */
+    .req-left-block {
+      border-radius: 16px;
+      padding: 1.1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.55rem;
+    }
+
+    .req-left-critical {
+      background: #FFF5F7;
+    }
+
+    .req-left-urgent {
+      background: #FFFBEB;
+    }
+
+    .req-left-standard {
+      background: #F0F9FF;
+    }
+
+    .badge-pill-critical {
+      background: var(--red-primary);
+      color: white;
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 0.72rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 9999px;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-pill-urgent {
+      background: #FFEDD5;
+      color: #C2410C;
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 0.72rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 9999px;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-pill-standard {
+      background: #BFDBFE;
+      color: #1D4ED8;
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 0.72rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 9999px;
+      letter-spacing: 0.04em;
+    }
+
+    .blood-req-headline {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    .blood-drop-big {
+      font-size: 1.5rem;
+      color: var(--red-primary);
+    }
+
+    .blood-group-text {
+      font-family: var(--font-main);
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--navy-dark);
+      line-height: 1;
+    }
+
+    .units-subtext {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--navy-dark);
+      letter-spacing: 0.02em;
+    }
+
+    /* Center Block (Hospital Info) */
+    .req-hospital-block {
+      display: flex;
+      gap: 0.85rem;
+      align-items: flex-start;
+    }
+
+    .hosp-icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: #EFF6FF;
+      color: #2563EB;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .hosp-name-row {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--navy-dark);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .hosp-category-text {
+      font-size: 0.82rem;
+      color: var(--slate-muted);
+      margin-bottom: 0.45rem;
+    }
+
+    .hosp-distance-text {
+      font-size: 0.84rem;
+      color: var(--slate-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .hosp-time-text {
+      font-size: 0.84rem;
+      color: var(--slate-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    /* Response Status Box Block */
+    .response-status-box {
+      border-radius: 14px;
+      padding: 0.9rem 1.15rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .status-confirmed {
+      background: #ECFDF5;
+      border: 1px solid #A7F3D0;
+    }
+
+    .status-awaiting {
+      background: #FFFBEB;
+      border: 1px solid #FDE68A;
+    }
+
+    .status-declined {
+      background: #FFF1F2;
+      border: 1px solid #FECDD3;
+    }
+
+    .status-title-row {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .status-confirmed .status-title-row { color: #047857; }
+    .status-awaiting .status-title-row { color: #B45309; }
+    .status-declined .status-title-row { color: #BE123C; }
+
+    .status-sub-desc {
+      font-size: 0.78rem;
+      color: var(--slate-muted);
+    }
+
+    .status-timestamp {
+      font-size: 0.74rem;
+      color: var(--slate-muted);
+      margin-top: 0.3rem;
+    }
+
+    /* Right Action Button Block */
+    .req-action-block {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .btn-view-details {
+      padding: 0.55rem 1.25rem;
+      border: 1.5px solid var(--red-primary);
+      color: var(--red-primary);
+      background: #FFFFFF;
+      border-radius: 9999px;
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-view-details:hover {
+      background: var(--red-primary);
+      color: white;
+      box-shadow: 0 4px 14px rgba(230, 0, 46, 0.25);
+    }
+
+    /* BOTTOM BANNER MATCHING REFERENCE */
+    .bottom-hope-banner {
+      background: linear-gradient(135deg, #FFF0F3 0%, #FFFFFF 100%);
+      border: 1px solid #FFE0E6;
+      border-radius: 20px;
+      padding: 1.35rem 2.25rem;
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .hope-left-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .hope-icon-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #FFEBEF;
+      color: var(--red-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .hope-title {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--navy-dark);
+      margin-bottom: 0.15rem;
+    }
+
+    .hope-subtitle {
+      font-size: 0.82rem;
+      color: var(--slate-muted);
+    }
+
+    .hope-pillar-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      border-left: 1px solid #FFE0E6;
+      padding-left: 1.5rem;
+    }
+
+    .hope-pillar-icon {
+      font-size: 1.25rem;
+      color: var(--red-primary);
+    }
+
+    .hope-pillar-title {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: var(--navy-dark);
+    }
+
+    /* NOTIFICATIONS FLOATING POPUP DROPDOWN MATCHING REFERENCE IMAGE EXACTLY */
+    .notif-popup-card {
+      position: absolute;
+      top: calc(100% + 14px);
+      right: -100px;
+      width: 440px;
+      background: #FFFFFF;
+      border-radius: 24px;
+      box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.2), 0 0 0 1px rgba(226, 232, 240, 0.9);
+      padding: 1.5rem;
+      z-index: 1000;
+      animation: popupSlideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes popupSlideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .popup-arrow-up {
+      position: absolute;
+      top: -8px;
+      right: 155px;
+      width: 16px;
+      height: 16px;
+      background: #FFFFFF;
+      border-top: 1px solid rgba(226, 232, 240, 0.9);
+      border-left: 1px solid rgba(226, 232, 240, 0.9);
+      transform: rotate(45deg);
+    }
+
+    .popup-header {
+      margin-bottom: 1.1rem;
+    }
+
+    .popup-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .popup-title {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: var(--navy-dark);
+    }
+
+    .btn-mark-read {
+      background: none;
+      border: none;
+      color: #2563EB;
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: color 0.2s ease;
+    }
+
+    .btn-mark-read:hover {
+      color: #1D4ED8;
+      text-decoration: underline;
+    }
+
+    .popup-body-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .notif-card-item {
+      border-radius: 18px;
+      padding: 1.1rem 1.15rem;
+      display: flex;
+      gap: 0.9rem;
+      align-items: flex-start;
+      border: 1px solid transparent;
+      text-align: left;
+    }
+
+    .notif-card-red {
+      background: #FFF5F7;
+      border-color: #FFE0E6;
+    }
+
+    .notif-card-green {
+      background: #F0FDF4;
+      border-color: #DCFCE7;
+    }
+
+    .notif-card-blue {
+      background: #F0F9FF;
+      border-color: #E0F2FE;
+    }
+
+    .notif-card-gray {
+      background: #F8FAFC;
+      border-color: #E2E8F0;
+    }
+
+    .notif-icon-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+
+    .circle-red {
+      background: #FFEBEF;
+      color: var(--red-primary);
+    }
+
+    .circle-green {
+      background: #16A34A;
+      color: white;
+    }
+
+    .circle-blue {
+      background: #E0F2FE;
+      color: #0284C7;
+    }
+
+    .circle-gray {
+      background: #E2E8F0;
+      color: var(--navy-dark);
+    }
+
+    .notif-content-area {
+      flex: 1;
+    }
+
+    .notif-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.3rem;
+    }
+
+    .notif-tag-red {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 0.8rem;
+      color: var(--red-primary);
+      letter-spacing: 0.02em;
+    }
+
+    .notif-tag-green {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 0.8rem;
+      color: #166534;
+    }
+
+    .notif-tag-blue {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 0.8rem;
+      color: #1E40AF;
+    }
+
+    .notif-tag-dark {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 0.8rem;
+      color: var(--navy-dark);
+    }
+
+    .notif-time-tag {
+      font-size: 0.74rem;
+      color: var(--slate-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .dot-unread {
+      color: var(--red-primary);
+      font-size: 0.6rem;
+    }
+
+    .notif-body-text {
+      font-size: 0.84rem;
+      color: var(--slate-body);
+      line-height: 1.4;
+      margin-bottom: 0.35rem;
+    }
+
+    .notif-sub-text {
+      font-size: 0.8rem;
+      color: var(--slate-muted);
+      line-height: 1.35;
+    }
+
+    .notif-meta-row {
+      font-size: 0.78rem;
+      color: var(--slate-muted);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-popup-view-req {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 1.15rem;
+      background: #FFFFFF;
+      border: 1.5px solid var(--red-primary);
+      color: var(--red-primary);
+      border-radius: 10px;
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-popup-view-req:hover {
+      background: var(--red-primary);
+      color: white;
+    }
+
+    .popup-footer-row {
+      margin-top: 1.1rem;
+      text-align: center;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--slate-border);
+    }
+
+    .link-view-all-notifs {
+      color: #2563EB;
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.88rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .link-view-all-notifs:hover {
+      text-decoration: underline;
+    }
+
+    /* FOOTER BAR */
+    .footer-bar {
+      height: 48px;
+      padding: 0 4rem;
+      border-top: 1px solid var(--slate-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.76rem;
+      color: var(--slate-muted);
+      background: #FFFFFF;
+      flex-shrink: 0;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .footer-links a {
+      color: var(--slate-muted);
+      text-decoration: none;
+    }
+
+    /* MODAL OVERLAY FOR VIEW DETAILS */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(6px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1100px) {
+      .hero-banner-card {
+        grid-template-columns: 1fr;
+      }
+      .request-row-card {
+        grid-template-columns: 1fr;
+      }
+      .bottom-hope-banner {
+        grid-template-columns: 1fr;
+      }
+      .dashboard-container {
+        width: 95%;
+      }
+      .header-bar, .footer-bar {
+        padding: 0 1.5rem;
+      }
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Minimal Role-Specific Navigation -->
-  <header class="site-header">
-    <div class="nav-wrapper">
-      <a href="index.html" class="brand-logo">
-        <div class="brand-mark">✚</div>
-        <span>LIFE LINK</span>
-      </a>
-
-      <ul class="nav-menu" id="roleNavMenu">
-        <!-- Rendered dynamically -->
-      </ul>
-
-      <div class="nav-actions" id="navAuthArea"></div>
-    </div>
-  </header>
-
-  <main class="container">
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+  <!-- TOP NAVBAR -->
+  <header class="header-bar">
+    <a href="donor-dashboard.html" class="brand-logo-left">
+      <div class="brand-logo-icon">
+        <i class="fa-solid fa-square-plus"></i>
+      </div>
       <div>
-        <span class="badge badge-critical" style="margin-bottom: 0.5rem;">EMERGENCY BROADCAST FEED</span>
-        <h1 style="font-size: 2.2rem;">Active Blood Requirements</h1>
-        <p style="color: var(--navy-muted);">Broadcasted by verified healthcare facilities with dynamic radius escalation</p>
+        <div class="brand-text-title">LIFE LINK</div>
+        <div class="brand-text-sub">Donate Blood. Save Lives.</div>
       </div>
+    </a>
 
-      <button onclick="openRequestModal()" class="btn btn-primary">
-        📢 Create Emergency Request (Authorized Org)
-      </button>
-    </div>
+    <ul class="nav-links-row">
+      <li>
+        <a href="donor-dashboard.html" class="nav-link-item">
+          <i class="fa-solid fa-house"></i> Home
+        </a>
+      </li>
+      <li>
+        <a href="emergency-requests.html" class="nav-link-item active">
+          <i class="fa-solid fa-file-lines"></i> My Requests
+        </a>
+      </li>
+      <li>
+        <a href="donor-dashboard.html#impactSection" class="nav-link-item">
+          <i class="fa-solid fa-droplet"></i> My Donations
+        </a>
+      </li>
+      <li style="position: relative;">
+        <a href="javascript:void(0)" id="notifBellBtn" onclick="toggleNotifPopup(event)" class="nav-link-item">
+          <i class="fa-solid fa-bell"></i> Notifications
+          <span class="nav-badge-count" id="notifBadgeCount">2</span>
+        </a>
 
-    <!-- Request Feed Cards Grid -->
-    <div id="requestsFeedGrid" class="grid-cards" style="margin-bottom: 3.5rem;">
-      <!-- Loaded dynamically via script -->
-    </div>
+        <!-- FLOATING POPUP DROPDOWN MATCHING REFERENCE IMAGE EXACTLY -->
+        <div id="notifDropdownPopup" class="notif-popup-card" style="display: none;">
+          <div class="popup-arrow-up"></div>
 
-    <!-- EMERGENCY ESCALATION ENGINE DEMO SECTION -->
-    <section class="card card-body" style="background: #ffffff; border-color: var(--navy-border);">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-        <div>
-          <span class="badge badge-warning" style="margin-bottom: 0.35rem;">CONTROLLED NOTIFICATION WAVES</span>
-          <h2 style="font-size: 1.6rem;">Controlled Radius Escalation Engine</h2>
-          <p style="color: var(--navy-muted); font-size: 0.9rem;">Demonstrating dynamic wave expansion (0–3km ➔ 3–5km ➔ 5–8km) to prevent alert fatigue</p>
-        </div>
-
-        <button onclick="triggerNextWaveEscalation()" class="btn btn-primary" id="waveEscalateBtn">
-          [ EXPAND RADIUS TO ROUND 2 (3–5 KM) ]
-        </button>
-      </div>
-
-      <div class="impact-journey" style="margin: 0; padding: 1.5rem;">
-        <div id="escalationWaveLog">
-          <div style="margin-bottom: 1rem; border-left: 3px solid var(--status-success); padding-left: 1rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <strong style="font-size: 1.05rem;">ROUND 1 — 0 to 3 km Radius Broadcast</strong>
-              <span class="badge badge-success">COMPLETED ✓</span>
-            </div>
-            <div style="color: var(--navy-muted); font-size: 0.88rem; margin-top: 0.2rem;">
-              Highest-priority donors notified: 8 Donors • 2 Responses Received
-            </div>
-          </div>
-
-          <div id="round2WaveBox" style="margin-bottom: 1rem; border-left: 3px solid var(--status-warning); padding-left: 1rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <strong style="font-size: 1.05rem;">ROUND 2 — 3 to 5 km Radius Expansion</strong>
-              <span class="badge badge-warning" id="round2WaveBadge">READY FOR DISPATCH</span>
-            </div>
-            <div style="color: var(--navy-muted); font-size: 0.88rem; margin-top: 0.2rem;" id="round2WaveDesc">
-              Expands notification pool to 14 additional suitable donors in secondary radius.
+          <div class="popup-header">
+            <div class="popup-title-row">
+              <span class="popup-title">My Notifications</span>
+              <button class="btn-mark-read" onclick="markAllNotifsAsRead(event)">
+                <i class="fa-solid fa-check-double"></i> Mark all as read
+              </button>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
-  </main>
 
-  <!-- Create Request Modal -->
-  <div id="requestModal" style="display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 200; align-items: center; justify-content: center; padding: 1.5rem;">
-    <div class="card card-body" style="width: 100%; max-width: 580px; max-height: 90vh; overflow-y: auto;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-        <h3 style="font-size: 1.35rem;">Create Emergency Blood Request</h3>
-        <button onclick="closeRequestModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--navy-muted);">&times;</button>
-      </div>
+          <div class="popup-body-list">
 
-      <form onsubmit="handleCreateRequestSubmit(event)">
-        <div class="badge badge-success" style="width: 100%; justify-content: center; margin-bottom: 1.25rem;">
-          ✓ AUTHORIZED ORGANIZATION VERIFICATION
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Patient Name</label>
-          <input type="text" id="reqPatient" class="form-control" placeholder="Karan Malhotra" required value="Karan Malhotra">
-        </div>
-
-        <div class="grid-2">
-          <div class="form-group">
-            <label class="form-label">Hospital / Organization</label>
-            <input type="text" id="reqHospital" class="form-control" placeholder="XYZ Government Hospital" required value="XYZ Government Hospital">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Hospital Location</label>
-            <input type="text" id="reqLocation" class="form-control" placeholder="Worli, Mumbai" required value="Worli, Mumbai">
-          </div>
-        </div>
-
-        <div class="grid-3">
-          <div class="form-group">
-            <label class="form-label">Blood Group</label>
-            <select id="reqBloodGroup" class="form-select">
-              <option value="O+">O+</option>
-              <option value="O-">O-</option>
-              <option value="A+">A+</option>
-              <option value="A-">A-</option>
-              <option value="B+">B+</option>
-              <option value="B-">B-</option>
-              <option value="AB+">AB+</option>
-              <option value="AB-">AB-</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Units Required</label>
-            <input type="number" id="reqUnits" class="form-control" min="1" value="2" required>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Urgency</label>
-            <select id="reqUrgency" class="form-select">
-              <option value="CRITICAL">CRITICAL</option>
-              <option value="URGENT">URGENT</option>
-              <option value="STANDARD">STANDARD</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Initial Radius (Round 1)</label>
-          <select id="reqRadius" class="form-select">
-            <option value="3">Round 1: 0–3 km</option>
-            <option value="5">Round 1: 0–5 km</option>
-          </select>
-        </div>
-
-        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
-          BROADCAST EMERGENCY REQUEST
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Notification Drawer Slide-In Panel -->
-  <div class="notification-drawer-overlay" id="notificationOverlay" onclick="toggleNotificationDrawer()"></div>
-  <div class="notification-drawer" id="notificationDrawer">
-    <div style="padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--navy-border); display: flex; justify-content: space-between; align-items: center;">
-      <h3 style="font-size: 1.2rem;">Notifications</h3>
-      <button onclick="toggleNotificationDrawer()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--navy-muted);">&times;</button>
-    </div>
-
-    <div id="notificationListContainer" style="overflow-y: auto; flex: 1;">
-      <!-- Loaded dynamically -->
-    </div>
-  </div>
-
-  <footer class="site-footer">
-    <div class="footer-bottom">
-      <p>© 2026 LIFE LINK Healthcare System</p>
-    </div>
-  </footer>
-
-  <script>
-    let currentWave = 1;
-
-    document.addEventListener('DOMContentLoaded', () => {
-      MockAuth.renderRoleNavigation('requests');
-      renderRequestsFeed();
-    });
-
-    function renderRequestsFeed() {
-      const container = document.getElementById('requestsFeedGrid');
-      if (!container) return;
-
-      container.innerHTML = MockData.emergencyRequests.map(r => `
-        <div class="card card-body card-hover" style="border-left: 4px solid ${r.urgency === 'CRITICAL' ? 'var(--status-critical)' : 'var(--crimson-red)'}">
-          <div style="margin-bottom: 0.75rem;">
-            <span class="badge badge-success" style="font-size: 0.72rem;">✓ Verified Government Hospital</span>
-          </div>
-
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
-              <div class="blood-badge-square">${r.bloodGroup}</div>
-              <div>
-                <h3 style="font-size: 1.25rem;">${r.patientName}</h3>
-                <div style="color: var(--navy-muted); font-size: 0.85rem;">🏥 ${r.hospitalLocation} • 📍 ${r.humanDistance}</div>
+            <!-- ITEM 1: URGENT RED HIGHLIGHT -->
+            <div class="notif-card-item notif-card-red">
+              <div class="notif-icon-circle circle-red">
+                <i class="fa-solid fa-bell"></i>
+              </div>
+              <div class="notif-content-area">
+                <div class="notif-header-row">
+                  <span class="notif-tag-red">URGENT O+ REQUEST NEARBY</span>
+                  <span class="notif-time-tag">10 mins ago <span class="dot-unread" id="dotUnread1">●</span></span>
+                </div>
+                <p class="notif-body-text">
+                  XYZ Government Hospital needs 2 units of O+ blood.
+                </p>
+                <div class="notif-meta-row">
+                  <span><i class="fa-solid fa-location-dot" style="color: var(--red-primary);"></i> 3.4 km away</span>
+                  <span style="margin: 0 0.35rem; color: #CBD5E1;">|</span>
+                  <span><i class="fa-regular fa-clock" style="color: var(--red-primary);"></i> Required within <strong style="color: var(--red-primary);">2 hours</strong></span>
+                </div>
+                <a href="emergency-requests.html?id=REQ-8821" class="btn-popup-view-req">
+                  View Request →
+                </a>
               </div>
             </div>
 
-            <span class="badge ${r.urgency === 'CRITICAL' ? 'badge-critical' : 'badge-warning'}">${r.urgency}</span>
+            <!-- ITEM 2: CONFIRMED GREEN HIGHLIGHT -->
+            <div class="notif-card-item notif-card-green">
+              <div class="notif-icon-circle circle-green">
+                <i class="fa-solid fa-check"></i>
+              </div>
+              <div class="notif-content-area">
+                <div class="notif-header-row">
+                  <span class="notif-tag-green">RESPONSE CONFIRMED</span>
+                  <span class="notif-time-tag">1 hour ago</span>
+                </div>
+                <p class="notif-body-text">
+                  Your donation commitment was received by XYZ Government Hospital.
+                </p>
+                <p class="notif-sub-text">
+                  Hospital contact line is open for your visit.
+                </p>
+              </div>
+            </div>
+
+            <!-- ITEM 3: ACTIVE BLUE HIGHLIGHT -->
+            <div class="notif-card-item notif-card-blue">
+              <div class="notif-icon-circle circle-blue">
+                <i class="fa-solid fa-tower-broadcast"></i>
+              </div>
+              <div class="notif-content-area">
+                <div class="notif-header-row">
+                  <span class="notif-tag-blue">AVAILABILITY ACTIVE</span>
+                  <span class="notif-time-tag">Yesterday</span>
+                </div>
+                <p class="notif-body-text">
+                  Your profile is currently visible to emergency healthcare providers nearby.
+                </p>
+                <p class="notif-sub-text">
+                  8 km notification radius enabled.
+                </p>
+              </div>
+            </div>
+
+            <!-- ITEM 4: VERIFIED GRAY HIGHLIGHT -->
+            <div class="notif-card-item notif-card-gray">
+              <div class="notif-icon-circle circle-gray">
+                <i class="fa-solid fa-user"></i>
+              </div>
+              <div class="notif-content-area">
+                <div class="notif-header-row">
+                  <span class="notif-tag-dark">DONOR PROFILE VERIFIED</span>
+                  <span class="notif-time-tag">2 days ago</span>
+                </div>
+                <p class="notif-body-text">
+                  Mobile verification and blood group details recorded successfully.
+                </p>
+                <p class="notif-sub-text">
+                  Verified Voluntary Donor.
+                </p>
+              </div>
+            </div>
+
           </div>
 
-          <div style="background: var(--bg-soft-gray); padding: 0.85rem; border-radius: var(--radius-sm); margin-bottom: 1rem; font-size: 0.9rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-            <div>
-              <span style="color: var(--navy-muted);">Required:</span>
-              <strong style="color: var(--crimson-red); font-size: 1.1rem; display: block;">${r.unitsNeeded} Units (${r.bloodGroup})</strong>
-            </div>
-            <div>
-              <span style="color: var(--navy-muted);">Time Remaining:</span>
-              <strong style="display: block; font-size: 0.95rem;">${r.timeRemaining}</strong>
-            </div>
+          <div class="popup-footer-row">
+            <a href="emergency-requests.html" class="link-view-all-notifs">
+              View All Notifications →
+            </a>
           </div>
 
-          <div id="responseArea_${r.id}" style="display: flex; gap: 0.5rem;">
-            <button onclick="handleDonateResponse('${r.id}', true)" class="btn btn-primary" style="flex: 1;">
-              I CAN DONATE
-            </button>
-            <button onclick="handleDonateResponse('${r.id}', false)" class="btn btn-secondary" style="flex: 1;">
-              NOT AVAILABLE
-            </button>
+        </div>
+      </li>
+      <li>
+        <a href="donor-profile.html" class="nav-link-item">
+          <i class="fa-solid fa-user"></i> Profile
+        </a>
+      </li>
+    </ul>
+
+    <div class="header-user-actions">
+      <a href="donor-profile.html" class="user-profile-btn">
+        <div class="user-avatar-circle">
+          A
+        </div>
+        <span>Arun</span> <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; color: var(--slate-muted);"></i>
+      </a>
+
+      <button onclick="MockAuth.logout()" class="btn-signout" title="Sign Out">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN DASHBOARD CONTAINER -->
+  <main class="dashboard-container">
+
+    <!-- HERO BANNER SECTION -->
+    <div class="hero-banner-card">
+      <div>
+        <div class="section-tag-red">MY REQUESTS</div>
+        <h1 class="hero-title">
+          Emergency blood requests<br>
+          you’ve received and responded to.
+        </h1>
+        <p class="hero-subtitle">
+          Your support can save lives. Here are the requests sent to you based on your location and availability.
+        </p>
+      </div>
+
+      <div class="center-art-container">
+        <img src="assets/images/crystal_blood_drop_hand.png" alt="Medical Blood Bag Illustration" class="center-art-img">
+        <div class="cursive-banner-text">Blood Connects Lives ♡</div>
+      </div>
+
+      <div class="right-impact-box">
+        <div class="dash-line"></div>
+        <div class="right-impact-text">
+          Real people.<br>
+          Real need.<br>
+          Real impact.
+        </div>
+        <div class="dash-line"></div>
+      </div>
+    </div>
+
+    <!-- TABS & SORT BAR -->
+    <div class="tabs-sort-bar">
+      <div class="tabs-group">
+        <button id="tabActiveBtn" onclick="switchRequestsTab('active')" class="tab-btn active">
+          Active (3)
+        </button>
+        <button id="tabCompletedBtn" onclick="switchRequestsTab('completed')" class="tab-btn inactive">
+          Completed (5)
+        </button>
+      </div>
+
+      <div>
+        <select class="sort-select-box" onchange="alert('Sorted by ' + this.value)">
+          <option value="latest">Sort by: Latest</option>
+          <option value="urgency">Sort by: Urgency</option>
+          <option value="distance">Sort by: Distance</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- REQUEST CARDS LIST MATCHING REFERENCE IMAGE EXACTLY -->
+    <div class="requests-list-container" id="requestsListContainer">
+
+      <!-- CARD 1: CRITICAL (RESPONSE CONFIRMED) -->
+      <div class="request-row-card">
+        <div class="req-left-block req-left-critical">
+          <span class="badge-pill-critical">CRITICAL</span>
+          <div class="blood-req-headline">
+            <i class="fa-solid fa-droplet blood-drop-big"></i>
+            <div>
+              <div class="blood-group-text">O+</div>
+              <div class="units-subtext">2 UNITS REQUIRED</div>
+            </div>
           </div>
         </div>
-      `).join('');
+
+        <div class="req-hospital-block">
+          <div class="hosp-icon-box">
+            <i class="fa-solid fa-hospital"></i>
+          </div>
+          <div>
+            <div class="hosp-name-row">
+              XYZ Government Hospital <i class="fa-solid fa-circle-check" style="color: #16A34A; font-size: 0.85rem;"></i>
+            </div>
+            <div class="hosp-category-text">Government Hospital &nbsp;|&nbsp; Mumbai</div>
+            <div class="hosp-distance-text">
+              <i class="fa-solid fa-location-dot" style="color: var(--red-primary);"></i> 3.4 km away
+            </div>
+            <div class="hosp-time-text">
+              <i class="fa-regular fa-clock" style="color: var(--red-primary);"></i> Required within <strong style="color: var(--red-primary); margin-left: 0.2rem;">1h 42m</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="response-status-box status-confirmed">
+          <div class="status-title-row">
+            <i class="fa-solid fa-circle-check"></i> RESPONSE CONFIRMED
+          </div>
+          <div class="status-sub-desc">You have confirmed to donate.</div>
+          <div class="status-timestamp">Today, 10:24 AM</div>
+        </div>
+
+        <div class="req-action-block">
+          <button onclick="openRequestDetailModal('REQ-8821')" class="btn-view-details">
+            View Details →
+          </button>
+        </div>
+      </div>
+
+      <!-- CARD 2: URGENT (AWAITING RESPONSE) -->
+      <div class="request-row-card">
+        <div class="req-left-block req-left-urgent">
+          <span class="badge-pill-urgent">URGENT</span>
+          <div class="blood-req-headline">
+            <i class="fa-solid fa-droplet blood-drop-big"></i>
+            <div>
+              <div class="blood-group-text">O+</div>
+              <div class="units-subtext">3 UNITS REQUIRED</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="req-hospital-block">
+          <div class="hosp-icon-box">
+            <i class="fa-solid fa-hospital"></i>
+          </div>
+          <div>
+            <div class="hosp-name-row">
+              Apollo City Hospital <i class="fa-solid fa-circle-check" style="color: #16A34A; font-size: 0.85rem;"></i>
+            </div>
+            <div class="hosp-category-text">Private Hospital &nbsp;|&nbsp; Mumbai</div>
+            <div class="hosp-distance-text">
+              <i class="fa-solid fa-location-dot" style="color: var(--red-primary);"></i> 5.1 km away
+            </div>
+            <div class="hosp-time-text">
+              <i class="fa-regular fa-clock" style="color: #D97706;"></i> Required within <strong style="color: #D97706; margin-left: 0.2rem;">3h 15m</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="response-status-box status-awaiting">
+          <div class="status-title-row">
+            <i class="fa-solid fa-clock"></i> AWAITING RESPONSE
+          </div>
+          <div class="status-sub-desc">Please respond at the earliest.</div>
+          <div class="status-timestamp">Today, 02:18 PM</div>
+        </div>
+
+        <div class="req-action-block">
+          <button onclick="openRequestDetailModal('REQ-8822')" class="btn-view-details">
+            View Details →
+          </button>
+        </div>
+      </div>
+
+      <!-- CARD 3: STANDARD (DECLINED) -->
+      <div class="request-row-card">
+        <div class="req-left-block req-left-standard">
+          <span class="badge-pill-standard">STANDARD</span>
+          <div class="blood-req-headline">
+            <i class="fa-solid fa-droplet blood-drop-big" style="color: #0284C7;"></i>
+            <div>
+              <div class="blood-group-text">A+</div>
+              <div class="units-subtext">1 UNIT REQUIRED</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="req-hospital-block">
+          <div class="hosp-icon-box">
+            <i class="fa-solid fa-hospital"></i>
+          </div>
+          <div>
+            <div class="hosp-name-row">
+              Red Cross Center <i class="fa-solid fa-circle-check" style="color: #16A34A; font-size: 0.85rem;"></i>
+            </div>
+            <div class="hosp-category-text">Non-Profit Organization &nbsp;|&nbsp; Mumbai</div>
+            <div class="hosp-distance-text">
+              <i class="fa-solid fa-location-dot" style="color: var(--slate-muted);"></i> 4.2 km away
+            </div>
+            <div class="hosp-time-text">
+              <i class="fa-regular fa-clock" style="color: var(--slate-muted);"></i> Required within <strong style="margin-left: 0.2rem;">5 hours</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="response-status-box status-declined">
+          <div class="status-title-row">
+            <i class="fa-solid fa-circle-xmark"></i> DECLINED
+          </div>
+          <div class="status-sub-desc">You have declined this request.</div>
+          <div class="status-timestamp">Yesterday, 06:45 PM</div>
+        </div>
+
+        <div class="req-action-block">
+          <button onclick="openRequestDetailModal('REQ-8823')" class="btn-view-details">
+            View Details →
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM HOPE BANNER MATCHING REFERENCE IMAGE -->
+    <div class="bottom-hope-banner">
+      <div class="hope-left-content">
+        <div class="hope-icon-circle">
+          <i class="fa-solid fa-hand-holding-heart"></i>
+        </div>
+        <div>
+          <div class="hope-title">Every response brings hope.</div>
+          <div class="hope-subtitle">Thank you for being a LIFE LINK donor.</div>
+        </div>
+      </div>
+
+      <div class="hope-pillar-item">
+        <i class="fa-solid fa-droplet hope-pillar-icon"></i>
+        <div class="hope-pillar-title">Give Hope</div>
+      </div>
+
+      <div class="hope-pillar-item">
+        <i class="fa-solid fa-users hope-pillar-icon"></i>
+        <div class="hope-pillar-title">Save Lives</div>
+      </div>
+
+      <div class="hope-pillar-item">
+        <i class="fa-solid fa-shield-halved hope-pillar-icon"></i>
+        <div class="hope-pillar-title">Stronger Communities</div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer-bar">
+    <div>
+      © 2026 LIFE LINK Healthcare System &nbsp;|&nbsp; Every Drop. Every Connection. Every Life.
+    </div>
+
+    <div class="footer-links">
+      <a href="#">Privacy</a> &nbsp;|&nbsp;
+      <a href="#">Terms</a> &nbsp;|&nbsp;
+      <a href="#">Support</a>
+    </div>
+  </footer>
+
+  <!-- REQUEST DETAILS MODAL -->
+  <div id="requestDetailModal" class="modal-overlay" style="display: none;">
+    <div style="background: #ffffff; border-radius: 24px; padding: 2.25rem; max-width: 540px; width: 90%; box-shadow: 0 25px 60px rgba(0,0,0,0.2);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <h3 style="font-family: var(--font-main); font-size: 1.35rem; color: var(--navy-dark);" id="modalReqTitle">Emergency Request Details</h3>
+        <button onclick="closeRequestDetailModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--slate-muted);">&times;</button>
+      </div>
+
+      <div id="modalReqContent" style="font-size: 0.9rem; line-height: 1.6; color: var(--slate-body);">
+        <!-- Loaded dynamically -->
+      </div>
+
+      <div style="margin-top: 1.75rem; text-align: right;">
+        <button onclick="closeRequestDetailModal()" class="btn-view-details" style="background: var(--red-primary); color: white; border: none;">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchRequestsTab(tab) {
+      const activeBtn = document.getElementById('tabActiveBtn');
+      const completedBtn = document.getElementById('tabCompletedBtn');
+
+      if (tab === 'active') {
+        activeBtn.className = 'tab-btn active';
+        completedBtn.className = 'tab-btn inactive';
+        alert('Showing 3 Active Emergency Requests.');
+      } else {
+        activeBtn.className = 'tab-btn inactive';
+        completedBtn.className = 'tab-btn active';
+        alert('Showing 5 Completed Request History items.');
+      }
     }
 
-    function handleDonateResponse(reqId, canDonate) {
-      const area = document.getElementById('responseArea_' + reqId);
-      if (!area) return;
+    function openRequestDetailModal(reqId) {
+      const modal = document.getElementById('requestDetailModal');
+      const title = document.getElementById('modalReqTitle');
+      const content = document.getElementById('modalReqContent');
+      if (!modal) return;
 
-      if (typeof FatigueService !== 'undefined') {
-        FatigueService.recordResponse('donor_demo_1', reqId, canDonate ? 'ACCEPTED' : 'DECLINED');
-      }
-
-      if (typeof AuditLogger !== 'undefined') {
-        AuditLogger.logEvent(reqId, 'DONOR_RESPONDED', canDonate ? 'Donor accepted emergency request.' : 'Donor declined.');
-      }
-
-      if (canDonate) {
-        area.innerHTML = `
-          <div style="width: 100%; padding: 0.75rem; background: var(--status-success-bg); color: var(--status-success); border-radius: var(--radius-sm); text-align: center; font-weight: 600; font-size: 0.88rem;">
-            ✓ Thank you. Your response has been sent to the authorized organization.
+      if (reqId === 'REQ-8821') {
+        title.textContent = 'XYZ Government Hospital (Critical O+)';
+        content.innerHTML = `
+          <div style="background: #FFF5F7; padding: 1rem; border-radius: 12px; margin-bottom: 1rem; border: 1px solid #FFE0E6;">
+            <strong>Status:</strong> <span style="color: #047857; font-weight: 700;">✓ RESPONSE CONFIRMED</span><br>
+            <strong>Patient:</strong> Karan Malhotra (ICU Emergency Ward)<br>
+            <strong>Required:</strong> 2 Units of O+ Blood<br>
+            <strong>Time Limit:</strong> Within 1h 42m
+          </div>
+          <p><strong>Hospital Address:</strong> 102 Dr. E. Moses Rd, Worli, Mumbai, Maharashtra 400018</p>
+          <p><strong>Distance:</strong> 3.4 km from your current location</p>
+          <p><strong>Contact Person:</strong> Dr. Rajesh Verma (Blood Bank Desk) - +91 98200 12345</p>
+        `;
+      } else if (reqId === 'REQ-8822') {
+        title.textContent = 'Apollo City Hospital (Urgent O+)';
+        content.innerHTML = `
+          <div style="background: #FFFBEB; padding: 1rem; border-radius: 12px; margin-bottom: 1rem; border: 1px solid #FDE68A;">
+            <strong>Status:</strong> <span style="color: #B45309; font-weight: 700;">⏱️ AWAITING RESPONSE</span><br>
+            <strong>Patient:</strong> Sneha Sharma (Operation Theater 3)<br>
+            <strong>Required:</strong> 3 Units of O+ Blood<br>
+            <strong>Time Limit:</strong> Within 3h 15m
+          </div>
+          <p><strong>Hospital Address:</strong> Marine Lines, South Mumbai, Maharashtra 400020</p>
+          <p><strong>Distance:</strong> 5.1 km from your current location</p>
+          <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+            <button onclick="alert('Confirmed! Thank you for accepting to donate.'); closeRequestDetailModal();" style="flex: 1; padding: 0.6rem; background: #16A34A; color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer;">ACCEPT DONATION</button>
+            <button onclick="alert('Request declined.'); closeRequestDetailModal();" style="flex: 1; padding: 0.6rem; background: #EF4444; color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer;">DECLINE</button>
           </div>
         `;
       } else {
-        area.innerHTML = `
-          <div style="width: 100%; padding: 0.75rem; background: var(--bg-soft-gray); color: var(--navy-muted); border-radius: var(--radius-sm); text-align: center; font-size: 0.88rem;">
-            Your availability has been updated.
+        title.textContent = 'Red Cross Center (Standard A+)';
+        content.innerHTML = `
+          <div style="background: #FFF1F2; padding: 1rem; border-radius: 12px; margin-bottom: 1rem; border: 1px solid #FECDD3;">
+            <strong>Status:</strong> <span style="color: #BE123C; font-weight: 700;">❌ DECLINED</span><br>
+            <strong>Required:</strong> 1 Unit of A+ Blood<br>
+            <strong>Time Limit:</strong> Within 5 hours
           </div>
+          <p><strong>Address:</strong> Shahid Bhagat Singh Rd, Fort, Mumbai, Maharashtra 400001</p>
+          <p><strong>Distance:</strong> 4.2 km from your current location</p>
         `;
       }
+
+      modal.style.display = 'flex';
     }
 
-    function triggerNextWaveEscalation() {
-      const badge = document.getElementById('round2WaveBadge');
-      const desc = document.getElementById('round2WaveDesc');
-      const btn = document.getElementById('waveEscalateBtn');
+    function closeRequestDetailModal() {
+      const modal = document.getElementById('requestDetailModal');
+      if (modal) modal.style.display = 'none';
+    }
 
-      if (badge) badge.className = 'badge badge-success';
-      if (badge) badge.textContent = 'DISPATCHED ✓';
-      if (desc) desc.textContent = 'Round 2 escalation dispatched to 14 additional donors in 3–5 km radius.';
-      if (btn) btn.textContent = 'Radius Expanded to 5 KM ✓';
-
-      if (typeof AuditLogger !== 'undefined') {
-        AuditLogger.logEvent('REQ-8821', 'ROUND_2_DISPATCHED', 'Wave 2 escalation dispatched (3–5 km radius).');
+    // Notifications Popup Dropdown Handlers
+    function toggleNotifPopup(event) {
+      if (event) event.stopPropagation();
+      const popup = document.getElementById('notifDropdownPopup');
+      if (!popup) return;
+      
+      if (popup.style.display === 'none' || popup.style.display === '') {
+        popup.style.display = 'block';
+      } else {
+        popup.style.display = 'none';
       }
-
-      alert('Round 2 Wave Escalation Triggered!\nRadius expanded to 5 km.\n14 additional suitable donors notified.');
     }
 
-    function openRequestModal() { document.getElementById('requestModal').style.display = 'flex'; }
-    function closeRequestModal() { document.getElementById('requestModal').style.display = 'none'; }
-
-    function handleCreateRequestSubmit(e) {
-      e.preventDefault();
-      const newReq = {
-        id: 'REQ-' + Math.floor(1000 + Math.random() * 9000),
-        patientName: document.getElementById('reqPatient').value,
-        bloodGroup: document.getElementById('reqBloodGroup').value,
-        unitsNeeded: document.getElementById('reqUnits').value,
-        unitsFulfilled: 0,
-        orgName: document.getElementById('reqHospital').value,
-        isVerifiedOrg: true,
-        hospitalLocation: document.getElementById('reqLocation').value,
-        distanceKm: 2.5,
-        humanDistance: '2.5 km from hospital',
-        timeRemaining: 'Required within 3 hours',
-        urgency: document.getElementById('reqUrgency').value,
-        searchRadiusKm: document.getElementById('reqRadius').value,
-        donorsNotified: 8,
-        status: 'ACTIVE',
-        additionalNotes: 'Urgent surgery requirement.'
-      };
-
-      MockData.emergencyRequests.unshift(newReq);
-      closeRequestModal();
-      renderRequestsFeed();
-      alert('Emergency blood request broadcasted!\nRequest ID: ' + newReq.id + '\nWave 1 Radius: 3 km');
+    function markAllNotifsAsRead(event) {
+      if (event) event.stopPropagation();
+      const badge = document.getElementById('notifBadgeCount');
+      const dots = document.querySelectorAll('.dot-unread');
+      if (badge) badge.style.display = 'none';
+      dots.forEach(dot => dot.style.display = 'none');
+      alert('All notifications marked as read.');
     }
+
+    document.addEventListener('click', function(event) {
+      const popup = document.getElementById('notifDropdownPopup');
+      const bellBtn = document.getElementById('notifBellBtn');
+      if (popup && popup.style.display === 'block') {
+        if (!popup.contains(event.target) && (!bellBtn || !bellBtn.contains(event.target))) {
+          popup.style.display = 'none';
+        }
+      }
+    });
   </script>
 
 </body>

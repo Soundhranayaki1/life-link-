@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Donations & Impact – LIFE LINK</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans, Inter, Caveat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script src="js/mockData.js" defer></script>
+  <script src="js/mockAuth.js" defer></script>
+  <script src="js/app.js" defer></script>
+
+  <style>
+    :root {
+      --red-primary: #E6002E;
+      --red-dark: #B90022;
+      --red-soft: #FFF0F3;
+      --navy-dark: #0F172A;
+      --slate-body: #334155;
+      --slate-muted: #64748B;
+      --slate-border: #E2E8F0;
+      --font-main: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      --font-body: 'Inter', -apple-system, sans-serif;
+      --font-cursive: 'Caveat', cursive;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #FAFCFF;
+      color: var(--navy-dark);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-x: hidden;
+    }
+
+    /* TOP NAVBAR MATCHING REFERENCE */
+    .header-bar {
+      height: 72px;
+      padding: 0 4rem;
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--slate-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+    }
+
+    .brand-logo-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .brand-logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--red-primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 12px rgba(230, 0, 46, 0.25);
+    }
+
+    .brand-text-title {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+      color: var(--navy-dark);
+      line-height: 1.1;
+    }
+
+    .brand-text-sub {
+      font-size: 0.7rem;
+      color: var(--slate-muted);
+      font-weight: 600;
+    }
+
+    .nav-links-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      list-style: none;
+    }
+
+    .nav-link-item {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.5rem 1.1rem;
+      border-radius: 9999px;
+      color: var(--slate-body);
+      text-decoration: none;
+      font-family: var(--font-main);
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    .nav-link-item:hover {
+      color: var(--red-primary);
+      background: var(--red-soft);
+    }
+
+    .nav-link-item.active {
+      background: #FFEBEF;
+      color: var(--red-primary);
+      font-weight: 800;
+    }
+
+    .nav-badge-count {
+      background: var(--red-primary);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 0.15rem 0.45rem;
+      border-radius: 9999px;
+    }
+
+    .header-user-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .user-profile-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      color: var(--navy-dark);
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    .user-avatar-circle {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #E2E8F0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--navy-dark);
+      font-weight: 700;
+      font-size: 0.88rem;
+    }
+
+    .btn-signout {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 1.15rem;
+      border: 1.5px solid var(--red-primary);
+      color: var(--red-primary);
+      background: transparent;
+      border-radius: 9999px;
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-signout:hover {
+      background: var(--red-primary);
+      color: white;
+    }
+
+    /* MAIN DASHBOARD CONTAINER WITH PAGE MARGINS */
+    .dashboard-container {
+      width: 90%;
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 2.25rem 0;
+      flex: 1;
+    }
+
+    /* HERO BANNER MATCHING REFERENCE IMAGE */
+    .hero-banner-card {
+      background: linear-gradient(135deg, #FFF0F3 0%, #FFFFFF 100%);
+      border-radius: 24px;
+      padding: 2.25rem 2.5rem;
+      border: 1px solid #FFE0E6;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+      margin-bottom: 2rem;
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .section-tag-red {
+      font-family: var(--font-main);
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--red-primary);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .hero-title {
+      font-family: var(--font-main);
+      font-size: 2.3rem;
+      font-weight: 800;
+      line-height: 1.15;
+      color: var(--navy-dark);
+      margin-bottom: 0.45rem;
+    }
+
+    .hero-title span {
+      color: var(--red-primary);
+    }
+
+    .hero-subtitle {
+      font-size: 0.92rem;
+      color: var(--slate-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Stat Boxes Side By Side */
+    .stats-row-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 1.15rem;
+    }
+
+    .stat-box-pink {
+      background: var(--red-soft);
+      border-radius: 18px;
+      padding: 1.15rem 1.35rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border: 1px solid #FFE0E6;
+    }
+
+    .stat-box-blue {
+      background: #F0F9FF;
+      border-radius: 18px;
+      padding: 1.15rem 1.35rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border: 1px solid #BAE6FD;
+    }
+
+    .stat-num-big {
+      font-family: var(--font-main);
+      font-size: 2.1rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .stat-num-pink { color: var(--red-primary); }
+    .stat-num-blue { color: var(--navy-dark); }
+
+    .stat-label-sub {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--slate-muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-top: 0.2rem;
+      line-height: 1.25;
+    }
+
+    /* Right Artwork Container */
+    .right-banner-art-box {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: center;
+      position: relative;
+    }
+
+    .hero-art-img {
+      max-width: 360px;
+      width: 100%;
+      height: auto;
+      max-height: 195px;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+    }
+
+    .cursive-tag-banner {
+      font-family: var(--font-cursive);
+      font-size: 1.55rem;
+      color: #991B1B;
+      margin-top: -0.8rem;
+      margin-right: 1.5rem;
+      user-select: none;
+    }
+
+    .cursive-dash {
+      width: 24px;
+      height: 2px;
+      background: var(--red-primary);
+      margin-top: 0.35rem;
+      margin-right: 1.5rem;
+    }
+
+    .sub-tag-caption {
+      font-family: var(--font-main);
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      color: var(--slate-muted);
+      text-transform: uppercase;
+      margin-top: 0.6rem;
+      margin-right: 1.5rem;
+    }
+
+    /* MAIN 2-COLUMN GRID (JOURNEY LEFT, SIDEBAR RIGHT) */
+    .main-donations-grid {
+      display: grid;
+      grid-template-columns: 1.8fr 1fr;
+      gap: 1.75rem;
+      margin-bottom: 2rem;
+    }
+
+    /* Left Personal Donation Journey Card */
+    .card-white {
+      background: #FFFFFF;
+      border-radius: 24px;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+      padding: 2rem 2.25rem;
+    }
+
+    .section-title {
+      font-family: var(--font-main);
+      font-size: 1.65rem;
+      font-weight: 800;
+      color: var(--navy-dark);
+      margin-bottom: 0.25rem;
+    }
+
+    .section-subtitle {
+      font-size: 0.88rem;
+      color: var(--slate-muted);
+      margin-bottom: 1.75rem;
+    }
+
+    /* Timeline Table Layout */
+    .journey-timeline-table {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      position: relative;
+      padding-left: 1.75rem;
+    }
+
+    .journey-timeline-table::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 10px;
+      bottom: 10px;
+      width: 2px;
+      background: var(--red-primary);
+      opacity: 0.35;
+    }
+
+    .timeline-item-row {
+      position: relative;
+      background: #FAFCFF;
+      border: 1px solid #F1F5F9;
+      border-radius: 16px;
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.25rem;
+    }
+
+    .timeline-item-row::before {
+      content: '';
+      position: absolute;
+      left: -1.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--red-primary);
+      box-shadow: 0 0 0 4px #FFEBEF;
+    }
+
+    .date-column {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 0.88rem;
+      color: var(--slate-muted);
+      width: 90px;
+    }
+
+    .facility-info-column {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      flex: 1;
+    }
+
+    .facility-icon-square {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: #F1F5F9;
+      color: var(--navy-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .facility-name {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--navy-dark);
+      margin-bottom: 0.15rem;
+    }
+
+    .facility-location {
+      font-size: 0.82rem;
+      color: var(--slate-muted);
+    }
+
+    .pill-completed {
+      background: #DCFCE7;
+      color: #16A34A;
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 0.35rem 0.9rem;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-shrink: 0;
+    }
+
+    /* RIGHT SIDEBAR CARDS */
+    .right-sidebar-column {
+      display: flex;
+      flex-direction: column;
+      gap: 1.35rem;
+    }
+
+    /* Card 1: Last Donation Box */
+    .card-last-donation {
+      background: #FFF5F7;
+      border: 1px solid #FFE2E7;
+      border-radius: 20px;
+      padding: 1.5rem;
+    }
+
+    .last-don-header {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--navy-dark);
+      margin-bottom: 0.85rem;
+    }
+
+    .last-don-icon-box {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: #FFEBEF;
+      color: var(--red-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .last-don-date {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: var(--navy-dark);
+      margin-bottom: 0.2rem;
+    }
+
+    .last-don-facility {
+      font-size: 0.88rem;
+      color: var(--slate-body);
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+
+    .last-don-subtext {
+      font-size: 0.8rem;
+      color: var(--slate-muted);
+    }
+
+    /* Card 2: Keep Making Impact CTA Box */
+    .card-impact-cta {
+      background: #FFFFFF;
+      border: 1px solid var(--slate-border);
+      border-radius: 20px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-title {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: var(--navy-dark);
+      margin-bottom: 0.35rem;
+    }
+
+    .cta-subtitle {
+      font-size: 0.84rem;
+      color: var(--slate-muted);
+      margin-bottom: 1.15rem;
+      line-height: 1.4;
+      max-width: 80%;
+    }
+
+    .btn-find-drives {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      background: var(--red-primary);
+      color: white;
+      border-radius: 12px;
+      text-decoration: none;
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.85rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-find-drives:hover {
+      background: var(--red-dark);
+      box-shadow: 0 4px 14px rgba(230, 0, 46, 0.3);
+    }
+
+    .cta-heart-graphic {
+      position: absolute;
+      right: -10px;
+      bottom: -10px;
+      width: 100px;
+      height: 100px;
+      opacity: 0.25;
+      pointer-events: none;
+    }
+
+    /* Card 3: Quote Card */
+    .card-quote-box {
+      background: #F0F9FF;
+      border: 1px solid #E0F2FE;
+      border-radius: 20px;
+      padding: 1.5rem;
+    }
+
+    .quote-icon-blue {
+      font-size: 1.5rem;
+      color: #60A5FA;
+      margin-bottom: 0.5rem;
+    }
+
+    .quote-body-text {
+      font-size: 0.9rem;
+      color: var(--navy-dark);
+      font-weight: 600;
+      line-height: 1.45;
+      margin-bottom: 0.75rem;
+    }
+
+    .quote-red-dash {
+      width: 24px;
+      height: 3px;
+      background: var(--red-primary);
+      border-radius: 2px;
+    }
+
+    /* FOOTER BAR */
+    .footer-bar {
+      height: 48px;
+      padding: 0 4rem;
+      border-top: 1px solid var(--slate-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.76rem;
+      color: var(--slate-muted);
+      background: #FFFFFF;
+      flex-shrink: 0;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .footer-links a {
+      color: var(--slate-muted);
+      text-decoration: none;
+    }
+
+    /* FLOATING NOTIFICATION POPUP DROPDOWN MATCHING REFERENCE IMAGE */
+    .notif-popup-card {
+      position: absolute;
+      top: calc(100% + 14px);
+      right: -20px;
+      width: 440px;
+      background: #FFFFFF;
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.15), 0 4px 15px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      padding: 1.5rem;
+      z-index: 1000;
+      animation: fadeInDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .popup-arrow-up {
+      position: absolute;
+      top: -10px;
+      right: 48px;
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-bottom: 10px solid #FFFFFF;
+      filter: drop-shadow(0 -3px 3px rgba(0,0,0,0.04));
+    }
+
+    .popup-header {
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--slate-border);
+    }
+
+    .popup-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .popup-title {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: var(--navy-dark);
+    }
+
+    .btn-mark-read {
+      background: none;
+      border: none;
+      color: #2563EB;
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: color 0.2s ease;
+    }
+
+    .btn-mark-read:hover {
+      color: #1D4ED8;
+      text-decoration: underline;
+    }
+
+    .popup-body-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .notif-card-item {
+      border-radius: 18px;
+      padding: 1.1rem 1.15rem;
+      display: flex;
+      gap: 0.9rem;
+      align-items: flex-start;
+      border: 1px solid transparent;
+      text-align: left;
+    }
+
+    .notif-card-red {
+      background: #FFF5F7;
+      border-color: #FFE0E6;
+    }
+
+    .notif-card-green {
+      background: #F0FDF4;
+      border-color: #DCFCE7;
+    }
+
+    .notif-card-blue {
+      background: #F0F9FF;
+      border-color: #E0F2FE;
+    }
+
+    .notif-card-gray {
+      background: #F8FAFC;
+      border-color: #E2E8F0;
+    }
+
+    .notif-icon-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+
+    .circle-red {
+      background: #FFEBEF;
+      color: var(--red-primary);
+    }
+
+    .circle-green {
+      background: #16A34A;
+      color: white;
+    }
+
+    .circle-blue {
+      background: #E0F2FE;
+      color: #0284C7;
+    }
+
+    .circle-gray {
+      background: #E2E8F0;
+      color: var(--navy-dark);
+    }
+
+    .notif-content-area {
+      flex: 1;
+    }
+
+    .notif-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.3rem;
+    }
+
+    .notif-tag-red {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 0.8rem;
+      color: var(--red-primary);
+      letter-spacing: 0.02em;
+    }
+
+    .notif-tag-green {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 0.8rem;
+      color: #166534;
+    }
+
+    .notif-tag-blue {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 0.8rem;
+      color: #1E40AF;
+    }
+
+    .notif-tag-dark {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 0.8rem;
+      color: var(--navy-dark);
+    }
+
+    .notif-time-tag {
+      font-size: 0.74rem;
+      color: var(--slate-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .dot-unread {
+      color: var(--red-primary);
+      font-size: 0.6rem;
+    }
+
+    .notif-body-text {
+      font-size: 0.84rem;
+      color: var(--slate-body);
+      line-height: 1.4;
+      margin-bottom: 0.35rem;
+    }
+
+    .notif-sub-text {
+      font-size: 0.8rem;
+      color: var(--slate-muted);
+      line-height: 1.35;
+    }
+
+    .notif-meta-row {
+      font-size: 0.78rem;
+      color: var(--slate-muted);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-popup-view-req {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 1.15rem;
+      background: #FFFFFF;
+      border: 1.5px solid var(--red-primary);
+      color: var(--red-primary);
+      border-radius: 10px;
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-popup-view-req:hover {
+      background: var(--red-primary);
+      color: white;
+    }
+
+    .popup-footer-row {
+      margin-top: 1.1rem;
+      text-align: center;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--slate-border);
+    }
+
+    .link-view-all-notifs {
+      color: #2563EB;
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.88rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .link-view-all-notifs:hover {
+      text-decoration: underline;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1100px) {
+      .hero-banner-card {
+        grid-template-columns: 1fr;
+      }
+      .main-donations-grid {
+        grid-template-columns: 1fr;
+      }
+      .dashboard-container {
+        width: 95%;
+      }
+      .header-bar, .footer-bar {
+        padding: 0 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAVBAR -->
+  <header class="header-bar">
+    <a href="donor-dashboard.html" class="brand-logo-left">
+      <div class="brand-logo-icon">
+        <i class="fa-solid fa-square-plus"></i>
+      </div>
+      <div>
+        <div class="brand-text-title">LIFE LINK</div>
+        <div class="brand-text-sub">Donate Blood. Save Lives.</div>
+      </div>
+    </a>
+
+    <ul class="nav-links-row">
+      <li>
+        <a href="donor-dashboard.html" class="nav-link-item">
+          <i class="fa-solid fa-house"></i> Home
+        </a>
+      </li>
+      <li>
+        <a href="emergency-requests.html" class="nav-link-item">
+          <i class="fa-solid fa-file-lines"></i> My Requests
+        </a>
+      </li>
+      <li>
+        <a href="my-donations.html" class="nav-link-item active">
+          <i class="fa-solid fa-droplet"></i> My Donations
+        </a>
+      </li>
+      <li style="position: relative;">
+        <a href="javascript:void(0)" id="notifBellBtn" onclick="toggleNotifPopup(event)" class="nav-link-item">
+          <i class="fa-solid fa-bell"></i> Notifications
+          <span class="nav-badge-count" id="notifBadgeCount">2</span>
+        </a>
+
+        <!-- FLOATING POPUP DROPDOWN MATCHING REFERENCE IMAGE EXACTLY -->
+        <div id="notifDropdownPopup" class="notif-popup-card" style="display: none;">
+          <div class="popup-arrow-up"></div>
+
+          <div class="popup-header">
+            <div class="popup-title-row">
+              <span class="popup-title">My Notifications</span>
+              <button class="btn-mark-read" onclick="markAllNotifsAsRead(event)">
+                <i class="fa-solid fa-check-double"></i> Mark all as read
+              </button>
+            </div>
+          </div>
+
+          <div class="popup-body-list">
+
+            <!-- ITEM 1: URGENT RED HIGHLIGHT -->
+            <div class="notif-card-item notif-card-red">
+              <div class="notif-icon-circle circle-red">
+                <i class="fa-solid fa-bell"></i>
+              </div>
+              <div class="notif-content-area">
+                <div class="notif-header-row">
+                  <span class="notif-tag-red">URGENT O+ REQUEST NEARBY</span>
+                  <span class="notif-time-tag">10 mins ago <span class="dot-unread" id="dotUnread1">●</span></span>
+                </div>
+                <p class="notif-body-text">
+                  XYZ Government Hospital needs 2 units of O+ blood.
+                </p>
+                <div class="notif-meta-row">
+                  <span><i class="fa-solid fa-location-dot" style="color: var(--red-primary);"></i> 3.4 km away</span>
+                  <span style="margin: 0 0.35rem; color: #CBD5E1;">|</span>
+                  <span><i class="fa-regular fa-clock" style="color: var(--red-primary);"></i> Required within <strong style="color: var(--red-primary);">2 hours</strong></span>
+                </div>
+                <a href="emergency-requests.html?id=REQ-8821" class="btn-popup-view-req">
+                  View Request →
+                </a>
+              </div>
+            </div>
+
+            <!-- ITEM 2: CONFIRMED GREEN HIGHLIGHT -->
+            <div class="notif-card-item notif-card-green">
+              <div class="notif-icon-circle circle-green">
+                <i class="fa-solid fa-check"></i>
+              </div>
+              <div class="notif-content-area">
+                <div class="notif-header-row">
+                  <span class="notif-tag-green">RESPONSE CONFIRMED</span>
+                  <span class="notif-time-tag">1 hour ago</span>
+                </div>
+                <p class="notif-body-text">
+                  Your donation commitment was received by XYZ Government Hospital.
+                </p>
+                <p class="notif-sub-text">
+                  Hospital contact line is open for your visit.
+                </p>
+              </div>
+            </div>
+
+            <!-- ITEM 3: ACTIVE BLUE HIGHLIGHT -->
+            <div class="notif-card-item notif-card-blue">
+              <div class="notif-icon-circle circle-blue">
+                <i class="fa-solid fa-tower-broadcast"></i>
+              </div>
+              <div class="notif-content-area">
+                <div class="notif-header-row">
+                  <span class="notif-tag-blue">AVAILABILITY ACTIVE</span>
+                  <span class="notif-time-tag">Yesterday</span>
+                </div>
+                <p class="notif-body-text">
+                  Your profile is currently visible to emergency healthcare providers nearby.
+                </p>
+                <p class="notif-sub-text">
+                  8 km notification radius enabled.
+                </p>
+              </div>
+            </div>
+
+            <!-- ITEM 4: VERIFIED GRAY HIGHLIGHT -->
+            <div class="notif-card-item notif-card-gray">
+              <div class="notif-icon-circle circle-gray">
+                <i class="fa-solid fa-user"></i>
+              </div>
+              <div class="notif-content-area">
+                <div class="notif-header-row">
+                  <span class="notif-tag-dark">DONOR PROFILE VERIFIED</span>
+                  <span class="notif-time-tag">2 days ago</span>
+                </div>
+                <p class="notif-body-text">
+                  Mobile verification and blood group details recorded successfully.
+                </p>
+                <p class="notif-sub-text">
+                  Verified Voluntary Donor.
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="popup-footer-row">
+            <a href="emergency-requests.html" class="link-view-all-notifs">
+              View All Notifications →
+            </a>
+          </div>
+
+        </div>
+      </li>
+      <li>
+        <a href="donor-profile.html" class="nav-link-item">
+          <i class="fa-solid fa-user"></i> Profile
+        </a>
+      </li>
+    </ul>
+
+    <div class="header-user-actions">
+      <a href="donor-profile.html" class="user-profile-btn">
+        <div class="user-avatar-circle">
+          A
+        </div>
+        <span>Arun</span> <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; color: var(--slate-muted);"></i>
+      </a>
+
+      <button onclick="MockAuth.logout()" class="btn-signout" title="Sign Out">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN DASHBOARD CONTAINER MATCHING REFERENCE IMAGE -->
+  <main class="dashboard-container" id="impactSection">
+
+    <!-- HERO BANNER SECTION (YOUR IMPACT & STATS) -->
+    <div class="hero-banner-card">
+      <div>
+        <div class="section-tag-red">MY DONATIONS</div>
+        
+        <h1 class="hero-title">
+          Your <span>Impact</span>
+        </h1>
+        
+        <p class="hero-subtitle">
+          Every donation creates a ripple of hope.
+        </p>
+
+        <div class="stats-row-grid">
+          <div class="stat-box-pink">
+            <i class="fa-solid fa-droplet" style="font-size: 1.8rem; color: var(--red-primary);"></i>
+            <div>
+              <div class="stat-num-big stat-num-pink">04</div>
+              <div class="stat-label-sub">DONATIONS</div>
+            </div>
+          </div>
+
+          <div class="stat-box-blue">
+            <i class="fa-solid fa-users" style="font-size: 1.8rem; color: #2563EB;"></i>
+            <div>
+              <div class="stat-num-big stat-num-blue">12</div>
+              <div class="stat-label-sub">LIVES POTENTIALLY HELPED</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-banner-art-box">
+        <img src="assets/images/crystal_blood_drop_hand.png" alt="Hand Holding Blood Drop" class="hero-art-img">
+        <div class="cursive-tag-banner">Thank you for making a difference</div>
+        <div class="cursive-dash"></div>
+        <div class="sub-tag-caption">A HEALTHIER TOMORROW TOGETHER</div>
+      </div>
+    </div>
+
+    <!-- MAIN 2-COLUMN GRID (JOURNEY LEFT, SIDEBAR RIGHT) -->
+    <div class="main-donations-grid">
+
+      <!-- LEFT COLUMN: PERSONAL DONATION JOURNEY -->
+      <div class="card-white">
+        <h2 class="section-title">Personal Donation Journey</h2>
+        <p class="section-subtitle">A record of your donations and the lives you've helped.</p>
+
+        <div class="journey-timeline-table">
+          
+          <!-- ITEM 1: AUG 2026 -->
+          <div class="timeline-item-row">
+            <div class="date-column">AUG 2026</div>
+
+            <div class="facility-info-column">
+              <div class="facility-icon-square">
+                <i class="fa-solid fa-hospital"></i>
+              </div>
+              <div>
+                <div class="facility-name">Blood Donation</div>
+                <div class="facility-location">XYZ Government Hospital</div>
+              </div>
+            </div>
+
+            <span class="pill-completed">
+              <i class="fa-solid fa-circle-check"></i> Completed
+            </span>
+          </div>
+
+          <!-- ITEM 2: MAR 2026 -->
+          <div class="timeline-item-row">
+            <div class="date-column">MAR 2026</div>
+
+            <div class="facility-info-column">
+              <div class="facility-icon-square">
+                <i class="fa-solid fa-hospital"></i>
+              </div>
+              <div>
+                <div class="facility-name">Blood Donation</div>
+                <div class="facility-location">ABC Regional Blood Bank</div>
+              </div>
+            </div>
+
+            <span class="pill-completed">
+              <i class="fa-solid fa-circle-check"></i> Completed
+            </span>
+          </div>
+
+          <!-- ITEM 3: NOV 2025 -->
+          <div class="timeline-item-row">
+            <div class="date-column">NOV 2025</div>
+
+            <div class="facility-info-column">
+              <div class="facility-icon-square">
+                <i class="fa-solid fa-users"></i>
+              </div>
+              <div>
+                <div class="facility-name">Community Drive</div>
+                <div class="facility-location">City Central Center</div>
+              </div>
+            </div>
+
+            <span class="pill-completed">
+              <i class="fa-solid fa-circle-check"></i> Completed
+            </span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: SIDEBAR CARDS -->
+      <div class="right-sidebar-column">
+
+        <!-- CARD 1: LAST DONATION BOX -->
+        <div class="card-last-donation">
+          <div class="last-don-header">
+            <div class="last-don-icon-box">
+              <i class="fa-regular fa-calendar-check"></i>
+            </div>
+            <span>Last Donation</span>
+          </div>
+
+          <div class="last-don-date">August 2026</div>
+          <div class="last-don-facility">XYZ Government Hospital</div>
+          <div class="last-don-subtext">Your kindness continues to save lives.</div>
+        </div>
+
+        <!-- CARD 2: KEEP MAKING AN IMPACT CTA -->
+        <div class="card-impact-cta">
+          <div class="cta-title">Keep Making an Impact</div>
+          <div class="cta-subtitle">Your next donation can help save more lives.</div>
+
+          <a href="emergency-requests.html" class="btn-find-drives">
+            <i class="fa-solid fa-heart"></i> Find Nearby Donation Drives →
+          </a>
+
+          <svg class="cta-heart-graphic" viewBox="0 0 100 100">
+            <path fill="#FFEBEF" d="M50 88.9L42.7 82.3C17 59 0 43.6 0 24.5 0 8.8 12.3 0 27.5 0 36.1 0 44.4 4 50 10.3 55.6 4 63.9 0 72.5 0 87.7 0 100 8.8 100 24.5c0 19.1-17 34.5-42.7 57.8L50 88.9z"/>
+          </svg>
+        </div>
+
+        <!-- CARD 3: QUOTE CARD -->
+        <div class="card-quote-box">
+          <div class="quote-icon-blue">
+            <i class="fa-solid fa-quote-left"></i>
+          </div>
+
+          <div class="quote-body-text">
+            "Small acts, when multiplied by many, can transform lives."
+          </div>
+
+          <div class="quote-red-dash"></div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer-bar">
+    <div>
+      © 2026 LIFE LINK Healthcare System &nbsp;|&nbsp; Every Drop. Every Connection. Every Life.
+    </div>
+
+    <div class="footer-links">
+      <a href="#">Privacy</a> &nbsp;|&nbsp;
+      <a href="#">Terms</a> &nbsp;|&nbsp;
+      <a href="#">Support</a>
+    </div>
+  </footer>
+
+  <script>
+    // Notifications Popup Dropdown Handlers
+    function toggleNotifPopup(event) {
+      if (event) event.stopPropagation();
+      const popup = document.getElementById('notifDropdownPopup');
+      if (!popup) return;
+      
+      if (popup.style.display === 'none' || popup.style.display === '') {
+        popup.style.display = 'block';
+      } else {
+        popup.style.display = 'none';
+      }
+    }
+
+    function markAllNotifsAsRead(event) {
+      if (event) event.stopPropagation();
+      const badge = document.getElementById('notifBadgeCount');
+      const dots = document.querySelectorAll('.dot-unread');
+      if (badge) badge.style.display = 'none';
+      dots.forEach(dot => dot.style.display = 'none');
+      alert('All notifications marked as read.');
+    }
+
+    document.addEventListener('click', function(event) {
+      const popup = document.getElementById('notifDropdownPopup');
+      const bellBtn = document.getElementById('notifBellBtn');
+      if (popup && popup.style.display === 'block') {
+        if (!popup.contains(event.target) && (!bellBtn || !bellBtn.contains(event.target))) {
+          popup.style.display = 'none';
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>

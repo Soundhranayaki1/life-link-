@@ -3,265 +3,841 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign In – LIFE LINK</title>
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/components.css">
+  <title>Sign In – LIFE LINK Healthcare System</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans, Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <script src="js/mockData.js" defer></script>
   <script src="js/mockAuth.js" defer></script>
+
   <style>
-    /* Clean Viewport-Constrained 2-Column Login Page Styling */
-    html, body {
-      height: 100%;
-      overflow-x: hidden;
+    :root {
+      --red-primary: #E6002E;
+      --red-dark: #B90022;
+      --red-soft: #FFF0F3;
+      --navy-dark: #0F172A;
+      --slate-body: #475569;
+      --slate-muted: #64748B;
+      --slate-border: #E2E8F0;
+      --font-main: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      --font-body: 'Inter', -apple-system, sans-serif;
     }
 
-    .login-header {
-      height: 60px;
-      background: rgba(253, 251, 247, 0.95);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--navy-border);
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Pure White Background to 100% Seamlessly Match Centerpiece Artwork */
+    html, body {
+      height: 100vh;
+      width: 100vw;
+      background: #FFFFFF;
+      color: var(--navy-dark);
+      font-family: var(--font-body);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Ambient Soft Red Ribbon Backdrop Overlay */
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 45vw;
+      height: 100vh;
+      background: radial-gradient(circle at 70% 30%, rgba(230, 0, 46, 0.04) 0%, rgba(255, 255, 255, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* TOP HEADER BAR */
+    .header-bar {
+      height: 72px;
+      padding: 0 3.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 2rem;
-      z-index: 50;
-    }
-
-    .login-container {
-      display: grid;
-      grid-template-columns: 45% 55%;
-      height: calc(100vh - 60px);
-      min-height: 580px;
-      max-height: 1080px;
-      overflow: hidden;
-    }
-
-    /* Left Visual Section */
-    .login-visual-panel {
-      position: relative;
-      background: var(--navy-dark);
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 3rem;
-      overflow: hidden;
-    }
-
-    .login-visual-img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center 30%;
-      opacity: 0.65;
-      transition: transform 0.6s ease;
-    }
-
-    .login-visual-panel:hover .login-visual-img {
-      transform: scale(1.02);
-    }
-
-    .login-visual-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(15, 23, 42, 0.2) 0%, rgba(15, 23, 42, 0.88) 100%);
-    }
-
-    .login-visual-content {
       position: relative;
       z-index: 10;
-      color: #ffffff;
-      max-width: 440px;
-      animation: fadeIn 0.6s ease-out;
+      flex-shrink: 0;
     }
 
-    /* Right Form Section */
-    .login-form-panel {
-      background: var(--bg-warm-ivory);
+    .brand-logo-card {
+      background: #FFFFFF;
+      padding: 0.5rem 1.3rem 0.5rem 0.65rem;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .brand-logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--red-primary) 0%, var(--red-dark) 100%);
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 2rem 2.5rem;
-      overflow-y: auto;
+      color: white;
+      font-size: 1.35rem;
+      box-shadow: 0 4px 14px rgba(230, 0, 46, 0.25);
     }
 
-    .login-form-card {
+    .brand-text-title {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 1.3rem;
+      letter-spacing: -0.02em;
+      color: var(--navy-dark);
+      line-height: 1.1;
+    }
+
+    .brand-text-title span {
+      color: var(--red-primary);
+    }
+
+    .brand-text-sub {
+      font-size: 0.72rem;
+      color: var(--slate-muted);
+      font-weight: 600;
+    }
+
+    .ecg-line-graphic {
+      width: 54px;
+      height: 22px;
+      stroke: var(--red-primary);
+      stroke-width: 2;
+      fill: none;
+      opacity: 0.85;
+      margin-left: 0.25rem;
+    }
+
+    .header-right-cta {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      font-size: 0.95rem;
+    }
+
+    .btn-header-donor {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.6rem 1.6rem;
+      border: 1.5px solid var(--red-primary);
+      color: var(--red-primary);
+      border-radius: 9999px;
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 0.88rem;
+      letter-spacing: 0.04em;
+      text-decoration: underline;
+      transition: all 0.2s ease;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .btn-header-donor:hover {
+      background: var(--red-primary);
+      color: white;
+      box-shadow: 0 6px 18px rgba(230, 0, 46, 0.25);
+    }
+
+    /* MAIN VIEWPORT ORGANIZED GRID */
+    .main-grid-container {
+      flex: 1;
       width: 100%;
-      max-width: 400px;
-      animation: fadeInUp 0.5s ease-out;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 2.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1.15fr 1fr;
+      gap: 2rem;
+      align-items: center;
+      position: relative;
+      z-index: 5;
     }
 
-    /* Input Focus Styles */
-    .form-control:focus {
-      border-color: var(--crimson-red);
-      box-shadow: 0 0 0 3px rgba(217, 4, 41, 0.12);
+    /* LEFT COLUMN (Hero Typography) */
+    .hero-left-column {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      max-width: 420px;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+    .tag-line {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-main);
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: var(--red-primary);
+      text-transform: uppercase;
+      margin-bottom: 0.85rem;
     }
 
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .tag-line::after {
+      content: '';
+      width: 32px;
+      height: 2px;
+      background: var(--red-primary);
     }
 
-    /* Mobile Responsive Recomposition */
-    @media (max-width: 850px) {
-      .login-header {
-        padding: 0 1.25rem;
+    .hero-headline {
+      font-family: var(--font-main);
+      font-size: 2.7rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      color: var(--navy-dark);
+      margin-bottom: 1rem;
+    }
+
+    .hero-headline .highlight-red {
+      color: var(--red-primary);
+    }
+
+    .hero-subtext {
+      font-size: 1rem;
+      color: var(--slate-muted);
+      margin-bottom: 1.4rem;
+      line-height: 1.5;
+    }
+
+    .accent-bar {
+      width: 36px;
+      height: 3px;
+      background: var(--red-primary);
+      border-radius: 2px;
+      margin-bottom: 2rem;
+    }
+
+    /* Bottom Feature Badges */
+    .hero-badges-row {
+      display: flex;
+      gap: 1.25rem;
+      align-items: center;
+    }
+
+    .badge-item {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .badge-icon-circle {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #FFEBEF;
+      color: var(--red-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+    }
+
+    .badge-title {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: var(--navy-dark);
+      line-height: 1.1;
+    }
+
+    .badge-subtitle {
+      font-size: 0.75rem;
+      color: var(--slate-muted);
+    }
+
+    /* CENTER COLUMN (Crystal Blood Drop Centerpiece - 100% Seamless Blend) */
+    .center-visual-column {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .crystal-drop-img {
+      width: 100%;
+      max-width: 540px;
+      max-height: 64vh;
+      object-fit: contain;
+      display: block;
+      /* Seamless Radial Mask + Blend Mode ensures 0% image box outline */
+      mix-blend-mode: multiply;
+      mask-image: radial-gradient(circle at 50% 50%, rgba(0,0,0,1) 55%, rgba(0,0,0,0) 98%);
+      -webkit-mask-image: radial-gradient(circle at 50% 50%, rgba(0,0,0,1) 55%, rgba(0,0,0,0) 98%);
+      filter: contrast(102%) brightness(101%);
+      transition: transform 0.4s ease;
+    }
+
+    .crystal-drop-img:hover {
+      transform: scale(1.02);
+    }
+
+    .center-bottom-caption {
+      font-family: var(--font-main);
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.22em;
+      color: var(--slate-muted);
+      text-transform: uppercase;
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    /* RIGHT COLUMN (Spacious & Bigger White Login Card) */
+    .login-right-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .login-card-white {
+      width: 100%;
+      max-width: 460px;
+      background: #FFFFFF;
+      border-radius: 28px;
+      padding: 2.5rem 2.25rem;
+      box-shadow: 0 25px 60px -10px rgba(15, 23, 42, 0.1);
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      position: relative;
+      z-index: 5;
+    }
+
+    .login-card-title {
+      font-family: var(--font-main);
+      font-size: 2.3rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--navy-dark);
+      margin-bottom: 0.4rem;
+    }
+
+    .login-card-title span {
+      color: var(--red-primary);
+    }
+
+    .login-card-subtitle {
+      font-size: 0.94rem;
+      color: var(--slate-muted);
+      line-height: 1.5;
+      margin-bottom: 1.6rem;
+    }
+
+    .form-group-custom {
+      margin-bottom: 1.35rem;
+    }
+
+    .form-label-custom {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--navy-dark);
+      margin-bottom: 0.4rem;
+    }
+
+    .input-box-custom {
+      background: #F8FAFC;
+      border: 1px solid var(--slate-border);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      padding: 0 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .input-box-custom:focus-within {
+      background: #FFFFFF;
+      border-color: var(--red-primary);
+      box-shadow: 0 0 0 3.5px rgba(230, 0, 46, 0.12);
+    }
+
+    .input-box-custom i {
+      color: var(--navy-dark);
+      font-size: 1rem;
+    }
+
+    .input-element {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      padding: 0.85rem 0.75rem;
+      font-size: 0.95rem;
+      font-family: var(--font-body);
+      color: var(--navy-dark);
+      font-weight: 500;
+    }
+
+    .btn-pwd-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--slate-muted);
+      font-size: 1rem;
+      padding: 0.25rem;
+    }
+
+    .btn-signin-red {
+      width: 100%;
+      padding: 0.95rem;
+      background: linear-gradient(135deg, var(--red-primary) 0%, var(--red-dark) 100%);
+      color: white;
+      border: none;
+      border-radius: 9999px;
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      box-shadow: 0 10px 24px -4px rgba(230, 0, 46, 0.45);
+      transition: all 0.25s ease;
+      margin-top: 0.5rem;
+    }
+
+    .btn-signin-red:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px -4px rgba(230, 0, 46, 0.6);
+    }
+
+    .divider-cta {
+      text-align: center;
+      margin: 1.35rem 0 1.2rem 0;
+      font-size: 0.85rem;
+      color: var(--slate-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .divider-cta::before, .divider-cta::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--slate-border);
+    }
+
+    /* DEMO ACCESS PANEL */
+    .demo-access-panel {
+      background: var(--red-soft);
+      border: 1px solid #FFE0E6;
+      border-radius: 18px;
+      padding: 1.15rem 1.2rem;
+    }
+
+    .demo-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .demo-title {
+      font-family: var(--font-main);
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--navy-dark);
+      letter-spacing: 0.03em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .demo-tag {
+      font-size: 0.72rem;
+      color: var(--slate-muted);
+      background: rgba(255, 255, 255, 0.9);
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-weight: 600;
+    }
+
+    .demo-buttons-3col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.55rem;
+    }
+
+    .demo-role-btn {
+      background: #FFFFFF;
+      border: 1px solid var(--slate-border);
+      color: var(--navy-dark);
+      padding: 0.65rem 0.35rem;
+      border-radius: 12px;
+      font-family: var(--font-main);
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    .demo-role-btn.active-role {
+      border: 1.5px solid var(--red-primary);
+      color: var(--red-primary);
+      box-shadow: 0 4px 12px rgba(230, 0, 46, 0.12);
+    }
+
+    .demo-role-btn:hover {
+      border-color: var(--red-primary);
+      color: var(--red-primary);
+    }
+
+    /* FOOTER BAR */
+    .footer-bar {
+      height: 46px;
+      padding: 0 3.5rem;
+      border-top: 1px solid rgba(226, 232, 240, 0.9);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: var(--slate-muted);
+      background: #FFFFFF;
+      flex-shrink: 0;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .footer-links a {
+      color: var(--slate-muted);
+      text-decoration: none;
+    }
+
+    /* ERROR ALERT */
+    .login-error-alert {
+      display: none;
+      padding: 0.7rem 0.9rem;
+      background: #FFEBEF;
+      border: 1px solid var(--red-primary);
+      color: var(--red-primary);
+      border-radius: 12px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      margin-bottom: 1.1rem;
+    }
+
+    /* RESPONSIVE MEDIA QUERIES */
+    @media (max-width: 1200px) {
+      .main-grid-container {
+        grid-template-columns: 1fr 1fr;
       }
-      .login-container {
-        grid-template-columns: 1fr;
-        height: auto;
-        min-height: auto;
-      }
-      .login-visual-panel {
-        height: 200px;
-        padding: 1.5rem;
-        justify-content: center;
-      }
-      .login-visual-content {
-        max-width: 100%;
-      }
-      .login-visual-content h2 {
-        font-size: 1.3rem !important;
-        margin-bottom: 0.25rem !important;
-      }
-      .login-visual-content p {
+      .center-visual-column {
         display: none;
-      }
-      .login-form-panel {
-        padding: 2rem 1.25rem 3rem;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- Minimal Top Header -->
-  <header class="login-header">
-    <a href="index.html" class="brand-logo">
-      <div class="brand-mark">✚</div>
-      <span>LIFE LINK</span>
+  <!-- TOP HEADER BAR -->
+  <header class="header-bar">
+    <a href="index.html" class="brand-logo-card">
+      <div class="brand-logo-icon">
+        <i class="fa-solid fa-square-plus"></i>
+      </div>
+      <div>
+        <div class="brand-text-title">LIFE <span>LINK</span></div>
+        <div class="brand-text-sub">Donate Blood. Save Lives.</div>
+      </div>
+      <svg class="ecg-line-graphic" viewBox="0 0 100 40">
+        <path d="M0,20 L30,20 L38,5 L46,35 L54,15 L62,25 L70,20 L100,20" />
+      </svg>
     </a>
 
-    <div style="font-size: 0.88rem;">
-      <span style="color: var(--navy-muted);">Don't have an account?</span>
-      <a href="register.html" style="font-weight: 700; color: var(--crimson-red); margin-left: 0.35rem;">BECOME A DONOR</a>
+    <div class="header-right-cta">
+      <span>Don't have an account?</span>
+      <a href="register.html" class="btn-header-donor">BECOME A DONOR</a>
     </div>
   </header>
 
-  <!-- Viewport-Constrained 2-Column Login Container -->
-  <div class="login-container">
-    
-    <!-- LEFT SIDE: VISUAL STORY -->
-    <div class="login-visual-panel">
-      <img src="assets/images/hero_blood_donor.png" alt="Voluntary blood donor" class="login-visual-img" onerror="this.src='https://images.unsplash.com/photo-1615461066841-6116e61058f4?q=80&w=1000&auto=format&fit=crop'">
-      <div class="login-visual-overlay"></div>
+  <!-- MAIN VIEWPORT ORGANIZED GRID -->
+  <main class="main-grid-container">
 
-      <div class="login-visual-content">
-        <div style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0.65rem; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(4px); color: #ffffff; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 1rem;">
-          HUMANITARIAN NETWORK
+    <!-- LEFT COLUMN: HERO TYPOGRAPHY & BADGES -->
+    <div class="hero-left-column">
+      <div class="tag-line">HUMANITARIAN NETWORK</div>
+
+      <h1 class="hero-headline">
+        Connecting<br>
+        willing donors<br>
+        with people<br>
+        <span class="highlight-red">who need them.</span>
+      </h1>
+
+      <p class="hero-subtext">
+        Every connection can make a life-saving difference.
+      </p>
+
+      <div class="accent-bar"></div>
+
+      <!-- 3 Bottom Feature Badges -->
+      <div class="hero-badges-row">
+        <div class="badge-item">
+          <div class="badge-icon-circle"><i class="fa-solid fa-heart"></i></div>
+          <div>
+            <div class="badge-title">Donate</div>
+            <div class="badge-subtitle">Give Hope</div>
+          </div>
         </div>
 
-        <h2 style="font-size: 1.9rem; color: #ffffff; font-weight: 800; line-height: 1.25; margin-bottom: 0.65rem;">
-          "Connecting willing donors with people who need them."
-        </h2>
+        <div class="badge-item">
+          <div class="badge-icon-circle"><i class="fa-solid fa-users"></i></div>
+          <div>
+            <div class="badge-title">Connect</div>
+            <div class="badge-subtitle">Save Lives</div>
+          </div>
+        </div>
 
-        <p style="color: rgba(255, 255, 255, 0.85); font-size: 0.95rem;">
-          Every connection can make a difference.
-        </p>
+        <div class="badge-item">
+          <div class="badge-icon-circle"><i class="fa-solid fa-shield-halved"></i></div>
+          <div>
+            <div class="badge-title">Build</div>
+            <div class="badge-subtitle">Stronger Communities</div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- RIGHT SIDE: LOGIN FORM -->
-    <div class="login-form-panel">
-      <div class="login-form-card">
-        
-        <div style="margin-bottom: 1.75rem;">
-          <h1 style="font-size: 1.85rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.35rem; color: var(--navy-dark);">
-            WELCOME BACK
-          </h1>
-          <p style="color: var(--navy-muted); font-size: 0.92rem;">
-            Sign in to your LIFE LINK account. Use your mobile number or email to continue.
-          </p>
-        </div>
+    <!-- CENTER COLUMN: CRYSTAL BLOOD DROP CENTERPIECE (100% SEAMLESS & NO VERTICAL TEXT) -->
+    <div class="center-visual-column">
+      <img src="assets/images/crystal_blood_drop_hand.png" alt="Crystal Blood Drop Cradled in Hand" class="crystal-drop-img">
+
+      <div class="center-bottom-caption">
+        RIGHT DONOR. RIGHT TIME. RIGHT PLACE.
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: SPACIOUS & BIGGER WHITE FLOATING LOGIN CARD -->
+    <div class="login-right-wrapper">
+      
+      <div class="login-card-white">
+        <h2 class="login-card-title">WELCOME <span>BACK</span></h2>
+        <p class="login-card-subtitle">
+          Sign in to your LIFE LINK account. Use your mobile number or email to continue.
+        </p>
+
+        <!-- Error Alert -->
+        <div id="loginErrorAlert" class="login-error-alert"></div>
 
         <form id="signInForm" onsubmit="handleFormLogin(event)">
-          <div class="form-group">
-            <label class="form-label">Mobile Number / Email</label>
-            <input type="text" id="loginId" class="form-control" placeholder="+91 98765 43210 or email@domain.com" required value="+91 98765 43210">
-          </div>
-
-          <div class="form-group">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
-              <label class="form-label" style="margin: 0;">Password / PIN</label>
-              <a href="#" style="font-size: 0.82rem; color: var(--navy-muted); font-weight: 500;">Forgot password?</a>
+          
+          <!-- Field 1: Mobile / Email -->
+          <div class="form-group-custom">
+            <label class="form-label-custom" for="loginId">Mobile Number / Email</label>
+            <div class="input-box-custom">
+              <i class="fa-regular fa-envelope"></i>
+              <input type="text" id="loginId" class="input-element" placeholder="+91 98765 43210" required value="+91 98765 43210">
             </div>
-            <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required value="password123">
           </div>
 
-          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem; padding: 0.85rem; font-size: 1rem;">
-            SIGN IN
+          <!-- Field 2: Password / PIN -->
+          <div class="form-group-custom">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+              <label class="form-label-custom" for="loginPassword" style="margin: 0;">Password / PIN</label>
+              <a href="javascript:void(0)" onclick="handleForgotPassword()" style="color: var(--red-primary); font-size: 0.82rem; font-weight: 700; text-decoration: underline;">
+                Forgot password?
+              </a>
+            </div>
+
+            <div class="input-box-custom">
+              <i class="fa-solid fa-lock"></i>
+              <input type="password" id="loginPassword" class="input-element" placeholder="••••••••" required value="password123">
+              <button type="button" class="btn-pwd-toggle" id="togglePasswordBtn" onclick="togglePasswordVisibility()" title="Show/Hide Password">
+                <i class="fa-regular fa-eye-slash"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Primary Submit Button -->
+          <button type="submit" class="btn-signin-red">
+            SIGN IN <i class="fa-solid fa-arrow-right"></i>
           </button>
         </form>
 
-        <div style="text-align: center; margin-top: 1.25rem; font-size: 0.88rem; color: var(--navy-muted);">
-          Don't have an account?
-          <a href="register.html" style="font-weight: 700; color: var(--crimson-red); margin-left: 0.25rem;">BECOME A DONOR</a>
+        <div class="divider-cta">
+          Don't have an account? <a href="register.html" style="color: var(--red-primary); font-weight: 800; text-decoration: underline;">BECOME A DONOR</a>
         </div>
 
-        <!-- COMPACT DEVELOPMENT DEMO ACCESS -->
-        <div style="margin-top: 2rem; padding-top: 1.25rem; border-top: 1px dashed var(--navy-border);">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem;">
-            <span style="font-size: 0.72rem; font-weight: 700; color: var(--navy-muted); letter-spacing: 0.5px; text-transform: uppercase;">
-              DEMO ACCESS
-            </span>
-            <span style="font-size: 0.7rem; color: var(--navy-muted); background: var(--bg-soft-gray); padding: 0.15rem 0.5rem; border-radius: var(--radius-full); border: 1px solid var(--navy-border);">
-              Development mode
-            </span>
+        <!-- DEMO ACCESS SECTION -->
+        <div class="demo-access-panel">
+          <div class="demo-header-row">
+            <div class="demo-title">
+              <i class="fa-solid fa-flask" style="color: var(--red-primary);"></i> DEMO ACCESS
+            </div>
+            <span class="demo-tag">Development mode</span>
           </div>
 
-          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-            <button type="button" onclick="handleQuickDemo('Donor')" class="btn btn-secondary btn-sm" style="flex: 1; padding: 0.4rem 0.5rem; font-size: 0.8rem; justify-content: center;">
-              Donor Demo
+          <div class="demo-buttons-3col">
+            <button type="button" onclick="handleQuickDemo('Donor')" class="demo-role-btn active-role">
+              <i class="fa-solid fa-user" style="color: var(--red-primary);"></i> Donor Demo
             </button>
-            <button type="button" onclick="handleQuickDemo('Organization')" class="btn btn-secondary btn-sm" style="flex: 1; padding: 0.4rem 0.5rem; font-size: 0.8rem; justify-content: center;">
-              Organization Demo
+
+            <button type="button" onclick="handleQuickDemo('Organization')" class="demo-role-btn">
+              <i class="fa-solid fa-building"></i> Organization Demo
             </button>
-            <button type="button" onclick="handleQuickDemo('Admin')" class="btn btn-secondary btn-sm" style="flex: 1; padding: 0.4rem 0.5rem; font-size: 0.8rem; justify-content: center;">
-              Admin Demo
+
+            <button type="button" onclick="handleQuickDemo('Admin')" class="demo-role-btn">
+              <i class="fa-solid fa-gear"></i> Admin Demo
             </button>
           </div>
         </div>
+      </div>
 
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer-bar">
+    <div>
+      © 2026 LIFE LINK Healthcare System &nbsp;|&nbsp; Every Drop. Every Connection. Every Life.
+    </div>
+
+    <div class="footer-links">
+      <a href="#">Privacy</a> &nbsp;|&nbsp;
+      <a href="#">Terms</a> &nbsp;|&nbsp;
+      <a href="#">Support</a>
+    </div>
+  </footer>
+
+  <!-- FORGOT PASSWORD MODAL FLOW -->
+  <div id="forgotPasswordModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="background: #ffffff; border-radius: 20px; padding: 2rem; max-width: 420px; width: 90%; box-shadow: 0 25px 50px rgba(0,0,0,0.2);">
+      <h3 style="font-family: var(--font-main); font-size: 1.3rem; color: var(--navy-dark); margin-bottom: 0.5rem;">Reset Your Password</h3>
+      <p style="font-size: 0.88rem; color: var(--slate-muted); margin-bottom: 1.2rem;">
+        Enter your registered mobile number or email address to receive password reset instructions.
+      </p>
+
+      <div style="margin-bottom: 1.2rem;">
+        <label style="display: block; font-size: 0.84rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--navy-dark);">Mobile Number / Email</label>
+        <input type="text" id="resetTargetInput" style="width: 100%; padding: 0.75rem; border: 1px solid var(--slate-border); border-radius: 10px; font-size: 0.9rem;">
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+        <button type="button" onclick="closeForgotPasswordModal()" style="padding: 0.55rem 1.1rem; background: #F1F5F9; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Cancel</button>
+        <button type="button" onclick="submitPasswordReset()" style="padding: 0.55rem 1.1rem; background: var(--red-primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">Send Instructions</button>
       </div>
     </div>
   </div>
 
   <script>
-    function handleFormLogin(e) {
-      e.preventDefault();
-      const id = document.getElementById('loginId').value;
-      const pwd = document.getElementById('loginPassword').value;
+    // Toggle Password Visibility
+    function togglePasswordVisibility() {
+      const pwdInput = document.getElementById('loginPassword');
+      const toggleBtn = document.getElementById('togglePasswordBtn');
 
-      MockAuth.login(id, pwd, 'Donor');
-      window.location.href = 'donor-dashboard.html';
+      if (!pwdInput || !toggleBtn) return;
+
+      if (pwdInput.type === 'password') {
+        pwdInput.type = 'text';
+        toggleBtn.innerHTML = '<i class="fa-regular fa-eye"></i>';
+      } else {
+        pwdInput.type = 'password';
+        toggleBtn.innerHTML = '<i class="fa-regular fa-eye-slash"></i>';
+      }
     }
 
-    function handleQuickDemo(role) {
-      const user = MockAuth.quickDemoLogin(role);
+    // Handle Form Login Submission
+    function handleFormLogin(e) {
+      e.preventDefault();
+      const loginId = document.getElementById('loginId').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+      const errorAlert = document.getElementById('loginErrorAlert');
+
+      if (!loginId || !password) {
+        if (errorAlert) {
+          errorAlert.textContent = 'Please enter both your mobile number/email and password.';
+          errorAlert.style.display = 'block';
+        }
+        return;
+      }
+
+      if (errorAlert) errorAlert.style.display = 'none';
+
+      let role = 'Donor';
+      const idLower = loginId.toLowerCase();
+      if (idLower.includes('admin')) {
+        role = 'Admin';
+      } else if (idLower.includes('org') || idLower.includes('hospital') || idLower.includes('bank')) {
+        role = 'Organization';
+      }
+
+      MockAuth.quickDemoLogin(role);
+
       const redirectUrl = {
         'Donor': 'donor-dashboard.html',
         'Organization': 'requester-dashboard.html',
-        'BloodBank': 'blood-bank-dashboard.html',
         'Admin': 'admin-dashboard.html'
       }[role] || 'donor-dashboard.html';
 
       window.location.href = redirectUrl;
+    }
+
+    // Handle Quick Demo Login Buttons
+    function handleQuickDemo(role) {
+      MockAuth.quickDemoLogin(role);
+
+      const redirectUrl = {
+        'Donor': 'donor-dashboard.html',
+        'Organization': 'requester-dashboard.html',
+        'Admin': 'admin-dashboard.html'
+      }[role] || 'donor-dashboard.html';
+
+      window.location.href = redirectUrl;
+    }
+
+    // Password Recovery Flow
+    function handleForgotPassword() {
+      const modal = document.getElementById('forgotPasswordModal');
+      const input = document.getElementById('resetTargetInput');
+      const currentId = document.getElementById('loginId').value;
+      if (input && currentId) input.value = currentId;
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeForgotPasswordModal() {
+      const modal = document.getElementById('forgotPasswordModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function submitPasswordReset() {
+      const input = document.getElementById('resetTargetInput').value.trim();
+      if (!input) {
+        alert('Please enter a valid mobile number or email address.');
+        return;
+      }
+      alert(`Password reset instructions have been dispatched to: ${input}`);
+      closeForgotPasswordModal();
     }
   </script>
 
