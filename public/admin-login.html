@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login – LIFE LINK Administration Console</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans, Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script src="js/mockData.js" defer></script>
+  <script src="js/mockAuth.js" defer></script>
+
+  <style>
+    :root {
+      --red-primary: #E6002E;
+      --navy-dark: #0F172A;
+      --slate-body: #475569;
+      --slate-muted: #64748B;
+      --slate-border: #E2E8F0;
+      --bg-canvas: #FAFCFF;
+      --font-main: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      --font-body: 'Inter', -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--navy-dark);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+
+    .top-bar {
+      width: 100%;
+      max-width: 1200px;
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 10;
+    }
+
+    .brand-logo-card {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .brand-logo-icon {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--navy-dark) 0%, #1E293B 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.3rem;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
+    }
+
+    .brand-text-title {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 1.35rem;
+      letter-spacing: -0.02em;
+      color: var(--navy-dark);
+      line-height: 1.1;
+    }
+
+    .brand-text-title span {
+      color: var(--red-primary);
+    }
+
+    .brand-tag {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: var(--red-primary);
+      background: #FFF0F3;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-top: 0.2rem;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 460px;
+      padding: 1.5rem;
+      position: relative;
+      z-index: 10;
+      margin: auto 0;
+    }
+
+    .login-card {
+      background: #FFFFFF;
+      border-radius: 24px;
+      border: 1px solid var(--slate-border);
+      box-shadow: 0 12px 36px rgba(15, 23, 42, 0.06);
+      padding: 2.5rem 2.25rem;
+    }
+
+    .badge-admin-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      color: #1E40AF;
+      font-family: var(--font-main);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+
+    .login-heading {
+      font-family: var(--font-main);
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--navy-dark);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+
+    .login-sub {
+      font-size: 0.9rem;
+      color: var(--slate-muted);
+      line-height: 1.5;
+      margin-bottom: 1.75rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      display: block;
+      font-family: var(--font-main);
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--navy-dark);
+      margin-bottom: 0.4rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background: #F8FAFC;
+      border: 1px solid var(--slate-border);
+      border-radius: 12px;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      color: var(--navy-dark);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .form-input:focus {
+      background: #FFFFFF;
+      border-color: var(--navy-dark);
+      box-shadow: 0 0 0 3.5px rgba(15, 23, 42, 0.12);
+    }
+
+    .btn-sign-in {
+      width: 100%;
+      padding: 0.9rem;
+      background: linear-gradient(135deg, var(--navy-dark) 0%, #1E293B 100%);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.25);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .btn-sign-in:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 25px rgba(15, 23, 42, 0.35);
+    }
+
+    .alert-box {
+      display: none;
+      padding: 0.75rem 0.9rem;
+      background: #FFEBEF;
+      border: 1px solid var(--red-primary);
+      color: var(--red-primary);
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.1rem;
+    }
+
+    .security-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--slate-muted);
+      margin-top: 1.5rem;
+    }
+
+    .footer-bar {
+      padding: 1.5rem;
+      font-size: 0.82rem;
+      color: var(--slate-muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top-bar">
+    <a href="index.html" class="brand-logo-card">
+      <div class="brand-logo-icon">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <div>
+        <div class="brand-text-title">LIFE <span>LINK</span></div>
+        <span class="brand-tag">Administration Console</span>
+      </div>
+    </a>
+
+    <a href="login.html" style="font-size: 0.88rem; font-weight: 700; color: var(--navy-dark); text-decoration: none;">
+      <i class="fa-solid fa-arrow-left"></i> Standard Portal Login
+    </a>
+  </header>
+
+  <main class="login-container">
+    <div class="login-card">
+      <span class="badge-admin-tag">
+        <i class="fa-solid fa-user-shield"></i> Platform Administrator Access
+      </span>
+
+      <h1 class="login-heading">Administrator Login</h1>
+      <p class="login-sub">
+        Authorized LIFE LINK platform administration access.
+      </p>
+
+      <div id="adminLoginAlert" class="alert-box"></div>
+
+      <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
+        <div class="form-group">
+          <label class="form-label" for="adminUsername">Admin Username</label>
+          <input type="text" id="adminUsername" class="form-input" value="admin" required>
+        </div>
+
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+            <label class="form-label" for="adminPassword" style="margin:0;">Password</label>
+            <a href="login.html?role=ADMIN" style="color: var(--red-primary); font-size: 0.82rem; font-weight: 700; text-decoration: underline;">Forgot Password?</a>
+          </div>
+          <input type="password" id="adminPassword" class="form-input" value="admin123" required>
+        </div>
+
+        <button type="submit" class="btn-sign-in">
+          SIGN IN <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </form>
+
+      <div class="security-badge">
+        🔒 Authorized Administrative Access • LIFE LINK Governance Console
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer-bar">
+    © 2026 LIFE LINK Emergency Network. All administrative operations are logged into system audit trail.
+  </footer>
+
+  <script>
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('adminUsername').value.trim();
+      const pass = document.getElementById('adminPassword').value.trim();
+      const alertBox = document.getElementById('adminLoginAlert');
+
+      const res = MockAuth.loginAdmin(user, pass);
+      if (res.success) {
+        window.location.href = res.redirectUrl;
+      } else {
+        alertBox.textContent = res.message;
+        alertBox.style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>

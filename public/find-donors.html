@@ -113,24 +113,24 @@
       if (!container) return;
 
       const bg = document.getElementById('filterBloodGroup').value;
-      const city = document.getElementById('filterCity').value.trim().toLowerCase();
+      const city = document.getElementById('filterCity').value.trim();
       const radius = parseFloat(document.getElementById('filterRadius').value);
+      const availFilter = document.getElementById('filterAvailable').value;
 
-      let list = MockData.donors.filter(d => {
-        if (bg !== 'All' && d.bloodGroup !== bg) return false;
-        if (city && !d.city.toLowerCase().includes(city)) return false;
+      let list = MockData.matchDonors(bg === 'All' ? 'O+' : bg, city);
+
+      list = list.filter(d => {
+        if (bg !== 'All' && !MockData.isCompatible(d.bloodGroup, bg)) return false;
         if (d.distanceKm > radius) return false;
+        if (availFilter === 'Available' && !d.isAvailable) return false;
         return true;
       });
-
-      // Sort by highest match score
-      list.sort((a, b) => b.matchScore - a.matchScore);
 
       if (list.length === 0) {
         container.innerHTML = `
           <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem;" class="card card-body">
-            <h3 style="margin-bottom: 0.5rem;">No Donors Found</h3>
-            <p style="color: var(--navy-muted);">No willing donors found within ${radius} km matching your filters.</p>
+            <h3 style="margin-bottom: 0.5rem;">No Matching Donors Found</h3>
+            <p style="color: var(--navy-muted);">No willing, eligible donors found within ${radius} km matching your filters.</p>
           </div>
         `;
         return;
@@ -141,37 +141,38 @@
 
         return `
           <div class="card card-body card-hover" style="position: relative; border-top: 4px solid ${isBestMatch ? 'var(--crimson-red)' : 'var(--navy-border)'}">
-            ${isBestMatch ? `
-              <div style="position: absolute; top: 12px; right: 12px;">
-                <span class="badge badge-critical">BEST MATCH</span>
-              </div>
-            ` : ''}
+            <div style="position: absolute; top: 12px; right: 12px; display: flex; gap: 0.5rem;">
+              <span class="badge ${d.isEligible ? 'badge-success' : 'badge-warning'}">${d.isEligible ? 'Eligible' : 'Not Eligible Yet'}</span>
+              ${isBestMatch ? '<span class="badge badge-critical">BEST MATCH</span>' : ''}
+            </div>
 
             <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
               <div class="blood-pill blood-pill-lg">${d.bloodGroup}</div>
               <div>
                 <h3 style="font-size: 1.25rem; margin-bottom: 0.15rem;">${d.name}</h3>
                 <div style="font-size: 0.85rem; color: var(--navy-muted);">
-                  📍 ${d.distanceKm} km away • ${d.city}
+                  📍 ${d.approxDistance} • ${d.city} &nbsp;|&nbsp; <span style="color: #2563EB; font-weight: 700;">${d.waveRound}</span>
                 </div>
               </div>
             </div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-light); padding: 0.75rem 1rem; border-radius: var(--radius-sm); margin-bottom: 1rem;">
               <div>
-                <span style="font-size: 0.78rem; color: var(--navy-muted); display: block;">Match Algorithm Score</span>
-                <strong style="color: #2563EB; font-size: 1.15rem;">${d.matchScore}% Match</strong>
+                <span style="font-size: 0.78rem; color: var(--navy-muted); display: block;">Match Status</span>
+                <strong style="color: #2563EB; font-size: 0.95rem;">${d.matchStatus}</strong>
               </div>
 
               <div>
-                <span class="badge badge-success">🟢 Available</span>
+                <span class="badge ${d.isAvailable ? 'badge-success' : 'badge-neutral'}">${d.isAvailable ? '🟢 Available' : '🔴 Unavailable'}</span>
               </div>
             </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--navy-border); padding-top: 1rem;">
-              <span style="font-size: 0.82rem; color: var(--navy-muted);">✓ Mobile Verified Donor</span>
-              <button onclick="alert('Contacting ${d.name} through authorized emergency request workflow.')" class="btn btn-primary btn-sm">
-                Request Contact
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--navy-border); padding-top: 0.85rem;">
+              <span style="font-size: 0.8rem; color: var(--navy-muted);">
+                48-Day Status: <strong>${d.eligibilityStatus}</strong>
+              </span>
+              <button onclick="alert('Sending emergency notification request to ${d.name} (${d.approxDistance}) under Privacy Shield.')" class="btn btn-primary btn-sm" ${!d.isEligible ? 'disabled style="opacity: 0.6; cursor: not-allowed;"' : ''}>
+                Notify Donor
               </button>
             </div>
           </div>

@@ -1,0 +1,2356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LIFE LINK – Organization Emergency Operations Portal</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans, Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script src="js/mockData.js" defer></script>
+  <script src="js/mockAuth.js" defer></script>
+
+  <style>
+    :root {
+      --red-primary: #E6002E;
+      --red-dark: #B90022;
+      --red-soft: #FFF0F3;
+      --navy-dark: #0F172A;
+      --slate-body: #334155;
+      --slate-muted: #64748B;
+      --slate-border: #E2E8F0;
+      --bg-canvas: #FAFCFF;
+      --green-success: #10B981;
+      --green-soft: #ECFDF5;
+      --blue-accent: #2563EB;
+      --blue-soft: #EFF6FF;
+      --amber-warn: #F59E0B;
+      --font-main: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      --font-body: 'Inter', -apple-system, sans-serif;
+      --sidebar-width: 280px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--navy-dark);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+    }
+
+    /* SIDEBAR NAVIGATION */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: #FFFFFF;
+      border-right: 1px solid var(--slate-border);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      min-height: 100vh;
+      max-height: 100vh;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: 1.25rem 1.5rem 1rem 1.5rem;
+      border-bottom: 1px solid var(--slate-border);
+      flex-shrink: 0;
+    }
+
+    .brand-logo-card {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .brand-logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--red-primary) 0%, var(--red-dark) 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+      box-shadow: 0 4px 14px rgba(230, 0, 46, 0.25);
+    }
+
+    .brand-text-title {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 1.2rem;
+      letter-spacing: -0.02em;
+      color: var(--navy-dark);
+      line-height: 1.1;
+    }
+
+    .brand-text-title span {
+      color: var(--red-primary);
+    }
+
+    .brand-portal-tag {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--blue-accent);
+      background: var(--blue-soft);
+      padding: 0.2rem 0.5rem;
+      border-radius: 9999px;
+      display: inline-block;
+      margin-top: 0.25rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* Nav List (Middle Scrollable) */
+    .sidebar-menu {
+      padding: 1rem 0.85rem;
+      list-style: none;
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .sidebar-menu::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .sidebar-menu::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .sidebar-menu::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 4px;
+    }
+
+    .nav-section-label {
+      font-family: var(--font-main);
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: var(--slate-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.65rem 0.75rem 0.3rem 0.75rem;
+    }
+
+    .nav-item-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 0.85rem;
+      border-radius: 12px;
+      color: var(--slate-body);
+      text-decoration: none;
+      font-family: var(--font-main);
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+
+    .nav-item-btn i.nav-icon {
+      font-size: 1.05rem;
+      width: 24px;
+      color: var(--slate-muted);
+      transition: color 0.2s ease;
+    }
+
+    .nav-item-btn:hover {
+      background: var(--red-soft);
+      color: var(--red-primary);
+    }
+
+    .nav-item-btn:hover i.nav-icon {
+      color: var(--red-primary);
+    }
+
+    .nav-item-btn.active {
+      background: #FFEBEF;
+      color: var(--red-primary);
+      border-color: #FFD6DE;
+      font-weight: 800;
+    }
+
+    .nav-item-btn.active i.nav-icon {
+      color: var(--red-primary);
+    }
+
+    .nav-badge-pill {
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 0.15rem 0.5rem;
+      border-radius: 9999px;
+      background: var(--red-primary);
+      color: white;
+    }
+
+    .nav-badge-pill.blue {
+      background: var(--blue-accent);
+    }
+
+    /* Sidebar Footer Profile Card (Bottom Fixed) */
+    .sidebar-footer {
+      padding: 1rem 0.85rem;
+      border-top: 1px solid var(--slate-border);
+      background: #FFFFFF;
+      flex-shrink: 0;
+    }
+
+    .org-profile-card-mini {
+      background: #F8FAFC;
+      border: 1px solid var(--slate-border);
+      border-radius: 16px;
+      padding: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .org-mini-header {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .org-avatar-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: #E2E8F0;
+      color: var(--navy-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .org-mini-info {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .org-mini-name {
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.84rem;
+      color: var(--navy-dark);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .org-mini-status {
+      font-size: 0.72rem;
+      color: var(--green-success);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .btn-logout-sidebar {
+      width: 100%;
+      padding: 0.5rem;
+      background: #FFFFFF;
+      border: 1px solid var(--slate-border);
+      border-radius: 10px;
+      color: var(--slate-muted);
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-logout-sidebar:hover {
+      background: #FEF2F2;
+      border-color: #FCA5A5;
+      color: var(--red-primary);
+    }
+
+    /* MAIN CONTENT WRAPPER */
+    .main-wrapper {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* TOP HEADER BAR */
+    .top-header-bar {
+      height: 72px;
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--slate-border);
+      padding: 0 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+    }
+
+    .header-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .mobile-menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      color: var(--navy-dark);
+      cursor: pointer;
+    }
+
+    .page-title-text {
+      font-family: var(--font-main);
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--navy-dark);
+      letter-spacing: -0.02em;
+    }
+
+    .verified-org-chip {
+      background: var(--green-soft);
+      border: 1px solid #A7F3D0;
+      color: #047857;
+      font-family: var(--font-main);
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .header-right-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .search-box-header {
+      position: relative;
+      width: 260px;
+    }
+
+    .search-box-header input {
+      width: 100%;
+      padding: 0.55rem 1rem 0.55rem 2.3rem;
+      background: #F8FAFC;
+      border: 1px solid var(--slate-border);
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-family: var(--font-body);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .search-box-header input:focus {
+      background: #FFFFFF;
+      border-color: var(--red-primary);
+      box-shadow: 0 0 0 3px rgba(230, 0, 46, 0.1);
+    }
+
+    .search-box-header i {
+      position: absolute;
+      left: 0.9rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--slate-muted);
+      font-size: 0.85rem;
+    }
+
+    .btn-notif-bell {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #F8FAFC;
+      border: 1px solid var(--slate-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--navy-dark);
+      font-size: 1rem;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    .btn-notif-bell:hover {
+      background: var(--red-soft);
+      color: var(--red-primary);
+      border-color: #FFD6DE;
+    }
+
+    .bell-pulse-badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 10px;
+      height: 10px;
+      background: var(--red-primary);
+      border-radius: 50%;
+      border: 2px solid white;
+      animation: pulse-ring 1.8s infinite;
+    }
+
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(230, 0, 46, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(230, 0, 46, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(230, 0, 46, 0); }
+    }
+
+    .btn-create-req-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.35rem;
+      background: linear-gradient(135deg, var(--red-primary) 0%, var(--red-dark) 100%);
+      color: white;
+      border: none;
+      border-radius: 9999px;
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 0.86rem;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(230, 0, 46, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .btn-create-req-cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(230, 0, 46, 0.45);
+    }
+
+    /* VIEW CONTENT AREA */
+    .content-area {
+      padding: 2.25rem 2.5rem;
+      flex: 1;
+    }
+
+    .view-pane {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .view-pane.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* CARD STYLING */
+    .card-white {
+      background: #FFFFFF;
+      border-radius: 20px;
+      border: 1px solid var(--slate-border);
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+      padding: 1.75rem 2rem;
+      margin-bottom: 1.75rem;
+    }
+
+    /* 1. DASHBOARD PANE STYLES */
+    .welcome-hero-card {
+      background: linear-gradient(135deg, #FFF0F3 0%, #FFFFFF 100%);
+      border: 1px solid #FFE0E6;
+      border-radius: 24px;
+      padding: 2rem 2.5rem;
+      margin-bottom: 2rem;
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 2rem;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome-text-side h1 {
+      font-family: var(--font-main);
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--navy-dark);
+      margin-bottom: 0.4rem;
+      line-height: 1.2;
+    }
+
+    .welcome-text-side p {
+      font-size: 0.95rem;
+      color: var(--slate-muted);
+      line-height: 1.5;
+      margin-bottom: 1.25rem;
+    }
+
+    .org-identity-badges {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .id-tag-chip {
+      background: #FFFFFF;
+      border: 1px solid var(--slate-border);
+      border-radius: 9999px;
+      padding: 0.3rem 0.85rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--navy-dark);
+      font-family: var(--font-main);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    /* Vector Hero Illustration */
+    .vector-hero-graphic {
+      width: 100%;
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* TOP 4 STATS CARDS */
+    .stats-4grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.35rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card-item {
+      background: #FFFFFF;
+      border-radius: 20px;
+      border: 1px solid var(--slate-border);
+      padding: 1.4rem 1.5rem;
+      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.03);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease;
+    }
+
+    .stat-card-item:hover {
+      transform: translateY(-2px);
+      border-color: #CBD5E1;
+    }
+
+    .stat-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.85rem;
+    }
+
+    .stat-icon-circle {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+    }
+
+    .icon-red { background: var(--red-soft); color: var(--red-primary); }
+    .icon-blue { background: var(--blue-soft); color: var(--blue-accent); }
+    .icon-green { background: var(--green-soft); color: var(--green-success); }
+    .icon-amber { background: #FEF3C7; color: var(--amber-warn); }
+
+    .stat-label-text {
+      font-family: var(--font-main);
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--slate-muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .stat-counter-number {
+      font-family: var(--font-main);
+      font-size: 2.3rem;
+      font-weight: 800;
+      color: var(--navy-dark);
+      line-height: 1.1;
+      margin-bottom: 0.35rem;
+    }
+
+    .stat-sub-trend {
+      font-size: 0.78rem;
+      color: var(--slate-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    /* 2-COLUMN DASHBOARD GRID */
+    .dashboard-2col-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      gap: 1.75rem;
+      margin-bottom: 2rem;
+    }
+
+    /* EMERGENCY OVERVIEW CARD */
+    .emergency-overview-card {
+      background: #FFFFFF;
+      border-radius: 24px;
+      border: 1px solid var(--slate-border);
+      padding: 1.85rem 2rem;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+    }
+
+    .card-header-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .card-heading-title {
+      font-family: var(--font-main);
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--navy-dark);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .badge-critical-pulse {
+      background: var(--red-soft);
+      border: 1px solid #FFD6DE;
+      color: var(--red-primary);
+      font-family: var(--font-main);
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .emergency-details-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      background: #F8FAFC;
+      border-radius: 16px;
+      padding: 1.15rem 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .detail-item-box .lbl {
+      font-size: 0.75rem;
+      color: var(--slate-muted);
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+
+    .detail-item-box .val {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: var(--navy-dark);
+    }
+
+    /* Progress bar visual */
+    .progress-bar-container {
+      margin-bottom: 1.5rem;
+    }
+
+    .progress-bar-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.84rem;
+      font-family: var(--font-main);
+      font-weight: 700;
+      color: var(--navy-dark);
+      margin-bottom: 0.4rem;
+    }
+
+    .progress-track {
+      height: 10px;
+      background: #E2E8F0;
+      border-radius: 9999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--red-primary), #FF4D6D);
+      border-radius: 9999px;
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ADAPTIVE DISPATCH CARD (THE CORE INNOVATION) */
+    .adaptive-dispatch-card {
+      background: #FFFFFF;
+      border-radius: 24px;
+      border: 1.5px solid #E2E8F0;
+      padding: 2rem;
+      box-shadow: 0 6px 24px rgba(15, 23, 42, 0.04);
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .adaptive-badge-tag {
+      background: linear-gradient(135deg, var(--navy-dark) 0%, #1E293B 100%);
+      color: white;
+      font-family: var(--font-main);
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    /* 3 Horizontal Stages */
+    .stages-horizontal-wrapper {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin: 1.5rem 0 1.5rem 0;
+      position: relative;
+    }
+
+    /* Connecting Progress Line */
+    .stages-horizontal-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 36px;
+      left: 15%;
+      right: 15%;
+      height: 3px;
+      background: #E2E8F0;
+      z-index: 1;
+    }
+
+    .stage-card-box {
+      background: #F8FAFC;
+      border: 1.5px solid var(--slate-border);
+      border-radius: 18px;
+      padding: 1.25rem 1.1rem;
+      position: relative;
+      z-index: 2;
+      transition: all 0.3s ease;
+    }
+
+    .stage-card-box.active-stage {
+      background: #FFFFFF;
+      border-color: var(--red-primary);
+      box-shadow: 0 10px 25px -5px rgba(230, 0, 46, 0.18);
+    }
+
+    .stage-card-box.completed-stage {
+      background: var(--green-soft);
+      border-color: #A7F3D0;
+    }
+
+    .stage-top-pill {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 0.78rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      display: inline-block;
+      margin-bottom: 0.75rem;
+    }
+
+    .pill-active { background: var(--red-primary); color: white; }
+    .pill-done { background: #10B981; color: white; }
+    .pill-queued { background: #CBD5E1; color: var(--navy-dark); }
+
+    .stage-radius-title {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--navy-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .stage-stats-list {
+      font-size: 0.82rem;
+      color: var(--slate-muted);
+      line-height: 1.5;
+    }
+
+    .stage-stats-list strong {
+      color: var(--navy-dark);
+    }
+
+    .adaptive-status-banner {
+      background: var(--red-soft);
+      border: 1px solid #FFE0E6;
+      border-radius: 14px;
+      padding: 0.9rem 1.15rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.88rem;
+      font-family: var(--font-main);
+      font-weight: 700;
+      color: #991B1B;
+    }
+
+    /* DONOR RESPONSE SNAPSHOT FUNNEL */
+    .funnel-container {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+
+    .funnel-step-box {
+      background: #F8FAFC;
+      border: 1px solid var(--slate-border);
+      border-radius: 16px;
+      padding: 1rem 0.75rem;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .funnel-step-box:hover {
+      background: #FFFFFF;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+    }
+
+    .funnel-num {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 1.6rem;
+      color: var(--navy-dark);
+      line-height: 1.1;
+    }
+
+    .funnel-lbl {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: var(--slate-muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-top: 0.25rem;
+    }
+
+    /* MAP / GEOGRAPHIC SECTION */
+    .map-section-card {
+      background: #FFFFFF;
+      border-radius: 24px;
+      border: 1px solid var(--slate-border);
+      padding: 1.85rem 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .map-svg-container {
+      background: radial-gradient(circle at 50% 50%, #F0F9FF 0%, #FAFCFF 100%);
+      border: 1px solid #E0F2FE;
+      border-radius: 20px;
+      height: 280px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 1rem 0;
+    }
+
+    .map-privacy-note {
+      font-size: 0.8rem;
+      color: var(--slate-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-style: italic;
+    }
+
+    /* GENERAL BUTTONS */
+    .btn-primary-red {
+      padding: 0.65rem 1.35rem;
+      background: var(--red-primary);
+      color: white;
+      border: none;
+      border-radius: 9999px;
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary-red:hover {
+      background: var(--red-dark);
+      box-shadow: 0 4px 12px rgba(230, 0, 46, 0.3);
+    }
+
+    .btn-secondary-outline {
+      padding: 0.65rem 1.35rem;
+      background: transparent;
+      border: 1.5px solid var(--slate-border);
+      color: var(--navy-dark);
+      border-radius: 9999px;
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-secondary-outline:hover {
+      background: #F8FAFC;
+      border-color: var(--slate-muted);
+    }
+
+    /* TABLE STYLES */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .custom-org-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .custom-org-table th {
+      background: #F8FAFC;
+      color: var(--slate-muted);
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.85rem 1.1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--slate-border);
+    }
+
+    .custom-org-table td {
+      padding: 1rem 1.1rem;
+      border-bottom: 1px solid var(--slate-border);
+      color: var(--navy-dark);
+    }
+
+    .custom-org-table tr:hover td {
+      background: #F8FAFC;
+    }
+
+    .badge-status {
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-family: var(--font-main);
+      font-size: 0.72rem;
+      font-weight: 800;
+      display: inline-block;
+    }
+
+    .status-active { background: #FEF3C7; color: #D97706; }
+    .status-critical { background: var(--red-soft); color: var(--red-primary); }
+    .status-fulfilled { background: var(--green-soft); color: var(--green-success); }
+    .status-expired { background: #F1F5F9; color: var(--slate-muted); }
+
+    /* MODAL OVERLAY */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .modal-card-box {
+      background: #FFFFFF;
+      border-radius: 24px;
+      max-width: 520px;
+      width: 100%;
+      padding: 2rem;
+      box-shadow: 0 25px 60px rgba(15, 23, 42, 0.2);
+      animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalPop {
+      from { transform: scale(0.94); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* FORM STYLES */
+    .form-group-item {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label-txt {
+      display: block;
+      font-family: var(--font-main);
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--navy-dark);
+      margin-bottom: 0.4rem;
+    }
+
+    .form-control-input, .form-control-select, .form-control-textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: #F8FAFC;
+      border: 1px solid var(--slate-border);
+      border-radius: 12px;
+      font-family: var(--font-body);
+      font-size: 0.92rem;
+      color: var(--navy-dark);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .form-control-input:focus, .form-control-select:focus, .form-control-textarea:focus {
+      background: #FFFFFF;
+      border-color: var(--red-primary);
+      box-shadow: 0 0 0 3.5px rgba(230, 0, 46, 0.12);
+    }
+
+    /* Blood Group Selection Grid */
+    .bg-grid-select {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.65rem;
+    }
+
+    .bg-select-btn {
+      padding: 0.75rem 0.5rem;
+      background: #F8FAFC;
+      border: 1.5px solid var(--slate-border);
+      border-radius: 12px;
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--navy-dark);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .bg-select-btn.active {
+      background: var(--red-soft);
+      border-color: var(--red-primary);
+      color: var(--red-primary);
+      box-shadow: 0 4px 12px rgba(230, 0, 46, 0.15);
+    }
+
+    /* RESPONSIVE CSS */
+    @media (max-width: 1024px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .main-wrapper {
+        margin-left: 0;
+      }
+      .mobile-menu-toggle {
+        display: block;
+      }
+      .stats-4grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .dashboard-2col-grid {
+        grid-template-columns: 1fr;
+      }
+      .stages-horizontal-wrapper {
+        grid-template-columns: 1fr;
+      }
+      .stages-horizontal-wrapper::before {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar" id="sidebarNav">
+    <div class="sidebar-header">
+      <a href="org-dashboard.html" class="brand-logo-card">
+        <div class="brand-logo-icon">
+          <i class="fa-solid fa-building-shield"></i>
+        </div>
+        <div>
+          <div class="brand-text-title">LIFE <span>LINK</span></div>
+          <span class="brand-portal-tag">Organization Portal</span>
+        </div>
+      </a>
+    </div>
+
+    <ul class="sidebar-menu">
+      <li class="nav-section-label">Main Dispatch Controls</li>
+
+      <li>
+        <button onclick="switchView('dashboard')" class="nav-item-btn active" id="nav-dashboard">
+          <span><i class="fa-solid fa-gauge-high nav-icon"></i> Dashboard</span>
+        </button>
+      </li>
+
+      <li>
+        <button onclick="switchView('create-request')" class="nav-item-btn" id="nav-create-request">
+          <span><i class="fa-solid fa-circle-plus nav-icon" style="color: var(--red-primary);"></i> Create Request</span>
+          <span class="nav-badge-pill">New</span>
+        </button>
+      </li>
+
+      <li>
+        <button onclick="switchView('active-requests')" class="nav-item-btn" id="nav-active-requests">
+          <span><i class="fa-solid fa-list-check nav-icon"></i> Active Requests</span>
+          <span class="nav-badge-pill blue" id="activeReqBadge">3</span>
+        </button>
+      </li>
+
+      <li>
+        <button onclick="switchView('donor-responses')" class="nav-item-btn" id="nav-donor-responses">
+          <span><i class="fa-solid fa-user-check nav-icon"></i> Donor Responses</span>
+          <span class="nav-badge-pill" id="donorResponseBadge">5</span>
+        </button>
+      </li>
+
+      <li>
+        <button onclick="switchView('fulfillment-tracking')" class="nav-item-btn" id="nav-fulfillment-tracking">
+          <span><i class="fa-solid fa-route nav-icon"></i> Fulfillment Tracking</span>
+        </button>
+      </li>
+
+      <li class="nav-section-label">Management & Logs</li>
+
+      <li>
+        <button onclick="switchView('request-history')" class="nav-item-btn" id="nav-request-history">
+          <span><i class="fa-solid fa-clock-rotate-left nav-icon"></i> Request History</span>
+        </button>
+      </li>
+
+      <li>
+        <button onclick="switchView('notifications')" class="nav-item-btn" id="nav-notifications">
+          <span><i class="fa-solid fa-bell nav-icon"></i> Notifications</span>
+          <span class="nav-badge-pill" style="background: var(--amber-warn);">4</span>
+        </button>
+      </li>
+
+      <li>
+        <button onclick="switchView('org-profile')" class="nav-item-btn" id="nav-org-profile">
+          <span><i class="fa-solid fa-building-user nav-icon"></i> Facility Profile</span>
+        </button>
+      </li>
+
+      <li>
+        <button onclick="switchView('help-support')" class="nav-item-btn" id="nav-help-support">
+          <span><i class="fa-solid fa-circle-question nav-icon"></i> Help & Support</span>
+        </button>
+      </li>
+    </ul>
+
+    <!-- Sidebar Footer Profile Card -->
+    <div class="sidebar-footer">
+      <div class="org-profile-card-mini">
+        <div class="org-mini-header">
+          <div class="org-avatar-icon">
+            <i class="fa-solid fa-hospital"></i>
+          </div>
+          <div class="org-mini-info">
+            <div class="org-mini-name" id="sidebarOrgName">Government General Hospital</div>
+            <div class="org-mini-status">
+              <i class="fa-solid fa-circle-check"></i> Verified Organization
+            </div>
+          </div>
+        </div>
+
+        <button onclick="MockAuth.logout()" class="btn-logout-sidebar">
+          <i class="fa-solid fa-right-from-bracket"></i> Sign Out Portal
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN WRAPPER -->
+  <div class="main-wrapper">
+
+    <!-- TOP HEADER BAR -->
+    <header class="top-header-bar">
+      <div class="header-breadcrumb">
+        <button class="mobile-menu-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+        <h2 class="page-title-text" id="topPageTitle">Organization Dashboard</h2>
+        <span class="verified-org-chip">
+          <i class="fa-solid fa-shield-check"></i> VERIFIED HEALTHCARE ORGANIZATION
+        </span>
+      </div>
+
+      <div class="header-right-actions">
+        <div class="search-box-header">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search REQ, blood group...">
+        </div>
+
+        <button class="btn-notif-bell" onclick="switchView('notifications')" title="Notifications">
+          <i class="fa-regular fa-bell"></i>
+          <div class="bell-pulse-badge"></div>
+        </button>
+
+        <button onclick="switchView('create-request')" class="btn-create-req-cta">
+          <i class="fa-solid fa-plus"></i> NEW REQUEST
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTENT AREA -->
+    <main class="content-area">
+
+      <!-- ================================================================= -->
+      <!-- 1. ORGANIZATION DASHBOARD VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-dashboard" class="view-pane active">
+
+        <!-- WELCOME HERO CARD WITH VECTOR GRAPHIC -->
+        <div class="welcome-hero-card">
+          <div class="welcome-text-side">
+            <div style="font-size: 0.8rem; font-weight: 800; color: var(--red-primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.35rem;">
+              DISPATCH CONTROL CENTER
+            </div>
+            <h1 id="dashGreeting">Good morning, Government General Hospital</h1>
+            <p>Manage emergency blood requirements and monitor donor response in real time across adaptive geographic radius waves.</p>
+
+            <div class="org-identity-badges">
+              <span class="id-tag-chip">
+                <i class="fa-solid fa-hashtag" style="color: var(--blue-accent);"></i> LL-GH-2026-001
+              </span>
+              <span class="id-tag-chip">
+                <i class="fa-solid fa-location-dot" style="color: var(--red-primary);"></i> Hosur, Tamil Nadu
+              </span>
+              <span class="id-tag-chip" style="background: var(--green-soft); color: #047857; border-color: #A7F3D0;">
+                <i class="fa-solid fa-circle-check"></i> VERIFIED ORGANIZATION
+              </span>
+            </div>
+          </div>
+
+          <!-- Pure SVG Healthcare Network Hero Illustration -->
+          <div class="vector-hero-graphic">
+            <svg viewBox="0 0 340 180" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="gradRed" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#E6002E" />
+                  <stop offset="100%" stop-color="#B90022" />
+                </linearGradient>
+                <linearGradient id="gradBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#2563EB" />
+                  <stop offset="100%" stop-color="#1E40AF" />
+                </linearGradient>
+              </defs>
+
+              <!-- Concentric Dispatch Radius Waves -->
+              <circle cx="170" cy="90" r="75" fill="none" stroke="#FFE0E6" stroke-width="2" stroke-dasharray="4 4" />
+              <circle cx="170" cy="90" r="52" fill="none" stroke="#E2E8F0" stroke-width="2" />
+              <circle cx="170" cy="90" r="30" fill="none" stroke="#E6002E" stroke-width="1.5" opacity="0.4">
+                <animate attributeName="r" values="25;40;25" dur="3s" repeatCount="indefinite" />
+                <animate attributeName="opacity" values="0.6;0.1;0.6" dur="3s" repeatCount="indefinite" />
+              </circle>
+
+              <!-- Connecting Network Rays -->
+              <line x1="170" y1="90" x2="110" y2="45" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="3 3"/>
+              <line x1="170" y1="90" x2="230" y2="50" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="3 3"/>
+              <line x1="170" y1="90" x2="225" y2="135" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="3 3"/>
+              <line x1="170" y1="90" x2="105" y2="130" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="3 3"/>
+
+              <!-- Central Hospital Node -->
+              <circle cx="170" cy="90" r="22" fill="url(#gradRed)" shadow="0 4px 10px rgba(0,0,0,0.2)"/>
+              <path d="M165 90 H175 M170 85 V95" stroke="white" stroke-width="3" stroke-linecap="round"/>
+
+              <!-- Donor Nodes -->
+              <circle cx="110" cy="45" r="8" fill="#10B981"/>
+              <circle cx="230" cy="50" r="8" fill="#10B981"/>
+              <circle cx="225" cy="135" r="8" fill="#2563EB"/>
+              <circle cx="105" cy="130" r="8" fill="#F59E0B"/>
+
+              <!-- Donor Icons/Dots -->
+              <circle cx="110" cy="45" r="3" fill="white"/>
+              <circle cx="230" cy="50" r="3" fill="white"/>
+              <circle cx="225" cy="135" r="3" fill="white"/>
+              <circle cx="105" cy="130" r="3" fill="white"/>
+
+              <!-- Labels -->
+              <rect x="135" y="15" width="70" height="20" rx="10" fill="#0F172A" />
+              <text x="170" y="29" fill="white" font-size="9" font-weight="bold" text-anchor="middle" font-family="sans-serif">HOSPITAL</text>
+            </svg>
+          </div>
+        </div>
+
+        <!-- TOP 4 STATISTICS CARDS -->
+        <div class="stats-4grid">
+          <div class="stat-card-item">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Active Requests</span>
+              <div class="stat-icon-circle icon-red"><i class="fa-solid fa-truck-medical"></i></div>
+            </div>
+            <div class="stat-counter-number" id="statActiveReqs">3</div>
+            <div class="stat-sub-trend"><i class="fa-solid fa-triangle-exclamation" style="color: var(--red-primary);"></i> 1 Critical requirement</div>
+          </div>
+
+          <div class="stat-card-item">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Donors Notified</span>
+              <div class="stat-icon-circle icon-blue"><i class="fa-solid fa-paper-plane"></i></div>
+            </div>
+            <div class="stat-counter-number" id="statDonorsNotified">42</div>
+            <div class="stat-sub-trend"><i class="fa-solid fa-circle-nodes" style="color: var(--blue-accent);"></i> Across 3 active rounds</div>
+          </div>
+
+          <div class="stat-card-item">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Confirmed Donors</span>
+              <div class="stat-icon-circle icon-green"><i class="fa-solid fa-user-check"></i></div>
+            </div>
+            <div class="stat-counter-number" id="statConfirmedDonors">8</div>
+            <div class="stat-sub-trend"><i class="fa-solid fa-check" style="color: var(--green-success);"></i> En-route to hospital</div>
+          </div>
+
+          <div class="stat-card-item">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Fulfillment Rate</span>
+              <div class="stat-icon-circle icon-amber"><i class="fa-solid fa-chart-line"></i></div>
+            </div>
+            <div class="stat-counter-number" id="statFulfillmentRate">92%</div>
+            <div class="stat-sub-trend"><i class="fa-solid fa-clock" style="color: var(--amber-warn);"></i> Avg response: 4.2 mins</div>
+          </div>
+        </div>
+
+        <!-- ADAPTIVE DISPATCH STATUS CARD (THE CORE INNOVATION COMPONENT) -->
+        <div class="adaptive-dispatch-card">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+              <span class="adaptive-badge-tag"><i class="fa-solid fa-bolt"></i> CORE INNOVATION</span>
+              <h2 style="font-family: var(--font-main); font-size: 1.5rem; font-weight: 800; margin-top: 0.4rem; color: var(--navy-dark);">
+                Adaptive Dispatch Status
+              </h2>
+            </div>
+
+            <div style="text-align: right;">
+              <span class="badge-status status-active" style="font-size: 0.8rem; padding: 0.35rem 0.85rem;">
+                <i class="fa-solid fa-circle-dot"></i> WAVE DISPATCH ACTIVE
+              </span>
+            </div>
+          </div>
+
+          <!-- 3 Horizontal Stages -->
+          <div class="stages-horizontal-wrapper">
+            <!-- ROUND 1 -->
+            <div class="stage-card-box completed-stage">
+              <span class="stage-top-pill pill-done">ROUND 1 — COMPLETED</span>
+              <div class="stage-radius-title">0 – 3 KM Radius</div>
+              <div class="stage-stats-list">
+                • <strong>12</strong> donors notified<br>
+                • <strong>2</strong> responses received<br>
+                • <strong>1</strong> donor confirmed
+              </div>
+            </div>
+
+            <!-- ROUND 2 (CURRENTLY ACTIVE) -->
+            <div class="stage-card-box active-stage">
+              <span class="stage-top-pill pill-active"><i class="fa-solid fa-wifi"></i> ROUND 2 — ACTIVE NOW</span>
+              <div class="stage-radius-title">3 – 5 KM Radius</div>
+              <div class="stage-stats-list">
+                • <strong>18</strong> donors available<br>
+                • <strong>5</strong> responses received<br>
+                • <strong>1</strong> additional confirmed
+              </div>
+            </div>
+
+            <!-- ROUND 3 -->
+            <div class="stage-card-box">
+              <span class="stage-top-pill pill-queued">ROUND 3 — QUEUED</span>
+              <div class="stage-radius-title">5 – 8 KM Radius</div>
+              <div class="stage-stats-list">
+                • <strong>27</strong> donors queued<br>
+                • Standby evaluation<br>
+                • Not started yet
+              </div>
+            </div>
+          </div>
+
+          <!-- Status Message Bar -->
+          <div class="adaptive-status-banner">
+            <i class="fa-solid fa-circle-info" style="font-size: 1.2rem; color: var(--red-primary);"></i>
+            <span>"Round 2 activated because Round 1 did not reach the required confirmation count."</span>
+          </div>
+        </div>
+
+        <!-- 2-COLUMN GRID: EMERGENCY OVERVIEW & DONOR SNAPSHOT -->
+        <div class="dashboard-2col-grid">
+
+          <!-- LEFT: EMERGENCY OVERVIEW & LIVE REQUEST CARD -->
+          <div class="emergency-overview-card">
+            <div class="card-header-flex">
+              <div class="card-heading-title">
+                <i class="fa-solid fa-kit-medical" style="color: var(--red-primary);"></i> Emergency Request Overview
+              </div>
+              <span class="badge-critical-pulse">
+                <i class="fa-solid fa-bell"></i> CRITICAL
+              </span>
+            </div>
+
+            <div style="font-size: 1.1rem; font-weight: 800; font-family: var(--font-main); color: var(--navy-dark); margin-bottom: 1rem;">
+              Emergency O+ Blood Requirement (REQ-1042)
+            </div>
+
+            <div class="emergency-details-grid">
+              <div class="detail-item-box">
+                <div class="lbl">Blood Group</div>
+                <div class="val" style="color: var(--red-primary);">O+</div>
+              </div>
+              <div class="detail-item-box">
+                <div class="lbl">Units Required</div>
+                <div class="val">3 Units</div>
+              </div>
+              <div class="detail-item-box">
+                <div class="lbl">Status</div>
+                <div class="val" style="font-size: 0.95rem; color: #D97706;">ACTIVE — SEARCHING</div>
+              </div>
+              <div class="detail-item-box">
+                <div class="lbl">Urgency</div>
+                <div class="val" style="color: var(--red-primary);">CRITICAL</div>
+              </div>
+              <div class="detail-item-box">
+                <div class="lbl">Location</div>
+                <div class="val" style="font-size: 0.9rem;">Govt General Hospital, Hosur</div>
+              </div>
+              <div class="detail-item-box">
+                <div class="lbl">Created Time</div>
+                <div class="val" style="font-size: 0.9rem;">10:42 AM</div>
+              </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-bar-container">
+              <div class="progress-bar-labels">
+                <span>2 / 3 DONORS CONFIRMED</span>
+                <span>66% FULFILLED</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill" style="width: 66%;"></div>
+              </div>
+            </div>
+
+            <!-- Buttons -->
+            <div style="display: flex; gap: 0.75rem;">
+              <button onclick="switchView('active-requests')" class="btn-primary-red">
+                <i class="fa-solid fa-eye"></i> VIEW REQUEST
+              </button>
+              <button onclick="switchView('fulfillment-tracking')" class="btn-secondary-outline">
+                <i class="fa-solid fa-sliders"></i> MANAGE DISPATCH
+              </button>
+            </div>
+          </div>
+
+          <!-- RIGHT: DONOR RESPONSE SNAPSHOT -->
+          <div class="card-white" style="margin-bottom: 0;">
+            <div class="card-heading-title" style="margin-bottom: 0.5rem;">
+              <i class="fa-solid fa-chart-pie" style="color: var(--blue-accent);"></i> Donor Response Snapshot
+            </div>
+            <p style="font-size: 0.85rem; color: var(--slate-muted); margin-bottom: 1.25rem;">
+              Real-time progression of notified donors across dispatch waves.
+            </p>
+
+            <div class="funnel-container">
+              <div class="funnel-step-box">
+                <div class="funnel-num" style="color: var(--blue-accent);">42</div>
+                <div class="funnel-lbl">NOTIFIED</div>
+              </div>
+              <div class="funnel-step-box">
+                <div class="funnel-num">11</div>
+                <div class="funnel-lbl">VIEWED</div>
+              </div>
+              <div class="funnel-step-box">
+                <div class="funnel-num" style="color: var(--amber-warn);">5</div>
+                <div class="funnel-lbl">RESPONDED</div>
+              </div>
+              <div class="funnel-step-box">
+                <div class="funnel-num" style="color: var(--slate-muted);">2</div>
+                <div class="funnel-lbl">DECLINED</div>
+              </div>
+              <div class="funnel-step-box" style="background: var(--green-soft); border-color: #A7F3D0;">
+                <div class="funnel-num" style="color: var(--green-success);">2</div>
+                <div class="funnel-lbl" style="color: var(--green-success);">CONFIRMED</div>
+              </div>
+            </div>
+
+            <div style="background: #F8FAFC; border-radius: 14px; padding: 0.85rem 1rem; margin-top: 1.25rem; font-size: 0.78rem; color: var(--slate-muted); border: 1px solid var(--slate-border);">
+              <i class="fa-solid fa-shield-halved" style="color: var(--blue-accent);"></i>
+              <strong>Privacy Protection:</strong> Donor phone numbers and exact addresses are masked. Contact is routed strictly through system proxy tokens.
+            </div>
+          </div>
+
+        </div>
+
+        <!-- MAP / GEOGRAPHIC MATCHING SECTION -->
+        <div class="map-section-card">
+          <div class="card-header-flex">
+            <div>
+              <div class="card-heading-title">
+                <i class="fa-solid fa-map-location-dot" style="color: var(--red-primary);"></i> Geographic Zone Donor Clusters
+              </div>
+              <div style="font-size: 0.85rem; color: var(--slate-muted); margin-top: 0.2rem;">
+                Approximate donor distribution around Government General Hospital, Hosur
+              </div>
+            </div>
+
+            <span class="map-privacy-note">
+              <i class="fa-solid fa-lock" style="color: var(--green-success);"></i> Exact donor locations are protected.
+            </span>
+          </div>
+
+          <!-- Vector Interactive Map Canvas -->
+          <div class="map-svg-container">
+            <svg viewBox="0 0 700 260" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+              <!-- Radial Zones -->
+              <!-- 8 KM Zone -->
+              <circle cx="350" cy="130" r="115" fill="rgba(37, 99, 235, 0.03)" stroke="#93C5FD" stroke-width="1.5" stroke-dasharray="5 5" />
+              <text x="350" y="24" fill="#3B82F6" font-size="10" font-weight="bold" text-anchor="middle">8 KM RADIUS ZONE (27 Donors)</text>
+
+              <!-- 5 KM Zone -->
+              <circle cx="350" cy="130" r="75" fill="rgba(230, 0, 46, 0.04)" stroke="#FCA5A5" stroke-width="1.5" stroke-dasharray="4 4" />
+              <text x="350" y="62" fill="#E6002E" font-size="10" font-weight="bold" text-anchor="middle">5 KM RADIUS ZONE (18 Donors)</text>
+
+              <!-- 3 KM Zone -->
+              <circle cx="350" cy="130" r="42" fill="rgba(16, 185, 129, 0.08)" stroke="#6EE7B7" stroke-width="2" />
+              <text x="350" y="94" fill="#059669" font-size="10" font-weight="bold" text-anchor="middle">3 KM ZONE (12 Donors)</text>
+
+              <!-- Center Hospital -->
+              <circle cx="350" cy="130" r="14" fill="#E6002E" />
+              <path d="M346 130 H354 M350 126 V134" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+              <text x="350" y="156" fill="#0F172A" font-size="11" font-weight="800" text-anchor="middle">Govt General Hospital</text>
+
+              <!-- Cluster Nodes (Approximate) -->
+              <!-- Cluster 1 (0-3km) -->
+              <g transform="translate(320, 110)">
+                <circle cx="0" cy="0" r="10" fill="#10B981" opacity="0.8"/>
+                <text x="0" y="3" fill="white" font-size="9" font-weight="bold" text-anchor="middle">6</text>
+              </g>
+              <g transform="translate(375, 140)">
+                <circle cx="0" cy="0" r="10" fill="#10B981" opacity="0.8"/>
+                <text x="0" y="3" fill="white" font-size="9" font-weight="bold" text-anchor="middle">6</text>
+              </g>
+
+              <!-- Cluster 2 (3-5km) -->
+              <g transform="translate(290, 150)">
+                <circle cx="0" cy="0" r="12" fill="#E6002E" opacity="0.8"/>
+                <text x="0" y="4" fill="white" font-size="10" font-weight="bold" text-anchor="middle">10</text>
+              </g>
+              <g transform="translate(410, 100)">
+                <circle cx="0" cy="0" r="11" fill="#E6002E" opacity="0.8"/>
+                <text x="0" y="3" fill="white" font-size="9" font-weight="bold" text-anchor="middle">8</text>
+              </g>
+
+              <!-- Cluster 3 (5-8km) -->
+              <g transform="translate(250, 80)">
+                <circle cx="0" cy="0" r="14" fill="#2563EB" opacity="0.8"/>
+                <text x="0" y="4" fill="white" font-size="10" font-weight="bold" text-anchor="middle">14</text>
+              </g>
+              <g transform="translate(450, 160)">
+                <circle cx="0" cy="0" r="14" fill="#2563EB" opacity="0.8"/>
+                <text x="0" y="4" fill="white" font-size="10" font-weight="bold" text-anchor="middle">13</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 2. CREATE EMERGENCY REQUEST VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-create-request" class="view-pane">
+        <div class="card-white" style="max-width: 800px; margin: 0 auto;">
+          <div style="border-bottom: 1px solid var(--slate-border); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
+            <span class="verified-org-chip" style="margin-bottom: 0.5rem;">
+              <i class="fa-solid fa-shield-check"></i> VERIFIED ORGANIZATION
+            </span>
+            <h1 style="font-family: var(--font-main); font-size: 1.8rem; font-weight: 800; color: var(--navy-dark);">
+              Create Emergency Blood Request
+            </h1>
+            <p style="font-size: 0.92rem; color: var(--slate-muted); margin-top: 0.25rem;">
+              Initiate an adaptive emergency dispatch to verified compatible donors in Hosur.
+            </p>
+          </div>
+
+          <form id="createEmergencyForm" onsubmit="handleRequestSubmit(event)">
+            <!-- Field 1: Blood Group -->
+            <div class="form-group-item">
+              <label class="form-label-txt">Select Required Blood Group</label>
+              <div class="bg-grid-select">
+                <button type="button" class="bg-select-btn active" onclick="selectBloodGroup(this, 'O+')">O+</button>
+                <button type="button" class="bg-select-btn" onclick="selectBloodGroup(this, 'O-')">O-</button>
+                <button type="button" class="bg-select-btn" onclick="selectBloodGroup(this, 'A+')">A+</button>
+                <button type="button" class="bg-select-btn" onclick="selectBloodGroup(this, 'A-')">A-</button>
+                <button type="button" class="bg-select-btn" onclick="selectBloodGroup(this, 'B+')">B+</button>
+                <button type="button" class="bg-select-btn" onclick="selectBloodGroup(this, 'B-')">B-</button>
+                <button type="button" class="bg-select-btn" onclick="selectBloodGroup(this, 'AB+')">AB+</button>
+                <button type="button" class="bg-select-btn" onclick="selectBloodGroup(this, 'AB-')">AB-</button>
+              </div>
+              <input type="hidden" id="reqBloodGroup" value="O+">
+            </div>
+
+            <!-- Field 2: Units & Urgency -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+              <div class="form-group-item">
+                <label class="form-label-txt" for="reqUnits">Units Required</label>
+                <select id="reqUnits" class="form-control-select" required>
+                  <option value="1">1 Unit</option>
+                  <option value="2">2 Units</option>
+                  <option value="3" selected>3 Units</option>
+                  <option value="4">4 Units</option>
+                  <option value="5">5 Units</option>
+                  <option value="6">6+ Units</option>
+                </select>
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-txt" for="reqUrgency">Urgency Level</label>
+                <select id="reqUrgency" class="form-control-select" required>
+                  <option value="CRITICAL" selected>Critical (Immediate Dispatch)</option>
+                  <option value="HIGH">High Priority (Within 3 Hours)</option>
+                  <option value="NORMAL">Normal Priority (Within 12 Hours)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Field 3: Required By & Radius -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+              <div class="form-group-item">
+                <label class="form-label-txt" for="reqTime">Required By (Date & Time)</label>
+                <input type="datetime-local" id="reqTime" class="form-control-input" required>
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-txt" for="reqRadius">Initial Search Radius</label>
+                <select id="reqRadius" class="form-control-select" required>
+                  <option value="3" selected>3 km (Round 1)</option>
+                  <option value="5">5 km (Round 2)</option>
+                  <option value="8">8 km (Round 3)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Field 4: Auto-populated Org Details -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+              <div class="form-group-item">
+                <label class="form-label-txt">Hospital / Facility</label>
+                <input type="text" class="form-control-input" value="Government General Hospital" readonly style="background: #F1F5F9; color: var(--slate-muted);">
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-txt">Location</label>
+                <input type="text" class="form-control-input" value="Hosur, Tamil Nadu" readonly style="background: #F1F5F9; color: var(--slate-muted);">
+              </div>
+            </div>
+
+            <!-- Additional Notes -->
+            <div class="form-group-item">
+              <label class="form-label-txt" for="reqNotes">Additional Emergency Notes (Optional)</label>
+              <textarea id="reqNotes" class="form-control-textarea" rows="3" placeholder="e.g., ICU Ward 3, Trauma Unit. Patient undergoing emergency surgery."></textarea>
+            </div>
+
+            <button type="submit" class="btn-primary-red" style="width: 100%; justify-content: center; padding: 0.95rem; font-size: 1rem; margin-top: 0.5rem;">
+              <i class="fa-solid fa-paper-plane"></i> CREATE EMERGENCY REQUEST
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 3. ACTIVE REQUESTS VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-active-requests" class="view-pane">
+        <div class="card-white">
+          <div class="card-header-flex">
+            <div>
+              <h2 style="font-family: var(--font-main); font-size: 1.4rem; font-weight: 800;">Active Emergency Blood Requests</h2>
+              <p style="font-size: 0.88rem; color: var(--slate-muted);">Monitor and manage active adaptive dispatch operations.</p>
+            </div>
+
+            <button onclick="switchView('create-request')" class="btn-primary-red" style="font-size: 0.82rem; padding: 0.5rem 1rem;">
+              <i class="fa-solid fa-plus"></i> New Request
+            </button>
+          </div>
+
+          <div class="table-container">
+            <table class="custom-org-table">
+              <thead>
+                <tr>
+                  <th>Request ID</th>
+                  <th>Blood Group</th>
+                  <th>Units</th>
+                  <th>Urgency</th>
+                  <th>Current Round</th>
+                  <th>Notified</th>
+                  <th>Confirmed</th>
+                  <th>Status</th>
+                  <th>Created</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="activeRequestsTableBody">
+                <!-- Populated dynamically via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 4. DONOR RESPONSES VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-donor-responses" class="view-pane">
+        <div class="card-white">
+          <div class="card-header-flex">
+            <div>
+              <h2 style="font-family: var(--font-main); font-size: 1.4rem; font-weight: 800;">Donor Response Monitor</h2>
+              <p style="font-size: 0.88rem; color: var(--slate-muted);">Track real-time donor commitments without exposing private donor information.</p>
+            </div>
+
+            <span class="verified-org-chip" style="background: #F0FDF4; border-color: #BBF7D0; color: #166534;">
+              <i class="fa-solid fa-user-shield"></i> Privacy Shield Active
+            </span>
+          </div>
+
+          <div style="background: #F8FAFC; border: 1px solid var(--slate-border); border-radius: 16px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: var(--slate-muted);">
+            <i class="fa-solid fa-circle-info" style="color: var(--blue-accent);"></i>
+            Donor names and mobile numbers are protected using platform proxy tokens. Locations are displayed strictly as approximate radial distances.
+          </div>
+
+          <div id="donorResponsesListGrid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem;">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 5. FULFILLMENT TRACKING VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-fulfillment-tracking" class="view-pane">
+        <div class="card-white">
+          <div class="card-header-flex">
+            <div>
+              <span class="badge-status status-critical" style="margin-bottom: 0.4rem;">LIVE DISPATCH — REQ-1042</span>
+              <h2 style="font-family: var(--font-main); font-size: 1.6rem; font-weight: 800;">Fulfillment Lifecycle Tracking</h2>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem;">
+              <button onclick="simulateDonorConfirmation()" class="btn-primary-red" style="font-size: 0.82rem; padding: 0.5rem 1rem;">
+                <i class="fa-solid fa-plus-circle"></i> Simulate Confirmation (+1)
+              </button>
+            </div>
+          </div>
+
+          <!-- Progress Visualization Grid -->
+          <div class="funnel-container" style="margin: 1.5rem 0;">
+            <div class="funnel-step-box">
+              <div class="funnel-num">3</div>
+              <div class="funnel-lbl">REQUIRED</div>
+            </div>
+            <div class="funnel-step-box">
+              <div class="funnel-num" style="color: var(--blue-accent);">30</div>
+              <div class="funnel-lbl">NOTIFIED</div>
+            </div>
+            <div class="funnel-step-box">
+              <div class="funnel-num" style="color: var(--amber-warn);">7</div>
+              <div class="funnel-lbl">RESPONDED</div>
+            </div>
+            <div class="funnel-step-box">
+              <div class="funnel-num" style="color: var(--green-success);" id="trackConfirmedCount">2</div>
+              <div class="funnel-lbl">CONFIRMED</div>
+            </div>
+            <div class="funnel-step-box" style="background: var(--green-soft); border-color: #A7F3D0;">
+              <div class="funnel-num" style="color: var(--green-success);" id="trackFulfilledRatio">2 / 3</div>
+              <div class="funnel-lbl" style="color: var(--green-success);">FULFILLED</div>
+            </div>
+          </div>
+
+          <h3 style="font-family: var(--font-main); font-size: 1.15rem; font-weight: 800; margin-bottom: 1rem;">
+            <i class="fa-solid fa-timeline" style="color: var(--red-primary);"></i> Dispatch Audit Timeline
+          </h3>
+
+          <div style="position: relative; padding-left: 1.75rem; border-left: 2px stroke var(--red-primary);" id="fulfillmentTimelineBox">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 6. REQUEST HISTORY VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-request-history" class="view-pane">
+        <div class="card-white">
+          <div class="card-header-flex">
+            <div>
+              <h2 style="font-family: var(--font-main); font-size: 1.4rem; font-weight: 800;">Emergency Request Audit History</h2>
+              <p style="font-size: 0.88rem; color: var(--slate-muted);">Complete record of all past emergency dispatch lifecycles.</p>
+            </div>
+
+            <button onclick="alert('Exporting official audit report as CSV...')" class="btn-secondary-outline" style="font-size: 0.82rem; padding: 0.5rem 1rem;">
+              <i class="fa-solid fa-download"></i> Export History
+            </button>
+          </div>
+
+          <div class="table-container">
+            <table class="custom-org-table">
+              <thead>
+                <tr>
+                  <th>Request ID</th>
+                  <th>Blood Group</th>
+                  <th>Units</th>
+                  <th>Status</th>
+                  <th>Fulfillment Date</th>
+                  <th>Avg Response Time</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>REQ-1031</strong></td>
+                  <td><span class="badge-status status-critical">B+</span></td>
+                  <td>2 units</td>
+                  <td><span class="badge-status status-fulfilled">FULFILLED</span></td>
+                  <td>18 Aug 2026</td>
+                  <td>6 mins</td>
+                  <td><button class="btn-secondary-outline" style="padding: 0.25rem 0.65rem; font-size: 0.75rem;">Details</button></td>
+                </tr>
+                <tr>
+                  <td><strong>REQ-1028</strong></td>
+                  <td><span class="badge-status status-critical">O-</span></td>
+                  <td>4 units</td>
+                  <td><span class="badge-status status-fulfilled">FULFILLED</span></td>
+                  <td>16 Aug 2026</td>
+                  <td>4 mins</td>
+                  <td><button class="btn-secondary-outline" style="padding: 0.25rem 0.65rem; font-size: 0.75rem;">Details</button></td>
+                </tr>
+                <tr>
+                  <td><strong>REQ-1024</strong></td>
+                  <td><span class="badge-status status-active">AB+</span></td>
+                  <td>2 units</td>
+                  <td><span class="badge-status status-expired">EXPIRED</span></td>
+                  <td>14 Aug 2026</td>
+                  <td>N/A</td>
+                  <td><button class="btn-secondary-outline" style="padding: 0.25rem 0.65rem; font-size: 0.75rem;">Details</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 7. NOTIFICATIONS VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-notifications" class="view-pane">
+        <div class="card-white" style="max-width: 800px;">
+          <div class="card-header-flex">
+            <div>
+              <h2 style="font-family: var(--font-main); font-size: 1.4rem; font-weight: 800;">Organization Notification Center</h2>
+              <p style="font-size: 0.88rem; color: var(--slate-muted);">System alerts, wave escalation notifications and donor updates.</p>
+            </div>
+            <button onclick="alert('All notifications marked as read.')" class="btn-secondary-outline" style="font-size: 0.82rem; padding: 0.4rem 0.85rem;">
+              Mark All Read
+            </button>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 0.85rem; margin-top: 1rem;">
+            <div style="background: var(--red-soft); border: 1px solid #FFE0E6; border-radius: 16px; padding: 1.1rem; display: flex; gap: 1rem; align-items: flex-start;">
+              <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--red-primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;">
+                <i class="fa-solid fa-wifi"></i>
+              </div>
+              <div style="flex: 1;">
+                <div style="font-family: var(--font-main); font-weight: 800; font-size: 0.95rem; color: var(--navy-dark);">Round 2 activated for REQ-1042</div>
+                <div style="font-size: 0.85rem; color: var(--slate-muted); margin-top: 0.2rem;">Round 1 did not reach target confirmations. 3–5 km radius wave activated automatically.</div>
+                <div style="font-size: 0.75rem; color: var(--slate-muted); margin-top: 0.4rem; font-weight: 600;">5 minutes ago • Unread</div>
+              </div>
+            </div>
+
+            <div style="background: var(--green-soft); border: 1px solid #A7F3D0; border-radius: 16px; padding: 1.1rem; display: flex; gap: 1rem; align-items: flex-start;">
+              <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--green-success); color: white; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;">
+                <i class="fa-solid fa-user-check"></i>
+              </div>
+              <div style="flex: 1;">
+                <div style="font-family: var(--font-main); font-weight: 800; font-size: 0.95rem; color: var(--navy-dark);">2 donors confirmed for O+ emergency request</div>
+                <div style="font-size: 0.85rem; color: var(--slate-muted); margin-top: 0.2rem;">Donors LL-D-1024 and LL-D-1028 accepted dispatch and are en-route to Hosur Hospital.</div>
+                <div style="font-size: 0.75rem; color: var(--slate-muted); margin-top: 0.4rem; font-weight: 600;">10 minutes ago • Unread</div>
+              </div>
+            </div>
+
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); border-radius: 16px; padding: 1.1rem; display: flex; gap: 1rem; align-items: flex-start;">
+              <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--blue-soft); color: var(--blue-accent); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;">
+                <i class="fa-solid fa-circle-check"></i>
+              </div>
+              <div style="flex: 1;">
+                <div style="font-family: var(--font-main); font-weight: 800; font-size: 0.95rem; color: var(--navy-dark);">REQ-1031 has been successfully fulfilled</div>
+                <div style="font-size: 0.85rem; color: var(--slate-muted); margin-top: 0.2rem;">2 units of B+ blood were received and processed for patient transfusion.</div>
+                <div style="font-size: 0.75rem; color: var(--slate-muted); margin-top: 0.4rem; font-weight: 600;">Yesterday</div>
+              </div>
+            </div>
+
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); border-radius: 16px; padding: 1.1rem; display: flex; gap: 1rem; align-items: flex-start;">
+              <div style="width: 36px; height: 36px; border-radius: 50%; background: #E2E8F0; color: var(--navy-dark); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;">
+                <i class="fa-solid fa-building-shield"></i>
+              </div>
+              <div style="flex: 1;">
+                <div style="font-family: var(--font-main); font-weight: 800; font-size: 0.95rem; color: var(--navy-dark);">Organization verification completed</div>
+                <div style="font-size: 0.85rem; color: var(--slate-muted); margin-top: 0.2rem;">Government General Hospital (LL-GH-2026-001) verified for 2026.</div>
+                <div style="font-size: 0.75rem; color: var(--slate-muted); margin-top: 0.4rem; font-weight: 600;">3 days ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 8. ORGANIZATION PROFILE VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-org-profile" class="view-pane">
+        <div class="card-white" style="max-width: 840px;">
+          <div style="display: flex; align-items: center; gap: 1.25rem; border-bottom: 1px solid var(--slate-border); padding-bottom: 1.5rem; margin-bottom: 1.75rem;">
+            <div style="width: 64px; height: 64px; border-radius: 18px; background: linear-gradient(135deg, var(--red-primary), var(--red-dark)); color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem; box-shadow: 0 6px 18px rgba(230,0,46,0.3);">
+              <i class="fa-solid fa-hospital"></i>
+            </div>
+
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.65rem;">
+                <h1 style="font-family: var(--font-main); font-size: 1.6rem; font-weight: 800; color: var(--navy-dark);">Government General Hospital</h1>
+                <span class="verified-org-chip">
+                  <i class="fa-solid fa-circle-check"></i> VERIFIED ORGANIZATION
+                </span>
+              </div>
+              <div style="font-size: 0.9rem; color: var(--slate-muted); margin-top: 0.2rem;">
+                Organization ID: <strong>LL-GH-2026-001</strong> • Government Healthcare & Regional Trauma Facility
+              </div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <div class="form-group-item">
+              <label class="form-label-txt">Organization Type</label>
+              <input type="text" class="form-control-input" value="Government Hospital" readonly>
+            </div>
+
+            <div class="form-group-item">
+              <label class="form-label-txt">Certification / Registration ID</label>
+              <input type="text" class="form-control-input" value="LL-GH-2026-001" readonly>
+            </div>
+
+            <div class="form-group-item" style="grid-column: span 2;">
+              <label class="form-label-txt">Hospital Address</label>
+              <input type="text" class="form-control-input" value="Government Hospital Road, Railway Station Area, Hosur, Tamil Nadu 635109" readonly>
+            </div>
+
+            <div class="form-group-item">
+              <label class="form-label-txt">Contact Email</label>
+              <input type="email" class="form-control-input" value="dispatch@ggh-hosur.tn.gov.in">
+            </div>
+
+            <div class="form-group-item">
+              <label class="form-label-txt">Main Desk Phone</label>
+              <input type="text" class="form-control-input" value="+91 4344 220000">
+            </div>
+
+            <div class="form-group-item">
+              <label class="form-label-txt">Emergency 24/7 Hotline</label>
+              <input type="text" class="form-control-input" value="+91 98430 12345">
+            </div>
+
+            <div class="form-group-item">
+              <label class="form-label-txt">Operating Hours</label>
+              <input type="text" class="form-control-input" value="24 Hours / 7 Days a week" readonly>
+            </div>
+          </div>
+
+          <button onclick="alert('Organization profile settings saved.')" class="btn-primary-red" style="margin-top: 1rem;">
+            <i class="fa-solid fa-floppy-disk"></i> Save Profile Details
+          </button>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 9. HELP & SUPPORT VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-help-support" class="view-pane">
+        <div class="card-white" style="max-width: 800px;">
+          <h2 style="font-family: var(--font-main); font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">Organization Help & Support</h2>
+          <p style="font-size: 0.92rem; color: var(--slate-muted); margin-bottom: 1.5rem;">Need assistance with emergency blood dispatch or platform operations?</p>
+
+          <div style="background: var(--blue-soft); border: 1px solid #BFDBFE; border-radius: 18px; padding: 1.25rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 1.75rem;">
+            <div style="width: 46px; height: 46px; border-radius: 50%; background: var(--blue-accent); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;">
+              <i class="fa-solid fa-headset"></i>
+            </div>
+            <div>
+              <div style="font-family: var(--font-main); font-weight: 800; font-size: 1rem; color: var(--navy-dark);">24/7 Dedicated Emergency Hotline</div>
+              <div style="font-size: 0.9rem; color: #1E40AF; font-weight: 700; margin-top: 0.2rem;">Toll Free: 1800-LIFELINK-GOVT (+91 1800-5433-5465)</div>
+            </div>
+          </div>
+
+          <h3 style="font-family: var(--font-main); font-size: 1.15rem; font-weight: 800; margin-bottom: 1rem;">Frequently Asked Questions</h3>
+
+          <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); border-radius: 14px; padding: 1rem 1.15rem;">
+              <div style="font-family: var(--font-main); font-weight: 700; font-size: 0.95rem; color: var(--navy-dark); margin-bottom: 0.35rem;">How does Round Escalation work?</div>
+              <div style="font-size: 0.86rem; color: var(--slate-muted); line-height: 1.4;">Notifications start in Round 1 (0–3 km). If required confirmations are not met within the evaluation window, the system automatically expands to Round 2 (3–5 km) and Round 3 (5–8 km).</div>
+            </div>
+
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); border-radius: 14px; padding: 1rem 1.15rem;">
+              <div style="font-family: var(--font-main); font-weight: 700; font-size: 0.95rem; color: var(--navy-dark); margin-bottom: 0.35rem;">How is donor privacy protected?</div>
+              <div style="font-size: 0.86rem; color: var(--slate-muted); line-height: 1.4;">Authorized organizations see approximate distances and masked contact details (+91 ******4321). Direct coordination is routed through system tokens.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- CONFIRMATION MODAL BEFORE REQUEST SUBMISSION -->
+  <div class="modal-overlay" id="confirmRequestModal">
+    <div class="modal-card-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--slate-border); padding-bottom: 0.85rem; margin-bottom: 1.25rem;">
+        <h3 style="font-family: var(--font-main); font-size: 1.3rem; font-weight: 800; color: var(--navy-dark);">
+          <i class="fa-solid fa-triangle-exclamation" style="color: var(--red-primary);"></i> Confirm Emergency Request?
+        </h3>
+        <button onclick="closeConfirmModal()" style="background: none; border: none; font-size: 1.4rem; color: var(--slate-muted); cursor: pointer;">&times;</button>
+      </div>
+
+      <p style="font-size: 0.9rem; color: var(--slate-muted); margin-bottom: 1.25rem;">
+        Are you sure you want to broadcast this emergency request? This will immediately trigger Round 1 notifications to compatible donors in Hosur.
+      </p>
+
+      <div style="background: #F8FAFC; border: 1px solid var(--slate-border); border-radius: 16px; padding: 1rem 1.15rem; margin-bottom: 1.5rem; font-size: 0.88rem; line-height: 1.6;">
+        <div>Blood Group: <strong style="color: var(--red-primary);" id="modalSummaryGroup">O+</strong></div>
+        <div>Units Required: <strong id="modalSummaryUnits">3 Units</strong></div>
+        <div>Urgency Level: <strong id="modalSummaryUrgency">CRITICAL</strong></div>
+        <div>Search Radius: <strong id="modalSummaryRadius">3 km (Round 1)</strong></div>
+        <div>Facility: <strong>Government General Hospital, Hosur</strong></div>
+      </div>
+
+      <div style="display: flex; gap: 0.85rem; justify-content: flex-end;">
+        <button onclick="closeConfirmModal()" class="btn-secondary-outline">Cancel</button>
+        <button onclick="executeRequestBroadcast()" class="btn-primary-red">
+          <i class="fa-solid fa-circle-check"></i> Confirm & Dispatch
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- REQUEST SUCCESS MODAL WITH MATCHING ENGINE ANIMATION -->
+  <div class="modal-overlay" id="successRequestModal">
+    <div class="modal-card-box" style="text-align: center; max-width: 540px;">
+      <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--green-soft); border: 2px solid #A7F3D0; color: var(--green-success); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1.25rem auto;">
+        <i class="fa-solid fa-check"></i>
+      </div>
+
+      <h2 style="font-family: var(--font-main); font-size: 1.6rem; font-weight: 800; color: var(--navy-dark); margin-bottom: 0.4rem;">
+        Emergency Request Created
+      </h2>
+      <div style="font-family: var(--font-main); font-weight: 800; font-size: 0.8rem; color: var(--blue-accent); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1.25rem;">
+        MATCHING ENGINE ACTIVATED
+      </div>
+
+      <div style="background: #F8FAFC; border: 1px solid var(--slate-border); border-radius: 16px; padding: 1rem 1.25rem; text-align: left; font-size: 0.88rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
+        <div style="color: #047857; font-weight: 700;"><i class="fa-solid fa-circle-check"></i> Organization verified: Government General Hospital</div>
+        <div style="color: #047857; font-weight: 700;"><i class="fa-solid fa-circle-check"></i> Blood group requirement recorded: <span id="succGroup">O+</span> (<span id="succUnits">3</span> Units)</div>
+        <div style="color: #047857; font-weight: 700;"><i class="fa-solid fa-circle-check"></i> Compatible donors identified: 30 donors matched in Hosur</div>
+        <div style="color: #047857; font-weight: 700;"><i class="fa-solid fa-circle-check"></i> Round 1 notification initiated: 12 donors notified (0–3 km)</div>
+      </div>
+
+      <!-- Animated Process Stepper -->
+      <div style="display: flex; justify-content: space-between; align-items: center; font-family: var(--font-main); font-weight: 800; font-size: 0.72rem; color: var(--slate-muted); background: #FFF5F7; border: 1px solid #FFE0E6; border-radius: 9999px; padding: 0.5rem 1rem; margin-bottom: 1.5rem;">
+        <span style="color: var(--red-primary);">REQUEST</span> →
+        <span style="color: var(--red-primary);">MATCH</span> →
+        <span style="color: var(--red-primary);">NOTIFY</span> →
+        <span>RESPONSES</span> →
+        <span>FULFILL</span>
+      </div>
+
+      <button onclick="goToFulfillmentFromSuccess()" class="btn-primary-red" style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 0.95rem;">
+        <i class="fa-solid fa-route"></i> VIEW LIVE DISPATCH
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // State management
+    let activeView = 'dashboard';
+    let confirmedCountState = 2;
+    let requiredCountState = 3;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Ensure user preset
+      const user = MockAuth.getCurrentUser();
+      if (user && user.role !== 'Organization') {
+        MockAuth.quickDemoLogin('Organization');
+      }
+
+      // Check URL hash
+      const hash = window.location.hash.replace('#', '');
+      if (hash && document.getElementById(`view-${hash}`)) {
+        switchView(hash);
+      } else {
+        switchView('dashboard');
+      }
+
+      // Set default datetime input
+      const reqTimeInput = document.getElementById('reqTime');
+      if (reqTimeInput) {
+        const now = new Date();
+        now.setHours(now.getHours() + 2);
+        reqTimeInput.value = now.toISOString().slice(0, 16);
+      }
+
+      renderActiveRequestsTable();
+      renderDonorResponsesGrid();
+      renderFulfillmentTimeline();
+    });
+
+    function switchView(viewId) {
+      document.querySelectorAll('.view-pane').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item-btn').forEach(el => el.classList.remove('active'));
+
+      const targetPane = document.getElementById(`view-${viewId}`);
+      const targetNav = document.getElementById(`nav-${viewId}`);
+
+      if (targetPane) targetPane.classList.add('active');
+      if (targetNav) targetNav.classList.add('active');
+
+      activeView = viewId;
+      window.location.hash = viewId;
+
+      // Update Top Title
+      const titleMap = {
+        'dashboard': 'Organization Dashboard',
+        'create-request': 'Create Emergency Blood Request',
+        'active-requests': 'Active Emergency Requests',
+        'donor-responses': 'Donor Response Monitor',
+        'fulfillment-tracking': 'Fulfillment Lifecycle Tracking',
+        'request-history': 'Request Audit History',
+        'notifications': 'Notification Center',
+        'org-profile': 'Facility Profile & Verification',
+        'help-support': 'Help & Support'
+      };
+      const titleEl = document.getElementById('topPageTitle');
+      if (titleEl) titleEl.textContent = titleMap[viewId] || 'Organization Portal';
+
+      // Close mobile sidebar if open
+      const sidebar = document.getElementById('sidebarNav');
+      if (sidebar) sidebar.classList.remove('open');
+    }
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebarNav');
+      if (sidebar) sidebar.classList.toggle('open');
+    }
+
+    function selectBloodGroup(btn, group) {
+      document.querySelectorAll('.bg-select-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('reqBloodGroup').value = group;
+    }
+
+    // Modal Handlers
+    function handleRequestSubmit(e) {
+      e.preventDefault();
+      const group = document.getElementById('reqBloodGroup').value;
+      const units = document.getElementById('reqUnits').value;
+      const urgency = document.getElementById('reqUrgency').value;
+      const radius = document.getElementById('reqRadius').value;
+
+      document.getElementById('modalSummaryGroup').textContent = group;
+      document.getElementById('modalSummaryUnits').textContent = `${units} Units`;
+      document.getElementById('modalSummaryUrgency').textContent = urgency;
+      document.getElementById('modalSummaryRadius').textContent = `${radius} km (Round 1)`;
+
+      document.getElementById('confirmRequestModal').style.display = 'flex';
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('confirmRequestModal').style.display = 'none';
+    }
+
+    function executeRequestBroadcast() {
+      closeConfirmModal();
+
+      const group = document.getElementById('reqBloodGroup').value;
+      const units = document.getElementById('reqUnits').value;
+
+      document.getElementById('succGroup').textContent = group;
+      document.getElementById('succUnits').textContent = units;
+
+      document.getElementById('successRequestModal').style.display = 'flex';
+    }
+
+    function goToFulfillmentFromSuccess() {
+      document.getElementById('successRequestModal').style.display = 'none';
+      switchView('fulfillment-tracking');
+    }
+
+    // RENDER ACTIVE REQUESTS TABLE
+    function renderActiveRequestsTable() {
+      const tbody = document.getElementById('activeRequestsTableBody');
+      if (!tbody) return;
+
+      const requests = [
+        { id: 'REQ-1042', group: 'O+', units: 3, urgency: 'CRITICAL', round: 'Round 2 (3–5 km)', notified: 30, confirmed: '2 / 3', status: 'ACTIVE', time: '10:42 AM' },
+        { id: 'REQ-1041', group: 'B+', units: 2, urgency: 'HIGH', round: 'Round 1 (0–3 km)', notified: 18, confirmed: '2 / 2', status: 'FULFILLED', time: '09:15 AM' },
+        { id: 'REQ-1039', group: 'AB+', units: 1, urgency: 'NORMAL', round: 'Round 1 (0–3 km)', notified: 12, confirmed: '1 / 1', status: 'FULFILLED', time: 'Yesterday' }
+      ];
+
+      tbody.innerHTML = requests.map(r => `
+        <tr>
+          <td><strong>${r.id}</strong></td>
+          <td><span class="badge-status status-critical">${r.group}</span></td>
+          <td>${r.units} Units</td>
+          <td><span class="badge-status ${r.urgency === 'CRITICAL' ? 'status-critical' : 'status-active'}">${r.urgency}</span></td>
+          <td><strong style="color: var(--blue-accent);">${r.round}</strong></td>
+          <td>${r.notified} Donors</td>
+          <td><strong>${r.confirmed}</strong></td>
+          <td><span class="badge-status ${r.status === 'ACTIVE' ? 'status-active' : 'status-fulfilled'}">${r.status}</span></td>
+          <td>${r.time}</td>
+          <td>
+            <button onclick="switchView('fulfillment-tracking')" class="btn-primary-red" style="padding: 0.25rem 0.65rem; font-size: 0.75rem;">
+              VIEW
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // RENDER DONOR RESPONSES GRID
+    function renderDonorResponsesGrid() {
+      const container = document.getElementById('donorResponsesListGrid');
+      if (!container) return;
+
+      const donors = [
+        { id: 'LL-D-1024', group: 'O+', distance: '~1.8 km', status: 'CONFIRMED', mobile: '+91 ******4321', time: '10:46 AM' },
+        { id: 'LL-D-1028', group: 'O+', distance: '~2.7 km', status: 'CONFIRMED', mobile: '+91 ******8890', time: '10:52 AM' },
+        { id: 'LL-D-1031', group: 'O+', distance: '~3.4 km', status: 'RESPONDED — EN ROUTE', mobile: '+91 ******1123', time: '10:55 AM' },
+        { id: 'LL-D-1035', group: 'O+', distance: '~4.2 km', status: 'DECLINED (Cooldown)', mobile: '+91 ******9012', time: '10:48 AM' }
+      ];
+
+      container.innerHTML = donors.map(d => `
+        <div style="background: #FFFFFF; border: 1px solid var(--slate-border); border-radius: 18px; padding: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+            <div>
+              <div style="font-family: var(--font-main); font-weight: 800; font-size: 1.05rem; color: var(--navy-dark);">${d.id}</div>
+              <div style="font-size: 0.8rem; color: var(--slate-muted);">Blood Group: <strong style="color: var(--red-primary);">${d.group}</strong> • Dist: <strong>${d.distance}</strong></div>
+            </div>
+            <span class="badge-status ${d.status.includes('CONFIRMED') ? 'status-fulfilled' : d.status.includes('RESPONDED') ? 'status-active' : 'status-expired'}">${d.status}</span>
+          </div>
+
+          <div style="font-size: 0.82rem; color: var(--slate-muted); background: #F8FAFC; padding: 0.6rem 0.85rem; border-radius: 12px; margin-bottom: 1rem;">
+            📱 Mobile: <strong>${d.mobile}</strong> (Masked for privacy)
+          </div>
+
+          <div style="display: flex; gap: 0.5rem;">
+            <button onclick="alert('Contacting donor through proxy call line...')" class="btn-secondary-outline" style="flex: 1; padding: 0.4rem; font-size: 0.78rem;">
+              <i class="fa-solid fa-phone"></i> Contact Proxy
+            </button>
+            <button onclick="alert('Donor response marked as confirmed.')" class="btn-primary-red" style="flex: 1; padding: 0.4rem; font-size: 0.78rem;">
+              <i class="fa-solid fa-check"></i> Confirm Visit
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // RENDER FULFILLMENT TIMELINE
+    function renderFulfillmentTimeline() {
+      const box = document.getElementById('fulfillmentTimelineBox');
+      if (!box) return;
+
+      const items = [
+        { time: '10:53 AM', text: '2 donors confirmed commitment for REQ-1042', tag: 'CONFIRMED' },
+        { time: '10:49 AM', text: 'Round 2 (3–5 km) activated automatically (Round 1 target unmet)', tag: 'ROUND 2' },
+        { time: '10:48 AM', text: 'Round 1 evaluated: 12 notified, 2 responses, 1 confirmed', tag: 'EVALUATED' },
+        { time: '10:44 AM', text: 'Round 1 (0–3 km) notification wave dispatched', tag: 'ROUND 1' },
+        { time: '10:43 AM', text: 'Smart Matching Engine identified 30 compatible donors in Hosur', tag: 'MATCHED' },
+        { time: '10:42 AM', text: 'Emergency request REQ-1042 created by Government General Hospital', tag: 'CREATED' }
+      ];
+
+      box.innerHTML = items.map(i => `
+        <div style="position: relative; padding-bottom: 1.25rem;">
+          <div style="position: absolute; left: -2.3rem; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: var(--red-primary); border: 3px solid #FFEBEF;"></div>
+          <div style="font-family: var(--font-main); font-size: 0.78rem; font-weight: 800; color: var(--slate-muted);">${i.time}</div>
+          <div style="font-family: var(--font-main); font-weight: 700; font-size: 0.92rem; color: var(--navy-dark); margin-top: 0.15rem;">${i.text}</div>
+        </div>
+      `).join('');
+    }
+
+    function simulateDonorConfirmation() {
+      if (confirmedCountState < requiredCountState) {
+        confirmedCountState++;
+        document.getElementById('trackConfirmedCount').textContent = confirmedCountState;
+        document.getElementById('trackFulfilledRatio').textContent = `${confirmedCountState} / ${requiredCountState}`;
+        document.getElementById('statConfirmedDonors').textContent = 8 + (confirmedCountState - 2);
+
+        alert(`✓ Additional donor confirmation received!\n\nStatus updated to ${confirmedCountState} / ${requiredCountState} Fulfilled.`);
+
+        if (confirmedCountState === requiredCountState) {
+          alert('🎉 REQUEST FULFILLED! Target confirmation count reached. Dispatch notification wave stopped.');
+        }
+      } else {
+        alert('Request REQ-1042 is already 100% fulfilled!');
+      }
+    }
+  </script>
+</body>
+</html>

@@ -9,6 +9,16 @@
   <script src="js/mockData.js" defer></script>
   <script src="js/mockAuth.js" defer></script>
   <script src="js/app.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof MockAuth !== 'undefined') {
+        const user = MockAuth.getCurrentUser();
+        if (user && user.role === 'Donor') {
+          window.location.href = 'donor-dashboard.html';
+        }
+      }
+    });
+  </script>
 </head>
 <body>
 

@@ -3,324 +3,3422 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Research & Verification Portal – LIFE LINK</title>
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/components.css">
-  <script src="js/services/mockData.js" defer></script>
-  <script src="js/services/mockAuth.js" defer></script>
-  <script src="js/services/fatigueService.js" defer></script>
-  <script src="js/services/matchingService.js" defer></script>
-  <script src="js/services/escalationEngine.js" defer></script>
-  <script src="js/services/auditLogger.js" defer></script>
-  <script src="js/services/analyticsService.js" defer></script>
-  <script src="js/services/stockService.js" defer></script>
-  <script src="js/app.js" defer></script>
+  <title>Admin Dashboard – LIFE LINK Platform Governance Console</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans, Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script src="js/mockData.js" defer></script>
+  <script src="js/mockAuth.js" defer></script>
+
   <style>
-    .admin-layout { display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 60px); }
-    .admin-sidebar { background: var(--navy-dark); color: #ffffff; padding: 1.5rem 1rem; border-right: 1px solid rgba(255,255,255,0.08); }
-    .admin-nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 1rem; color: rgba(255,255,255,0.7); border-radius: var(--radius-sm); font-size: 0.88rem; font-weight: 600; margin-bottom: 0.35rem; cursor: pointer; }
-    .admin-nav-item:hover, .admin-nav-item.active { background: rgba(255,255,255,0.12); color: #ffffff; }
-    .tab-section { display: none; }
-    .tab-section.active { display: block; }
-    @media (max-width: 900px) { .admin-layout { grid-template-columns: 1fr; } .admin-sidebar { display: none; } }
+    :root {
+      --red-primary: #E6002E;
+      --red-dark: #B90022;
+      --red-soft: #FFF0F3;
+      --navy-dark: #0F172A;
+      --slate-body: #334155;
+      --slate-muted: #64748B;
+      --slate-border: #E2E8F0;
+      --bg-canvas: #F8FAFC;
+      --green-success: #10B981;
+      --green-soft: #ECFDF5;
+      --blue-accent: #2563EB;
+      --blue-soft: #EFF6FF;
+      --amber-warn: #F59E0B;
+      --amber-soft: #FFFBEB;
+      --font-main: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      --font-body: 'Inter', -apple-system, sans-serif;
+      --sidebar-width: 260px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--navy-dark);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+      font-size: 13.5px;
+      line-height: 1.45;
+    }
+
+    /* FIXED 3-TIER SIDEBAR NAVIGATION */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: #FFFFFF;
+      border-right: 1px solid var(--slate-border);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      min-height: 100vh;
+      max-height: 100vh;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: 1rem 1.15rem;
+      border-bottom: 1px solid var(--slate-border);
+      flex-shrink: 0;
+    }
+
+    .brand-logo-card {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+    }
+
+    .brand-logo-icon {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, var(--navy-dark) 0%, #1E293B 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.05rem;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.18);
+    }
+
+    .brand-text-title {
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+      color: var(--navy-dark);
+      line-height: 1.1;
+    }
+
+    .brand-text-title span {
+      color: var(--red-primary);
+    }
+
+    .brand-portal-tag {
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: var(--red-primary);
+      background: var(--red-soft);
+      padding: 0.12rem 0.4rem;
+      border-radius: 9999px;
+      display: inline-block;
+      margin-top: 0.15rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* Middle Scrollable Menu */
+    .sidebar-menu {
+      padding: 0.6rem 0.5rem;
+      list-style: none;
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.12rem;
+    }
+
+    .sidebar-menu::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .sidebar-menu::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 4px;
+    }
+
+    .nav-section-label {
+      font-family: var(--font-main);
+      font-size: 11px;
+      font-weight: 600;
+      color: #94A3B8;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 1.15rem 0.75rem 0.35rem 0.75rem;
+    }
+
+    .nav-item-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 40px;
+      padding: 0.45rem 0.75rem;
+      border-radius: 8px;
+      color: #475569;
+      text-decoration: none;
+      font-family: var(--font-main);
+      font-weight: 500;
+      font-size: 14px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-left: 3px solid transparent;
+      transition: all 0.15s ease;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+
+    .nav-item-btn > span {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .nav-item-btn i.nav-icon {
+      font-size: 17px;
+      width: 20px;
+      text-align: center;
+      color: #64748B;
+      transition: color 0.15s ease;
+    }
+
+    .nav-item-btn:hover {
+      background: #F8FAFC;
+      color: #1E293B;
+    }
+
+    .nav-item-btn:hover i.nav-icon {
+      color: #475569;
+    }
+
+    .nav-item-btn.active {
+      background: #FFF0F3;
+      color: #E4002B;
+      border-left: 3px solid #E4002B;
+      font-weight: 600;
+      border-radius: 8px;
+    }
+
+    .nav-item-btn.active i.nav-icon {
+      color: #E4002B !important;
+    }
+
+    .nav-badge-pill {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 0.15rem 0.55rem;
+      border-radius: 9999px;
+      background: #E4002B;
+      color: #FFFFFF;
+      margin-left: auto;
+    }
+
+    .nav-badge-pill.amber {
+      background: #FEF3C7;
+      color: #D97706;
+    }
+    .nav-badge-pill.blue {
+      background: #EFF6FF;
+      color: #2563EB;
+    }
+
+    /* COLLAPSIBLE GROUP NAVIGATION STYLES */
+    .nav-group-container {
+      margin-bottom: 0.12rem;
+    }
+
+    .nav-parent-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 40px;
+      padding: 0.45rem 0.75rem;
+      border-radius: 8px;
+      color: #334155;
+      font-family: var(--font-main);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+
+    .nav-parent-btn > span {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .nav-parent-btn i.nav-icon {
+      font-size: 17px;
+      width: 20px;
+      text-align: center;
+      color: #64748B;
+      transition: color 0.15s ease;
+    }
+
+    .nav-parent-btn:hover {
+      background: #F8FAFC;
+      color: #1E293B;
+    }
+
+    .nav-parent-btn:hover i.nav-icon {
+      color: #475569;
+    }
+
+    .nav-parent-btn .chevron-icon {
+      font-size: 0.72rem;
+      color: #64748B;
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .nav-parent-btn.expanded .chevron-icon {
+      transform: rotate(90deg);
+      color: #334155;
+    }
+
+    /* Submenu with Tree Guide Line */
+    .nav-sub-menu {
+      list-style: none;
+      padding-left: 0.75rem;
+      border-left: 1px solid #E2E8F0;
+      margin-left: 1.25rem;
+      margin-top: 0.15rem;
+      margin-bottom: 0.25rem;
+      display: none;
+      flex-direction: column;
+      gap: 0.12rem;
+    }
+
+    .nav-sub-menu.open {
+      display: flex;
+    }
+
+    .nav-child-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 38px;
+      padding: 0.4rem 0.65rem;
+      border-radius: 8px;
+      color: #475569;
+      text-decoration: none;
+      font-family: var(--font-main);
+      font-weight: 500;
+      font-size: 13.5px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-left: 3px solid transparent;
+      transition: all 0.15s ease;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+
+    .nav-child-btn > span {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .nav-child-btn i.child-icon {
+      font-size: 15px;
+      width: 18px;
+      text-align: center;
+      color: #64748B;
+      transition: color 0.15s ease;
+    }
+
+    .nav-child-btn:hover {
+      background: #F8FAFC;
+      color: #1E293B;
+    }
+
+    .nav-child-btn:hover i.child-icon {
+      color: #475569;
+    }
+
+    .nav-child-btn.active {
+      background: #FFF0F3;
+      color: #E4002B;
+      border-left: 3px solid #E4002B;
+      font-weight: 600;
+      border-radius: 8px;
+    }
+
+    .nav-child-btn.active i.child-icon {
+      color: #E4002B;
+    }
+
+    /* Bottom Account Card */
+    .sidebar-footer {
+      padding: 0.65rem;
+      border-top: 1px solid #E2E8F0;
+      background: #FFFFFF;
+      flex-shrink: 0;
+    }
+
+    .admin-profile-card-mini {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 0.65rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+    }
+
+    .admin-mini-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .admin-avatar-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      background: #0F172A;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.88rem;
+      flex-shrink: 0;
+    }
+
+    .admin-mini-name {
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 13.5px;
+      color: #0F172A;
+      line-height: 1.2;
+    }
+
+    .btn-logout-sidebar {
+      width: 100%;
+      padding: 0.4rem;
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 6px;
+      color: #64748B;
+      font-family: var(--font-main);
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      transition: all 0.15s ease;
+    }
+
+    .btn-logout-sidebar:hover {
+      background: #F1F5F9;
+      border-color: #CBD5E1;
+      color: #334155;
+    }
+
+    /* MAIN WRAPPER */
+    .main-wrapper {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* TOP HEADER BAR (Compact 60px) */
+    .top-header-bar {
+      height: 60px;
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--slate-border);
+      padding: 0 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+    }
+
+    .header-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .page-title-text {
+      font-family: var(--font-main);
+      font-size: 1.15rem; /* ~18px */
+      font-weight: 700;
+      color: var(--navy-dark);
+      letter-spacing: -0.01em;
+    }
+
+    .verified-org-chip {
+      background: var(--blue-soft);
+      border: 1px solid #BFDBFE;
+      color: #1E40AF;
+      font-family: var(--font-main);
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.18rem 0.5rem;
+      border-radius: 9999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .header-right-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .search-box-header {
+      position: relative;
+      width: 210px;
+    }
+
+    .search-box-header input {
+      width: 100%;
+      padding: 0.4rem 0.75rem 0.4rem 1.9rem;
+      background: #F8FAFC;
+      border: 1px solid var(--slate-border);
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-family: var(--font-body);
+      outline: none;
+      transition: all 0.15s ease;
+    }
+
+    .search-box-header input:focus {
+      background: #FFFFFF;
+      border-color: var(--navy-dark);
+      box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.06);
+    }
+
+    .search-box-header i {
+      position: absolute;
+      left: 0.7rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--slate-muted);
+      font-size: 0.78rem;
+    }
+
+    .btn-create-org-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.42rem 0.95rem;
+      background: linear-gradient(135deg, var(--red-primary) 0%, var(--red-dark) 100%);
+      color: white;
+      border: none;
+      border-radius: 9999px;
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.78rem;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(230, 0, 46, 0.2);
+      transition: all 0.15s ease;
+    }
+
+    .btn-create-org-cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 14px rgba(230, 0, 46, 0.3);
+    }
+
+    /* CONTENT AREA */
+    .content-area {
+      padding: 1.5rem 1.75rem;
+      flex: 1;
+    }
+
+    .view-pane {
+      display: none;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .view-pane.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* CARDS & COMPACT PANELS */
+    .card-white {
+      background: #FFFFFF;
+      border-radius: 12px;
+      border: 1px solid var(--slate-border);
+      box-shadow: 0 1px 6px rgba(15, 23, 42, 0.02);
+      padding: 1.15rem 1.35rem;
+      margin-bottom: 1.25rem;
+    }
+
+    /* 4-GRID COMPACT STATS */
+    .stats-4grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .stat-card-item {
+      background: #FFFFFF;
+      border-radius: 12px;
+      border: 1px solid var(--slate-border);
+      padding: 0.9rem 1.1rem;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.02);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+
+    .stat-card-item:hover {
+      border-color: #CBD5E1;
+      transform: translateY(-1px);
+    }
+
+    .stat-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4rem;
+    }
+
+    .stat-icon-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+
+    .icon-blue { background: var(--blue-soft); color: var(--blue-accent); }
+    .icon-green { background: var(--green-soft); color: var(--green-success); }
+    .icon-amber { background: #FEF3C7; color: var(--amber-warn); }
+    .icon-red { background: var(--red-soft); color: var(--red-primary); }
+
+    .stat-counter-number {
+      font-family: var(--font-main);
+      font-size: 1.5rem; /* ~24px */
+      font-weight: 700;
+      color: var(--navy-dark);
+      line-height: 1.1;
+      margin-bottom: 0.2rem;
+    }
+
+    .stat-label-text {
+      font-family: var(--font-main);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--slate-muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    /* RESPONSIVE 2-COL LAYOUTS */
+    .grid-2col-75 {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .grid-2col-equal {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    /* BADGES */
+    .badge-status {
+      padding: 0.18rem 0.5rem;
+      border-radius: 9999px;
+      font-family: var(--font-main);
+      font-size: 0.68rem;
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    .status-verified { background: var(--green-soft); color: var(--green-success); }
+    .status-pending { background: #FEF3C7; color: #D97706; }
+    .status-suspended { background: var(--red-soft); color: var(--red-primary); }
+    .status-rejected { background: #F1F5F9; color: var(--slate-muted); }
+
+    /* TABLES */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .custom-org-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.83rem;
+    }
+
+    .custom-org-table th {
+      background: #F8FAFC;
+      color: var(--slate-muted);
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.65rem 0.85rem;
+      text-align: left;
+      border-bottom: 1px solid var(--slate-border);
+    }
+
+    .custom-org-table td {
+      padding: 0.75rem 0.85rem;
+      border-bottom: 1px solid var(--slate-border);
+      color: var(--navy-dark);
+    }
+
+    .custom-org-table tr:hover td {
+      background: #F8FAFC;
+    }
+
+    /* BUTTONS */
+    .btn-action-sm {
+      padding: 0.3rem 0.65rem;
+      border-radius: 6px;
+      font-family: var(--font-main);
+      font-weight: 600;
+      font-size: 0.75rem;
+      cursor: pointer;
+      border: 1px solid var(--slate-border);
+      background: #FFFFFF;
+      color: var(--navy-dark);
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .btn-action-sm:hover {
+      background: #F8FAFC;
+      border-color: var(--slate-muted);
+    }
+
+    .btn-action-primary {
+      background: var(--navy-dark);
+      color: white;
+      border-color: var(--navy-dark);
+    }
+
+    .btn-action-primary:hover {
+      background: #1E293B;
+    }
+
+    .btn-action-red {
+      background: var(--red-primary);
+      color: white;
+      border-color: var(--red-primary);
+    }
+
+    .btn-action-red:hover {
+      background: var(--red-dark);
+    }
+
+    /* MODALS */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(2px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+    }
+
+    .modal-card-box {
+      background: #FFFFFF;
+      border-radius: 16px;
+      max-width: 500px;
+      width: 100%;
+      padding: 1.5rem;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.15);
+      animation: modalPop 0.18s ease-out;
+    }
+
+    @keyframes modalPop {
+      from { transform: scale(0.97); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* FORMS */
+    .form-group-item { margin-bottom: 0.95rem; }
+    .form-label-txt { display: block; font-family: var(--font-main); font-size: 0.78rem; font-weight: 600; color: var(--navy-dark); margin-bottom: 0.3rem; }
+    .form-control-input, .form-control-select, .form-control-textarea {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      background: #F8FAFC;
+      border: 1px solid var(--slate-border);
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-size: 0.84rem;
+      color: var(--navy-dark);
+      outline: none;
+      transition: all 0.15s ease;
+    }
+    .form-control-input:focus, .form-control-select:focus, .form-control-textarea:focus {
+      background: #FFFFFF;
+      border-color: var(--navy-dark);
+      box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.06);
+    }
   </style>
 </head>
 <body>
 
-  <!-- Site Navigation -->
-  <header class="site-header">
-    <div class="nav-wrapper">
-      <a href="admin-dashboard.html" class="brand-logo">
-        <div class="brand-mark">✚</div>
-        <span>LIFE LINK</span>
+  <!-- FIXED 3-TIER SIDEBAR NAVIGATION -->
+  <aside class="sidebar" id="sidebarNav">
+    <div class="sidebar-header">
+      <a href="admin-dashboard.html" class="brand-logo-card">
+        <div class="brand-logo-icon">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div>
+          <div class="brand-text-title">LIFE <span>LINK</span></div>
+          <span class="brand-portal-tag">Admin Portal</span>
+        </div>
       </a>
-
-      <ul class="nav-menu" id="roleNavMenu">
-        <!-- Rendered dynamically -->
-      </ul>
-
-      <div class="nav-actions" id="navAuthArea"></div>
     </div>
-  </header>
 
-  <div class="admin-layout">
-    <!-- Admin Sidebar Navigation -->
-    <aside class="admin-sidebar">
-      <div style="font-size: 0.72rem; font-weight: 700; color: rgba(255,255,255,0.4); text-transform: uppercase; margin-bottom: 1rem; padding-left: 0.5rem;">
-        RESEARCH & OVERVIEW
-      </div>
+    <ul class="sidebar-menu">
+      <!-- 1. MAIN -->
+      <li class="nav-section-label">MAIN</li>
+      <li>
+        <button onclick="switchView('dashboard')" class="nav-item-btn active" id="nav-dashboard">
+          <span><i class="fa-solid fa-chart-pie nav-icon"></i> Dashboard</span>
+        </button>
+      </li>
 
-      <div class="admin-nav-item active" onclick="switchAdminView('overview', this)">📊 Overview</div>
-      <div class="admin-nav-item" onclick="switchAdminView('ieeeMetrics', this)">📈 IEEE Research Metrics</div>
-      <div class="admin-nav-item" onclick="switchAdminView('coverageMap', this)">🗺️ Emergency Coverage Map</div>
-      <div class="admin-nav-item" onclick="switchAdminView('forecasting', this)">🔮 Demand Forecasting</div>
-      <div class="admin-nav-item" onclick="switchAdminView('organizations', this)">🏢 Organizations</div>
-      <div class="admin-nav-item" onclick="switchAdminView('auditLogs', this)">📜 Emergency Audit Logs</div>
-    </aside>
+      <!-- 2. OPERATIONS -->
+      <li class="nav-section-label">OPERATIONS</li>
+      <li class="nav-group-container">
+        <button onclick="toggleNavGroup('operations')" class="nav-parent-btn" id="parent-operations">
+          <span><i class="fa-solid fa-tower-broadcast nav-icon"></i> Emergency Management</span>
+          <i class="fa-solid fa-chevron-right chevron-icon" id="chevron-operations"></i>
+        </button>
+        <ul class="nav-sub-menu" id="submenu-operations">
+          <li>
+            <button onclick="switchView('live-dispatch')" class="nav-child-btn" id="nav-live-dispatch">
+              <span><i class="fa-solid fa-satellite-dish child-icon"></i> Live Dispatch</span>
+              <span class="nav-badge-pill">7 Active</span>
+            </button>
+          </li>
+          <li>
+            <button onclick="switchView('emergency-requests')" class="nav-child-btn" id="nav-emergency-requests">
+              <span><i class="fa-solid fa-truck-medical child-icon"></i> Emergency Requests</span>
+            </button>
+          </li>
+          <li>
+            <button onclick="switchView('fulfillment-tracking')" class="nav-child-btn" id="nav-fulfillment-tracking">
+              <span><i class="fa-solid fa-bullseye child-icon"></i> Fulfillment Tracking</span>
+            </button>
+          </li>
+          <li>
+            <button onclick="switchView('request-history')" class="nav-child-btn" id="nav-request-history">
+              <span><i class="fa-solid fa-clock-rotate-left child-icon"></i> Request History</span>
+            </button>
+          </li>
+        </ul>
+      </li>
 
-    <!-- Main Admin Workspace -->
-    <main style="padding: 2rem; background: var(--bg-soft-gray);">
-      <div style="margin-bottom: 2rem;">
-        <h1 style="font-size: 1.8rem;" id="tabTitleHeader">System Overview</h1>
-        <p style="color: var(--navy-muted); font-size: 0.9rem;">Platform verification applications, emergency dispatch metrics, and experimental logs</p>
-      </div>
+      <!-- 3. ORGANIZATIONS -->
+      <li class="nav-section-label">ORGANIZATIONS</li>
+      <li class="nav-group-container">
+        <button onclick="toggleNavGroup('organizations')" class="nav-parent-btn" id="parent-organizations">
+          <span><i class="fa-solid fa-building-shield nav-icon"></i> Organization Management</span>
+          <i class="fa-solid fa-chevron-right chevron-icon" id="chevron-organizations"></i>
+        </button>
+        <ul class="nav-sub-menu" id="submenu-organizations">
+          <li>
+            <button onclick="switchView('organizations')" class="nav-child-btn" id="nav-organizations">
+              <span><i class="fa-solid fa-building child-icon"></i> All Organizations</span>
+              <span class="nav-badge-pill blue" id="navBadgeTotalOrg">28</span>
+            </button>
+          </li>
+          <li>
+            <button onclick="switchView('create-org')" class="nav-child-btn" id="nav-create-org">
+              <span><i class="fa-solid fa-square-plus child-icon"></i> Create Organization</span>
+            </button>
+          </li>
+          <li>
+            <button onclick="switchView('verification-requests')" class="nav-child-btn" id="nav-verification-requests">
+              <span><i class="fa-solid fa-user-check child-icon"></i> Verification Requests</span>
+              <span class="nav-badge-pill amber" id="navBadgePending">3</span>
+            </button>
+          </li>
+          <li>
+            <button onclick="switchView('change-requests')" class="nav-child-btn" id="nav-change-requests">
+              <span><i class="fa-solid fa-code-pull-request child-icon"></i> Change Requests</span>
+              <span class="nav-badge-pill blue" id="navBadgeChanges">2</span>
+            </button>
+          </li>
+          <li>
+            <button onclick="switchView('suspended-orgs')" class="nav-child-btn" id="nav-suspended-orgs">
+              <span><i class="fa-solid fa-ban child-icon"></i> Suspended Organizations</span>
+              <span class="nav-badge-pill" id="navBadgeSuspended">1</span>
+            </button>
+          </li>
+        </ul>
+      </li>
 
-      <!-- TAB 1: OVERVIEW & KPIS -->
-      <div id="tabOverview" class="tab-section active">
-        <div class="grid-4" style="margin-bottom: 2rem;">
-          <div class="card card-body" style="text-align: center;">
-            <div style="font-size: 0.82rem; color: var(--navy-muted);">Registered Donors</div>
-            <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800;">2,846</div>
+      <!-- 4. DONORS -->
+      <li class="nav-section-label">DONORS</li>
+      <li class="nav-group-container">
+        <button onclick="toggleNavGroup('donors')" class="nav-parent-btn" id="parent-donors">
+          <span><i class="fa-solid fa-users-gear nav-icon"></i> Donor Management</span>
+          <i class="fa-solid fa-chevron-right chevron-icon" id="chevron-donors"></i>
+        </button>
+        <ul class="nav-sub-menu" id="submenu-donors">
+          <li>
+            <button onclick="switchView('donors')" class="nav-child-btn" id="nav-donors">
+              <span><i class="fa-solid fa-users child-icon"></i> Donors</span>
+              <span class="nav-badge-pill blue">1,248</span>
+            </button>
+          </li>
+        </ul>
+      </li>
+
+      <!-- 5. ANALYTICS -->
+      <li class="nav-section-label">ANALYTICS</li>
+      <li>
+        <button onclick="switchView('analytics')" class="nav-item-btn" id="nav-analytics">
+          <span><i class="fa-solid fa-chart-line nav-icon"></i> Analytics</span>
+        </button>
+      </li>
+      <li>
+        <button onclick="switchView('notifications')" class="nav-item-btn" id="nav-notifications">
+          <span><i class="fa-solid fa-bell nav-icon"></i> Notification Center</span>
+          <span class="nav-badge-pill" id="navBadgeNotifs">4</span>
+        </button>
+      </li>
+
+      <!-- 6. GOVERNANCE -->
+      <li class="nav-section-label">GOVERNANCE</li>
+      <li class="nav-group-container">
+        <button onclick="toggleNavGroup('governance')" class="nav-parent-btn" id="parent-governance">
+          <span><i class="fa-solid fa-shield-halved nav-icon"></i> Security & Governance</span>
+          <i class="fa-solid fa-chevron-right chevron-icon" id="chevron-governance"></i>
+        </button>
+        <ul class="nav-sub-menu" id="submenu-governance">
+          <li>
+            <button onclick="switchView('audit-logs')" class="nav-child-btn" id="nav-audit-logs">
+              <span><i class="fa-solid fa-list-check child-icon"></i> Audit Logs</span>
+            </button>
+          </li>
+          <li>
+            <button onclick="switchView('settings')" class="nav-child-btn" id="nav-settings">
+              <span><i class="fa-solid fa-gears child-icon"></i> System Settings</span>
+            </button>
+          </li>
+        </ul>
+      </li>
+
+      <!-- 7. SUPPORT -->
+      <li class="nav-section-label">SUPPORT</li>
+      <li>
+        <button onclick="switchView('help-support')" class="nav-item-btn" id="nav-help-support">
+          <span><i class="fa-solid fa-headset nav-icon"></i> Help & Support</span>
+        </button>
+      </li>
+    </ul>
+
+    <!-- Sidebar Footer Account Card -->
+    <div class="sidebar-footer">
+      <div class="admin-profile-card-mini">
+        <div class="admin-mini-header">
+          <div class="admin-avatar-icon">
+            <i class="fa-solid fa-user-shield"></i>
           </div>
-          <div class="card card-body" style="text-align: center;">
-            <div style="font-size: 0.82rem; color: var(--navy-muted);">Available Donors</div>
-            <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--status-success);">1,420</div>
-          </div>
-          <div class="card card-body" style="text-align: center;">
-            <div style="font-size: 0.82rem; color: var(--navy-muted);">Pending Organizations</div>
-            <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--status-warning);">3</div>
-          </div>
-          <div class="card card-body" style="text-align: center;">
-            <div style="font-size: 0.82rem; color: var(--navy-muted);">Fulfilled Requests</div>
-            <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--crimson-red);">642</div>
+          <div>
+            <div class="admin-mini-name">System Administrator</div>
+            <div style="font-size: 0.68rem; color: var(--blue-accent); font-weight: 600;">Super Admin Access</div>
           </div>
         </div>
 
-        <div class="card card-body">
-          <h3 style="font-size: 1.2rem; margin-bottom: 1rem;">Recent Emergency Broadcasts</h3>
-          <div id="overviewRequestsPreview"></div>
-        </div>
+        <button onclick="MockAuth.logout()" class="btn-logout-sidebar">
+          <i class="fa-solid fa-right-from-bracket"></i> Sign Out Portal
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN WRAPPER -->
+  <div class="main-wrapper">
+
+    <!-- TOP HEADER BAR -->
+    <header class="top-header-bar">
+      <div class="header-breadcrumb">
+        <h2 class="page-title-text" id="topPageTitle">Admin Dashboard</h2>
+        <span class="verified-org-chip">
+          <i class="fa-solid fa-shield-halved"></i> MASTER PLATFORM GOVERNANCE
+        </span>
       </div>
 
-      <!-- TAB 2: IEEE RESEARCH PERFORMANCE METRICS -->
-      <div id="tabIeeeMetrics" class="tab-section">
-        <div class="card card-body" style="margin-bottom: 2rem;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+      <div class="header-right-actions">
+        <div class="search-box-header">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="globalAdminSearch" onkeyup="handleGlobalSearch(this.value)" placeholder="Search organizations, IDs...">
+        </div>
+
+        <button onclick="switchView('create-org')" class="btn-create-org-cta">
+          <i class="fa-solid fa-plus"></i> CREATE ORGANIZATION
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTENT AREA -->
+    <main class="content-area">
+
+      <!-- ================================================================= -->
+      <!-- 1. ADMIN DASHBOARD VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-dashboard" class="view-pane active">
+        
+        <!-- WELCOME / TOP STATUS BAR -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.1rem;">
+          <div>
+            <h1 style="font-family: var(--font-main); font-size: 1.25rem; font-weight: 700; color: var(--navy-dark);">
+              Overview & Network Activity
+            </h1>
+            <p style="font-size: 0.82rem; color: var(--slate-muted);">
+              Monitor authorized organizations, emergency requests and dispatch operations.
+            </p>
+          </div>
+
+          <div style="font-size: 0.78rem; color: var(--slate-muted); font-weight: 600; text-align: right;">
+            <div>● Network Status: <span style="color: var(--green-success); font-weight: 700;">OPERATIONAL</span></div>
+            <div>28 Sep 2026 • 10:55 AM</div>
+          </div>
+        </div>
+
+        <!-- 4 COMPACT STATISTIC CARDS -->
+        <div class="stats-4grid">
+          <div class="stat-card-item">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Total Donors</span>
+              <div class="stat-icon-circle icon-blue"><i class="fa-solid fa-users"></i></div>
+            </div>
+            <div class="stat-counter-number">1,248</div>
+            <div style="font-size: 0.72rem; color: var(--green-success); font-weight: 600;">+8 today</div>
+          </div>
+
+          <div class="stat-card-item">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Verified Organizations</span>
+              <div class="stat-icon-circle icon-green"><i class="fa-solid fa-building-circle-check"></i></div>
+            </div>
+            <div class="stat-counter-number" style="color: var(--green-success);">24</div>
+            <div style="font-size: 0.72rem; color: var(--amber-warn); font-weight: 600;">3 pending review</div>
+          </div>
+
+          <div class="stat-card-item">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Active Requests</span>
+              <div class="stat-icon-circle icon-red"><i class="fa-solid fa-truck-medical"></i></div>
+            </div>
+            <div class="stat-counter-number" style="color: var(--red-primary);">7</div>
+            <div style="font-size: 0.72rem; color: var(--red-primary); font-weight: 600;">3 critical</div>
+          </div>
+
+          <div class="stat-card-item">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Fulfilled Requests</span>
+              <div class="stat-icon-circle icon-blue"><i class="fa-solid fa-circle-check"></i></div>
+            </div>
+            <div class="stat-counter-number" style="color: var(--blue-accent);">186</div>
+            <div style="font-size: 0.72rem; color: var(--slate-muted); font-weight: 600;">92% fulfillment rate</div>
+          </div>
+        </div>
+
+        <!-- ROW 2: LIVE EMERGENCY DISPATCH (LEFT) + RECENT PLATFORM ACTIVITY (RIGHT) -->
+        <div class="grid-2col-75">
+          
+          <!-- LIVE EMERGENCY DISPATCH -->
+          <div class="card-white" style="border-left: 3px solid var(--red-primary); margin-bottom: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
+              <div>
+                <span class="badge-status status-suspended" style="margin-bottom: 0.2rem;">
+                  <i class="fa-solid fa-bolt"></i> LIVE EMERGENCY DISPATCH
+                </span>
+                <h3 style="font-family: var(--font-main); font-size: 0.98rem; font-weight: 700; color: var(--navy-dark);">
+                  Featured Active Case: REQ-1042
+                </h3>
+              </div>
+
+              <span class="badge-status status-suspended">CRITICAL</span>
+            </div>
+
+            <!-- FEATURED CARD DETAIL -->
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); border-radius: 10px; padding: 0.85rem; margin-bottom: 0.85rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.65rem;">
+                <div style="display: flex; gap: 0.75rem; align-items: center;">
+                  <div style="width: 40px; height: 40px; background: var(--red-soft); border-radius: 8px; border: 1px solid #FFD6DE; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0;">
+                    <span style="font-family: var(--font-main); font-weight: 700; font-size: 0.95rem; color: var(--red-primary);">O+</span>
+                    <span style="font-size: 0.58rem; font-weight: 700; color: var(--slate-muted);">3 Units</span>
+                  </div>
+
+                  <div>
+                    <div style="font-family: var(--font-main); font-weight: 700; font-size: 0.88rem; color: var(--navy-dark);">
+                      Government General Hospital
+                    </div>
+                    <div style="font-size: 0.76rem; color: var(--slate-muted);">
+                      Hosur, Tamil Nadu • Current Dispatch: <strong>Round 2 (3–5 km)</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="text-align: right;">
+                  <div style="font-size: 0.7rem; font-weight: 700; color: var(--slate-muted);">CONFIRMED</div>
+                  <div style="font-family: var(--font-main); font-weight: 700; font-size: 1rem; color: var(--navy-dark);">2 / 3</div>
+                </div>
+              </div>
+
+              <!-- PROGRESS BAR -->
+              <div style="margin-top: 0.65rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--slate-muted); margin-bottom: 0.25rem;">
+                  <span>Fulfillment Progress</span>
+                  <span>66% (Searching 1 donor)</span>
+                </div>
+                <div style="width: 100%; height: 6px; background: #E2E8F0; border-radius: 9999px; overflow: hidden;">
+                  <div style="width: 66%; height: 100%; background: linear-gradient(90deg, var(--red-primary), #10B981); border-radius: 9999px;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ADAPTIVE DISPATCH VISUAL FLOW -->
+            <div style="background: #FFFFFF; border: 1px solid var(--slate-border); border-radius: 10px; padding: 0.75rem; margin-bottom: 0.85rem;">
+              <div style="font-size: 0.68rem; font-weight: 700; color: var(--slate-muted); text-transform: uppercase; margin-bottom: 0.4rem;">
+                Adaptive Notification Flow (FIND ➔ NOTIFY ➔ EVALUATE ➔ EXPAND ➔ FULFILL)
+              </div>
+
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; text-align: center;">
+                <div style="background: #F8FAFC; border: 1px solid var(--slate-border); padding: 0.45rem; border-radius: 6px; font-size: 0.74rem;">
+                  <div style="font-weight: 700; color: var(--navy-dark);">ROUND 1 (0–3 km)</div>
+                  <div style="font-size: 0.68rem; color: var(--slate-muted);">12 notified • 1 confirmed</div>
+                  <span class="badge-status status-verified" style="margin-top: 0.15rem;">✓ Completed</span>
+                </div>
+
+                <div style="background: #FFF0F3; border: 1px solid #FFE0E6; padding: 0.45rem; border-radius: 6px; font-size: 0.74rem;">
+                  <div style="font-weight: 700; color: var(--red-primary);">ROUND 2 (3–5 km)</div>
+                  <div style="font-size: 0.68rem; color: var(--slate-muted);">18 notified • 1 confirmed</div>
+                  <span class="badge-status status-suspended" style="margin-top: 0.15rem;">🟢 Active</span>
+                </div>
+
+                <div style="background: #F8FAFC; border: 1px solid var(--slate-border); padding: 0.45rem; border-radius: 6px; font-size: 0.74rem; opacity: 0.6;">
+                  <div style="font-weight: 700; color: var(--navy-dark);">ROUND 3 (5–8 km)</div>
+                  <div style="font-size: 0.68rem; color: var(--slate-muted);">Not started</div>
+                  <span class="badge-status status-rejected" style="margin-top: 0.15rem;">○ Queued</span>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end;">
+              <button onclick="viewLiveDispatchDetails('REQ-1042')" class="btn-action-sm btn-action-primary">
+                VIEW LIVE DISPATCH <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- RECENT PLATFORM ACTIVITY -->
+          <div class="card-white" style="margin-bottom: 0;">
+            <h3 style="font-family: var(--font-main); font-size: 0.98rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.85rem;">
+              Recent Platform Activity
+            </h3>
+
+            <div style="display: flex; flex-direction: column; gap: 0.7rem;">
+              <div style="display: flex; gap: 0.65rem; align-items: flex-start; font-size: 0.8rem;">
+                <span style="font-size: 0.72rem; font-weight: 700; color: var(--slate-muted); width: 55px; flex-shrink: 0;">10:53 AM</span>
+                <div style="width: 20px; height: 20px; border-radius: 50%; background: var(--green-soft); color: var(--green-success); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; flex-shrink: 0;">
+                  <i class="fa-solid fa-check"></i>
+                </div>
+                <div>
+                  <strong>2 donors confirmed</strong> for REQ-1042
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 0.65rem; align-items: flex-start; font-size: 0.8rem;">
+                <span style="font-size: 0.72rem; font-weight: 700; color: var(--slate-muted); width: 55px; flex-shrink: 0;">10:49 AM</span>
+                <div style="width: 20px; height: 20px; border-radius: 50%; background: #FFFBEB; color: var(--amber-warn); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; flex-shrink: 0;">
+                  <i class="fa-solid fa-tower-broadcast"></i>
+                </div>
+                <div>
+                  <strong>Round 2 activated</strong> for REQ-1042
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 0.65rem; align-items: flex-start; font-size: 0.8rem;">
+                <span style="font-size: 0.72rem; font-weight: 700; color: var(--slate-muted); width: 55px; flex-shrink: 0;">10:42 AM</span>
+                <div style="width: 20px; height: 20px; border-radius: 50%; background: var(--red-soft); color: var(--red-primary); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; flex-shrink: 0;">
+                  <i class="fa-solid fa-truck-medical"></i>
+                </div>
+                <div>
+                  <strong>New request REQ-1042</strong> by Govt General Hospital
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 0.65rem; align-items: flex-start; font-size: 0.8rem;">
+                <span style="font-size: 0.72rem; font-weight: 700; color: var(--slate-muted); width: 55px; flex-shrink: 0;">10:20 AM</span>
+                <div style="width: 20px; height: 20px; border-radius: 50%; background: var(--blue-soft); color: var(--blue-accent); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; flex-shrink: 0;">
+                  <i class="fa-solid fa-building-circle-check"></i>
+                </div>
+                <div>
+                  <strong>City Blood Bank verification</strong> approved
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 0.65rem; align-items: flex-start; font-size: 0.8rem;">
+                <span style="font-size: 0.72rem; font-weight: 700; color: var(--slate-muted); width: 55px; flex-shrink: 0;">09:55 AM</span>
+                <div style="width: 20px; height: 20px; border-radius: 50%; background: var(--green-soft); color: var(--green-success); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; flex-shrink: 0;">
+                  <i class="fa-solid fa-user-plus"></i>
+                </div>
+                <div>
+                  <strong>8 new donor registrations</strong> verified
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ROW 3: ORGANIZATION OVERVIEW (LEFT) + REQUEST STATUS (RIGHT) -->
+        <div class="grid-2col-equal">
+          
+          <!-- ORGANIZATION OVERVIEW -->
+          <div class="card-white" style="margin-bottom: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+              <h3 style="font-family: var(--font-main); font-size: 0.98rem; font-weight: 700; color: var(--navy-dark);">
+                Organization Overview
+              </h3>
+              <button onclick="switchView('organizations')" class="btn-action-sm" style="font-size: 0.72rem;">
+                VIEW ALL ORGANIZATIONS →
+              </button>
+            </div>
+
+            <!-- STATUS STATS PILLS -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.45rem; text-align: center; margin-bottom: 0.75rem;">
+              <div style="background: var(--green-soft); border: 1px solid #A7F3D0; padding: 0.35rem; border-radius: 6px;">
+                <div style="font-size: 0.62rem; font-weight: 700; color: var(--green-success);">VERIFIED</div>
+                <div style="font-family: var(--font-main); font-weight: 700; font-size: 0.92rem; color: var(--navy-dark);">24</div>
+              </div>
+
+              <div style="background: #FEF3C7; border: 1px solid #FDE68A; padding: 0.35rem; border-radius: 6px;">
+                <div style="font-size: 0.62rem; font-weight: 700; color: #D97706;">PENDING</div>
+                <div style="font-family: var(--font-main); font-weight: 700; font-size: 0.92rem; color: var(--navy-dark);">3</div>
+              </div>
+
+              <div style="background: var(--red-soft); border: 1px solid #FFD6DE; padding: 0.35rem; border-radius: 6px;">
+                <div style="font-size: 0.62rem; font-weight: 700; color: var(--red-primary);">SUSPENDED</div>
+                <div style="font-family: var(--font-main); font-weight: 700; font-size: 0.92rem; color: var(--navy-dark);">1</div>
+              </div>
+
+              <div style="background: #F8FAFC; border: 1px solid var(--slate-border); padding: 0.35rem; border-radius: 6px;">
+                <div style="font-size: 0.62rem; font-weight: 700; color: var(--slate-muted);">TOTAL</div>
+                <div style="font-family: var(--font-main); font-weight: 700; font-size: 0.92rem; color: var(--navy-dark);">28</div>
+              </div>
+            </div>
+
+            <!-- RECENT ORG LIST -->
+            <div style="display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.78rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0.6rem; background: #F8FAFC; border-radius: 6px;">
+                <div>
+                  <strong>Government General Hospital</strong>
+                  <div style="font-size: 0.68rem; color: var(--slate-muted);">Hosur, Tamil Nadu</div>
+                </div>
+                <span class="badge-status status-verified">✓ Verified</span>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0.6rem; background: #F8FAFC; border-radius: 6px;">
+                <div>
+                  <strong>City Blood Bank</strong>
+                  <div style="font-size: 0.68rem; color: var(--slate-muted);">Bengaluru, Karnataka</div>
+                </div>
+                <span class="badge-status status-verified">✓ Verified</span>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0.6rem; background: #F8FAFC; border-radius: 6px;">
+                <div>
+                  <strong>Emergency Care Centre</strong>
+                  <div style="font-size: 0.68rem; color: var(--slate-muted);">Chennai, Tamil Nadu</div>
+                </div>
+                <span class="badge-status status-pending">⌛ Pending</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- REQUEST STATUS BREAKDOWN -->
+          <div class="card-white" style="margin-bottom: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+              <h3 style="font-family: var(--font-main); font-size: 0.98rem; font-weight: 700; color: var(--navy-dark);">
+                Emergency Request Status
+              </h3>
+              <button onclick="switchView('emergency-requests')" class="btn-action-sm" style="font-size: 0.72rem;">
+                VIEW ALL REQUESTS →
+              </button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.65rem;">
+              <div style="background: var(--green-soft); border: 1px solid #A7F3D0; padding: 0.65rem; border-radius: 8px;">
+                <div style="font-size: 0.65rem; font-weight: 700; color: var(--green-success);">FULFILLED</div>
+                <div style="font-family: var(--font-main); font-weight: 700; font-size: 1.2rem; color: var(--navy-dark);">186</div>
+                <div style="font-size: 0.68rem; color: var(--slate-muted);">92% success rate</div>
+              </div>
+
+              <div style="background: #FFFBEB; border: 1px solid #FDE68A; padding: 0.65rem; border-radius: 8px;">
+                <div style="font-size: 0.65rem; font-weight: 700; color: #D97706;">ACTIVE</div>
+                <div style="font-family: var(--font-main); font-weight: 700; font-size: 1.2rem; color: var(--navy-dark);">7</div>
+                <div style="font-size: 0.68rem; color: var(--slate-muted);">Broadcast in progress</div>
+              </div>
+
+              <div style="background: #F1F5F9; border: 1px solid var(--slate-border); padding: 0.65rem; border-radius: 8px;">
+                <div style="font-size: 0.65rem; font-weight: 700; color: var(--slate-muted);">EXPIRED</div>
+                <div style="font-family: var(--font-main); font-weight: 700; font-size: 1.2rem; color: var(--navy-dark);">12</div>
+                <div style="font-size: 0.68rem; color: var(--slate-muted);">Time window closed</div>
+              </div>
+
+              <div style="background: var(--red-soft); border: 1px solid #FFD6DE; padding: 0.65rem; border-radius: 8px;">
+                <div style="font-size: 0.65rem; font-weight: 700; color: var(--red-primary);">ESCALATED</div>
+                <div style="font-family: var(--font-main); font-weight: 700; font-size: 1.2rem; color: var(--navy-dark);">4</div>
+                <div style="font-size: 0.68rem; color: var(--slate-muted);">Expanded radius waves</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ROW 4: NETWORK PERFORMANCE (DEMO METRICS) -->
+        <div class="card-white" style="margin-top: 1.25rem; margin-bottom: 0;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
             <div>
-              <span class="badge badge-neutral" style="margin-bottom: 0.35rem;">IEEE BASE PAPER PARAMETERS</span>
-              <h2 style="font-size: 1.5rem;">Emergency Response Performance Metrics</h2>
+              <h3 style="font-family: var(--font-main); font-size: 0.98rem; font-weight: 700; color: var(--navy-dark);">
+                LIFE LINK Network Performance
+              </h3>
+              <span style="font-size: 0.68rem; color: var(--slate-muted); font-weight: 600;">
+                Prototype Metrics • Demo Analytics
+              </span>
             </div>
-            <span class="badge badge-success">EXPERIMENTAL MEASUREMENTS</span>
+
+            <button onclick="switchView('analytics')" class="btn-action-sm">
+              FULL ANALYTICS REPORT →
+            </button>
           </div>
 
-          <div class="grid-4" style="text-align: center; gap: 1.5rem;">
-            <div style="background: var(--bg-warm-ivory); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--navy-border);">
-              <div style="font-family: var(--font-heading); font-size: 2.4rem; font-weight: 800; color: var(--navy-dark);" id="metricNotifCount">18.4</div>
-              <div style="font-size: 0.85rem; font-weight: 700; color: var(--navy-muted);">AVG DONORS NOTIFIED</div>
+          <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; text-align: center;">
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); padding: 0.65rem; border-radius: 8px;">
+              <div style="font-size: 0.65rem; font-weight: 700; color: var(--slate-muted);">AVG RESPONSE TIME</div>
+              <div style="font-family: var(--font-main); font-weight: 700; font-size: 1.15rem; color: var(--green-success);">8.4 min</div>
             </div>
 
-            <div style="background: var(--bg-warm-ivory); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--navy-border);">
-              <div style="font-family: var(--font-heading); font-size: 2.4rem; font-weight: 800; color: var(--status-warning);" id="metricRounds">1.6</div>
-              <div style="font-size: 0.85rem; font-weight: 700; color: var(--navy-muted);">AVG WAVE ROUNDS</div>
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); padding: 0.65rem; border-radius: 8px;">
+              <div style="font-size: 0.65rem; font-weight: 700; color: var(--slate-muted);">AVG DONORS NOTIFIED</div>
+              <div style="font-family: var(--font-main); font-weight: 700; font-size: 1.15rem; color: var(--navy-dark);">18</div>
             </div>
 
-            <div style="background: var(--bg-warm-ivory); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--navy-border);">
-              <div style="font-family: var(--font-heading); font-size: 2.4rem; font-weight: 800; color: var(--status-success);" id="metricRespTime">8.4m</div>
-              <div style="font-size: 0.85rem; font-weight: 700; color: var(--navy-muted);">AVG RESPONSE TIME</div>
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); padding: 0.65rem; border-radius: 8px;">
+              <div style="font-size: 0.65rem; font-weight: 700; color: var(--slate-muted);">AVG ROUNDS</div>
+              <div style="font-family: var(--font-main); font-weight: 700; font-size: 1.15rem; color: var(--amber-warn);">1.8</div>
             </div>
 
-            <div style="background: var(--bg-warm-ivory); padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--navy-border);">
-              <div style="font-family: var(--font-heading); font-size: 2.4rem; font-weight: 800; color: var(--crimson-red);" id="metricFulfillRate">88.5%</div>
-              <div style="font-size: 0.85rem; font-weight: 700; color: var(--navy-muted);">FULFILLMENT RATE</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB 3: EMERGENCY COVERAGE MAP -->
-      <div id="tabCoverageMap" class="tab-section">
-        <div class="card card-body" style="margin-bottom: 2rem;">
-          <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Regional Donor Coverage Density Map</h2>
-          <p style="color: var(--navy-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">Approximate coverage density zones without exposing donor residential addresses</p>
-
-          <div class="map-visualization-box" style="height: 380px;">
-            <div style="position: absolute; top: 20px; left: 25px; font-size: 0.85rem; font-weight: 700;">
-              COVERAGE ZONE DENSITY: MUMBAI SUBURBAN
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); padding: 0.65rem; border-radius: 8px;">
+              <div style="font-size: 0.65rem; font-weight: 700; color: var(--slate-muted);">FULFILLMENT RATE</div>
+              <div style="font-family: var(--font-main); font-weight: 700; font-size: 1.15rem; color: var(--blue-accent);">92%</div>
             </div>
 
-            <div class="map-radar-circle" style="width: 280px; height: 280px;">
-              <div class="map-radar-circle r2" style="width: 180px; height: 180px;">
-                <div class="map-center-node"></div>
-              </div>
-
-              <div class="map-marker-pin" style="top: 15%; left: 20%; background: #DCFCE7; color: #16A34A;">
-                🟢 High Coverage Zone (Andheri)
-              </div>
-              <div class="map-marker-pin" style="bottom: 20%; right: 25%; background: #FEF3C7; color: #D97706;">
-                🟡 Moderate Zone (Bandra)
-              </div>
-              <div class="map-marker-pin" style="top: 60%; left: 10%; background: #FEE2E2; color: #DC2626;">
-                🔴 Low Coverage Zone (Worli)
-              </div>
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); padding: 0.65rem; border-radius: 8px;">
+              <div style="font-size: 0.65rem; font-weight: 700; color: var(--slate-muted);">EFFICIENCY</div>
+              <div style="font-family: var(--font-main); font-weight: 700; font-size: 1.15rem; color: var(--green-success);">16.7%</div>
             </div>
           </div>
         </div>
+
       </div>
 
-      <!-- TAB 4: BLOOD DEMAND FORECASTING -->
-      <div id="tabForecasting" class="tab-section">
-        <div class="card card-body">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-            <div>
-              <span class="badge badge-warning" style="margin-bottom: 0.35rem;">DEMAND PREDICTION MODEL</span>
-              <h2 style="font-size: 1.5rem;">Prototype Blood Demand Forecasting</h2>
-            </div>
-            <span class="badge badge-neutral">PROTOTYPE PREDICTIONS</span>
+      <!-- ================================================================= -->
+      <!-- 2. LIVE DISPATCH MONITOR VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-live-dispatch" class="view-pane">
+        <div class="card-white">
+          <div style="margin-bottom: 1.15rem;">
+            <h2 style="font-family: var(--font-main); font-size: 1.2rem; font-weight: 700; color: var(--navy-dark);">Live Dispatch Monitor</h2>
+            <p style="font-size: 0.82rem; color: var(--slate-muted);">Monitor emergency blood requests and adaptive notification rounds across the LIFE LINK network.</p>
           </div>
 
-          <div style="overflow-x: auto;">
-            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+          <div class="table-container">
+            <table class="custom-org-table">
               <thead>
-                <tr style="background: var(--bg-soft-gray); border-bottom: 1px solid var(--navy-border);">
-                  <th style="padding: 0.75rem 1rem;">Blood Group</th>
-                  <th style="padding: 0.75rem 1rem;">Current Demand</th>
-                  <th style="padding: 0.75rem 1rem;">Expected Demand</th>
-                  <th style="padding: 0.75rem 1rem;">Trend</th>
-                  <th style="padding: 0.75rem 1rem;">Urgency Level</th>
+                <tr>
+                  <th>Request ID</th>
+                  <th>Blood Group</th>
+                  <th>Units</th>
+                  <th>Organization</th>
+                  <th>Current Round</th>
+                  <th>Donors Notified</th>
+                  <th>Confirmed</th>
+                  <th>Status</th>
+                  <th style="text-align: right;">Action</th>
                 </tr>
               </thead>
-              <tbody id="forecastTableBody">
-                <!-- Loaded dynamically -->
+              <tbody>
+                <tr>
+                  <td><strong>REQ-1042</strong></td>
+                  <td><span class="badge-status status-suspended">O+</span></td>
+                  <td>3</td>
+                  <td>Government General Hospital</td>
+                  <td><span class="badge-status status-pending">Round 2 (3–5 km)</span></td>
+                  <td>30</td>
+                  <td><strong style="color: var(--navy-dark);">2 / 3</strong></td>
+                  <td><span class="badge-status status-pending">SEARCHING</span></td>
+                  <td style="text-align: right;">
+                    <button onclick="viewLiveDispatchDetails('REQ-1042')" class="btn-action-sm btn-action-primary">VIEW DISPATCH</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>REQ-1041</strong></td>
+                  <td><span class="badge-status status-verified">B+</span></td>
+                  <td>2</td>
+                  <td>City Blood Bank</td>
+                  <td><span class="badge-status status-verified">Round 1 (0–3 km)</span></td>
+                  <td>14</td>
+                  <td><strong style="color: var(--green-success);">2 / 2</strong></td>
+                  <td><span class="badge-status status-verified">FULFILLED</span></td>
+                  <td style="text-align: right;">
+                    <button onclick="viewLiveDispatchDetails('REQ-1041')" class="btn-action-sm btn-action-primary">VIEW DISPATCH</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>REQ-1039</strong></td>
+                  <td><span class="badge-status status-rejected">AB+</span></td>
+                  <td>1</td>
+                  <td>Emergency Care Centre</td>
+                  <td><span class="badge-status status-suspended">Round 3 (5–8 km)</span></td>
+                  <td>38</td>
+                  <td><strong style="color: var(--red-primary);">0 / 1</strong></td>
+                  <td><span class="badge-status status-suspended">ESCALATED</span></td>
+                  <td style="text-align: right;">
+                    <button onclick="viewLiveDispatchDetails('REQ-1039')" class="btn-action-sm btn-action-primary">VIEW DISPATCH</button>
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
         </div>
       </div>
 
-      <!-- TAB 5: ORGANIZATIONS VERIFICATION -->
-      <div id="tabOrganizations" class="tab-section">
-        <div class="card card-body">
-          <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">Healthcare Organization Verification Applications</h2>
-          <div style="overflow-x: auto;">
-            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+      <!-- ================================================================= -->
+      <!-- 3. LIVE DISPATCH DETAILS VIEW (REQ-1042) -->
+      <!-- ================================================================= -->
+      <div id="view-live-dispatch-details" class="view-pane">
+        <div class="card-white">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--slate-border); padding-bottom: 0.85rem; margin-bottom: 1.15rem;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.55rem; margin-bottom: 0.2rem;">
+                <h2 style="font-family: var(--font-main); font-size: 1.25rem; font-weight: 700; color: var(--navy-dark);" id="ldTitle">
+                  REQ-1042 — Live Emergency Dispatch
+                </h2>
+                <span class="badge-status status-suspended">CRITICAL</span>
+              </div>
+              <div style="font-size: 0.82rem; color: var(--slate-muted);">
+                Organization: <strong id="ldOrgName">Government General Hospital</strong> • Blood Group: <strong id="ldGroup">O+</strong> • Required: <strong id="ldUnits">3 Units</strong>
+              </div>
+            </div>
+
+            <button onclick="switchView('live-dispatch')" class="btn-action-sm">
+              <i class="fa-solid fa-arrow-left"></i> Back to Monitor
+            </button>
+          </div>
+
+          <div style="background: var(--blue-soft); border: 1px solid #BFDBFE; border-radius: 10px; padding: 0.65rem 0.85rem; margin-bottom: 1.15rem; font-size: 0.78rem; color: #1E40AF; display: flex; align-items: center; gap: 0.55rem;">
+            <i class="fa-solid fa-user-lock" style="font-size: 1rem;"></i>
+            <div>
+              <strong>PRIVACY PROTECTED GOVERNANCE:</strong> Donor exact home addresses and GPS coordinates are hidden. Only approximate radius and response status are displayed.
+            </div>
+          </div>
+
+          <h3 style="font-family: var(--font-main); font-size: 0.98rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.75rem;">
+            <i class="fa-solid fa-layer-group" style="color: var(--blue-accent);"></i> Adaptive Notification Rounds Progress
+          </h3>
+
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.85rem; margin-bottom: 1.25rem;">
+            <div style="background: #F8FAFC; border: 1px solid #CBD5E1; border-radius: 10px; padding: 0.85rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                <span style="font-family: var(--font-main); font-weight: 700; font-size: 0.82rem; color: var(--navy-dark);">ROUND 1</span>
+                <span class="badge-status status-verified">✓ COMPLETED</span>
+              </div>
+              <div style="font-size: 0.76rem; color: var(--slate-muted);">Radius: <strong>0–3 KM</strong></div>
+              <div style="font-size: 0.78rem; margin-top: 0.3rem;">Notified: 12 • Confirmed: <strong style="color: var(--green-success);">1 Donor</strong></div>
+            </div>
+
+            <div style="background: #FFF0F3; border: 1.5px solid var(--red-primary); border-radius: 10px; padding: 0.85rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                <span style="font-family: var(--font-main); font-weight: 700; font-size: 0.82rem; color: var(--red-primary);">ROUND 2</span>
+                <span class="badge-status status-suspended">🟢 ACTIVE</span>
+              </div>
+              <div style="font-size: 0.76rem; color: var(--slate-muted);">Radius: <strong>3–5 KM</strong></div>
+              <div style="font-size: 0.78rem; margin-top: 0.3rem;">Notified: 18 • Confirmed: <strong style="color: var(--green-success);">1 Donor</strong></div>
+            </div>
+
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); border-radius: 10px; padding: 0.85rem; opacity: 0.6;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                <span style="font-family: var(--font-main); font-weight: 700; font-size: 0.82rem; color: var(--navy-dark);">ROUND 3</span>
+                <span class="badge-status status-rejected">○ QUEUED</span>
+              </div>
+              <div style="font-size: 0.76rem; color: var(--slate-muted);">Radius: <strong>5–8 KM</strong></div>
+              <div style="font-size: 0.78rem; margin-top: 0.3rem;">Notified: 0 • Confirmed: 0</div>
+            </div>
+          </div>
+
+          <div style="background: #F8FAFC; border: 1px solid var(--slate-border); border-radius: 10px; padding: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+              <span style="font-family: var(--font-main); font-weight: 700; font-size: 0.88rem; color: var(--navy-dark);">Fulfillment Status: 2 / 3 Confirmed</span>
+              <span class="badge-status status-pending">SEARCHING 1 MORE DONOR</span>
+            </div>
+
+            <div style="width: 100%; height: 8px; background: #E2E8F0; border-radius: 9999px; overflow: hidden;">
+              <div style="width: 66%; height: 100%; background: linear-gradient(90deg, var(--red-primary), #10B981); border-radius: 9999px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 4. EMERGENCY REQUEST MANAGEMENT VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-emergency-requests" class="view-pane">
+        <div class="card-white">
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.15rem;">
+            <div>
+              <h2 style="font-family: var(--font-main); font-size: 1.25rem; font-weight: 700; color: var(--navy-dark);">Emergency Requests</h2>
+              <p style="font-size: 0.82rem; color: var(--slate-muted);">Monitor emergency blood requirements across the LIFE LINK network.</p>
+            </div>
+
+            <div style="display: flex; gap: 0.45rem;">
+              <select id="reqFilterGroup" onchange="filterReqTable()" class="form-control-select" style="width: auto; padding: 0.3rem 0.6rem; font-size: 0.78rem;">
+                <option value="ALL">All Blood Groups</option>
+                <option value="O+">O+</option>
+                <option value="B+">B+</option>
+                <option value="AB+">AB+</option>
+                <option value="O-">O-</option>
+              </select>
+
+              <select id="reqFilterStatus" onchange="filterReqTable()" class="form-control-select" style="width: auto; padding: 0.3rem 0.6rem; font-size: 0.78rem;">
+                <option value="ALL">All Statuses</option>
+                <option value="ACTIVE">ACTIVE</option>
+                <option value="FULFILLED">FULFILLED</option>
+                <option value="ESCALATED">ESCALATED</option>
+                <option value="EXPIRED">EXPIRED</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="custom-org-table">
               <thead>
-                <tr style="background: var(--bg-soft-gray); border-bottom: 1px solid var(--navy-border);">
-                  <th style="padding: 0.75rem 1rem;">Organization Name</th>
-                  <th style="padding: 0.75rem 1rem;">Type</th>
-                  <th style="padding: 0.75rem 1rem;">Certification #</th>
-                  <th style="padding: 0.75rem 1rem;">Representative</th>
-                  <th style="padding: 0.75rem 1rem;">Status</th>
-                  <th style="padding: 0.75rem 1rem; text-align: right;">Action</th>
+                <tr>
+                  <th>Request ID</th>
+                  <th>Blood Group</th>
+                  <th>Units</th>
+                  <th>Urgency</th>
+                  <th>Organization</th>
+                  <th>Current Round</th>
+                  <th>Confirmed</th>
+                  <th>Status</th>
+                  <th style="text-align: right;">Action</th>
                 </tr>
               </thead>
-              <tbody id="adminOrgTableBody">
-                <!-- Loaded dynamically -->
+              <tbody id="emergencyReqTableBody">
+                <!-- Populated dynamically via JS -->
               </tbody>
             </table>
           </div>
         </div>
       </div>
 
-      <!-- TAB 6: EMERGENCY AUDIT LOGS -->
-      <div id="tabAuditLogs" class="tab-section">
-        <div class="card card-body">
-          <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">Emergency Request Lifecycle Audit Log</h2>
-          <div id="auditLogContainer">
-            <!-- Loaded dynamically -->
+      <!-- ================================================================= -->
+      <!-- 6. ORGANIZATION MANAGEMENT VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-organizations" class="view-pane">
+        <div class="stats-4grid">
+          <div class="stat-card-item">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Total Organizations</span>
+              <div class="stat-icon-circle icon-blue"><i class="fa-solid fa-building-user"></i></div>
+            </div>
+            <div class="stat-counter-number" id="statTotalOrgs">28</div>
+            <div style="font-size: 0.7rem; color: var(--slate-muted);">Registered entities</div>
+          </div>
+
+          <div class="stat-card-item">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Verified</span>
+              <div class="stat-icon-circle icon-green"><i class="fa-solid fa-circle-check"></i></div>
+            </div>
+            <div class="stat-counter-number" id="statVerifiedOrgs" style="color: var(--green-success);">24</div>
+            <div style="font-size: 0.7rem; color: var(--green-success); font-weight: 600;">Active dispatch rights</div>
+          </div>
+
+          <div class="stat-card-item">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Pending Verification</span>
+              <div class="stat-icon-circle icon-amber"><i class="fa-solid fa-hourglass-half"></i></div>
+            </div>
+            <div class="stat-counter-number" id="statPendingOrgs" style="color: var(--amber-warn);">3</div>
+            <div style="font-size: 0.7rem; color: var(--amber-warn); font-weight: 600;">Awaiting admin audit</div>
+          </div>
+
+          <div class="stat-card-item">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Suspended</span>
+              <div class="stat-icon-circle icon-red"><i class="fa-solid fa-ban"></i></div>
+            </div>
+            <div class="stat-counter-number" id="statSuspendedOrgs" style="color: var(--red-primary);">1</div>
+            <div style="font-size: 0.7rem; color: var(--red-primary); font-weight: 600;">Restricted privileges</div>
+          </div>
+        </div>
+
+        <div class="card-white">
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.15rem;">
+            <div>
+              <h2 style="font-family: var(--font-main); font-size: 1.25rem; font-weight: 700; color: var(--navy-dark);">Organization Management</h2>
+              <p style="font-size: 0.82rem; color: var(--slate-muted);">Manage authorized hospitals, blood banks and healthcare organizations registered with LIFE LINK.</p>
+            </div>
+
+            <div style="display: flex; gap: 0.45rem; flex-wrap: wrap;">
+              <select id="filterType" onchange="filterOrgTable()" class="form-control-select" style="width: auto; padding: 0.3rem 0.6rem; font-size: 0.78rem;">
+                <option value="ALL">All Types</option>
+                <option value="Government Hospital">Government Hospital</option>
+                <option value="Government Blood Bank">Government Blood Bank</option>
+                <option value="Private Blood Bank">Private Blood Bank</option>
+                <option value="Authorized Healthcare Organization">Healthcare Organization</option>
+              </select>
+
+              <select id="filterStatus" onchange="filterOrgTable()" class="form-control-select" style="width: auto; padding: 0.3rem 0.6rem; font-size: 0.78rem;">
+                <option value="ALL">All Statuses</option>
+                <option value="VERIFIED">Verified</option>
+                <option value="PENDING">Pending Verification</option>
+                <option value="SUSPENDED">Suspended</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="custom-org-table">
+              <thead>
+                <tr>
+                  <th>Organization Name & ID</th>
+                  <th>Type</th>
+                  <th>Location</th>
+                  <th>Status</th>
+                  <th>Last Updated</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="orgMasterTableBody">
+                <!-- Populated via JS -->
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
+
+      <!-- ================================================================= -->
+      <!-- 7. CREATE ORGANIZATION VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-create-org" class="view-pane">
+        <div class="card-white" style="max-width: 740px; margin: 0 auto;">
+          <div style="border-bottom: 1px solid var(--slate-border); padding-bottom: 0.85rem; margin-bottom: 1.15rem;">
+            <h2 style="font-family: var(--font-main); font-size: 1.35rem; font-weight: 700; color: var(--navy-dark);">Create New Organization</h2>
+            <p style="font-size: 0.82rem; color: var(--slate-muted);">Register an authorized healthcare organization into the LIFE LINK network.</p>
+          </div>
+
+          <form id="createOrgForm" onsubmit="handleCreateOrgSubmit(event)">
+            <h4 style="font-family: var(--font-main); font-size: 0.9rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.75rem;">
+              1. Organization Information
+            </h4>
+
+            <div style="display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 0.85rem;">
+              <div class="form-group-item">
+                <label class="form-label-txt" for="cName">Organization Name *</label>
+                <input type="text" id="cName" class="form-control-input" placeholder="e.g. Government General Hospital" required>
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-txt" for="cType">Organization Type *</label>
+                <select id="cType" class="form-control-select" required>
+                  <option value="Government Hospital">Government Hospital</option>
+                  <option value="Government Blood Bank">Government Blood Bank</option>
+                  <option value="Private Blood Bank">Private Blood Bank</option>
+                  <option value="Authorized Healthcare Organization">Authorized Healthcare Org</option>
+                </select>
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-txt">Organization ID (Auto)</label>
+                <input type="text" id="cOrgId" class="form-control-input" value="LL-ORG-2026-006" readonly style="background: #F1F5F9; font-weight: 700;">
+              </div>
+            </div>
+
+            <h4 style="font-family: var(--font-main); font-size: 0.9rem; font-weight: 700; color: var(--navy-dark); margin-top: 0.65rem; margin-bottom: 0.75rem;">
+              2. Contact Information
+            </h4>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.85rem;">
+              <div class="form-group-item">
+                <label class="form-label-txt" for="cPhone">Official Phone Number *</label>
+                <input type="text" id="cPhone" class="form-control-input" placeholder="+91 4344 220000" required>
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-txt" for="cEmail">Official Email *</label>
+                <input type="email" id="cEmail" class="form-control-input" placeholder="contact@hospital.gov.in" required>
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-txt" for="cEmergency">Emergency Contact *</label>
+                <input type="text" id="cEmergency" class="form-control-input" placeholder="+91 98430 12345" required>
+              </div>
+            </div>
+
+            <h4 style="font-family: var(--font-main); font-size: 0.9rem; font-weight: 700; color: var(--navy-dark); margin-top: 0.65rem; margin-bottom: 0.75rem;">
+              3. Location Details
+            </h4>
+
+            <div class="form-group-item">
+              <label class="form-label-txt" for="cAddress">Address *</label>
+              <input type="text" id="cAddress" class="form-control-input" placeholder="Government Hospital Road, Railway Station Area" required>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.85rem;">
+              <div class="form-group-item">
+                <label class="form-label-txt" for="cCity">City *</label>
+                <input type="text" id="cCity" class="form-control-input" placeholder="Hosur" required>
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-txt" for="cState">State *</label>
+                <input type="text" id="cState" class="form-control-input" placeholder="Tamil Nadu" required>
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-txt" for="cPincode">Pincode *</label>
+                <input type="text" id="cPincode" class="form-control-input" placeholder="635109" required>
+              </div>
+            </div>
+
+            <h4 style="font-family: var(--font-main); font-size: 0.9rem; font-weight: 700; color: var(--navy-dark); margin-top: 0.65rem; margin-bottom: 0.75rem;">
+              4. Authorization & Verification
+            </h4>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+              <div class="form-group-item">
+                <label class="form-label-txt" for="cReg">Registration / Certification # *</label>
+                <input type="text" id="cReg" class="form-control-input" placeholder="GOVT-TN-HOSP-9912" required>
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-txt" for="cAuthority">Issuing Authority *</label>
+                <input type="text" id="cAuthority" class="form-control-input" placeholder="Department of Health, Govt of Tamil Nadu" required>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+              <div class="form-group-item">
+                <label class="form-label-txt" for="cValid">Certification Valid Until *</label>
+                <input type="date" id="cValid" class="form-control-input" value="2030-12-31" required>
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-txt" for="cRep">Authorized Representative *</label>
+                <input type="text" id="cRep" class="form-control-input" placeholder="Dr. A. Ramanathan (Medical Superintendent)" required>
+              </div>
+            </div>
+
+            <h4 style="font-family: var(--font-main); font-size: 0.9rem; font-weight: 700; color: var(--navy-dark); margin-top: 0.65rem; margin-bottom: 0.75rem;">
+              5. PORTAL ACCESS CREDENTIALS
+            </h4>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+              <div class="form-group-item">
+                <label class="form-label-txt" for="cUsername">Organization Username *</label>
+                <input type="text" id="cUsername" class="form-control-input" placeholder="e.g. govgeneralhosur" required>
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-txt" for="cRegMobile">Registered Account Mobile Number *</label>
+                <input type="tel" id="cRegMobile" class="form-control-input" placeholder="+91 98430 12345" required>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+              <div class="form-group-item">
+                <label class="form-label-txt" for="cPassword">Initial Portal Password *</label>
+                <input type="password" id="cPassword" class="form-control-input" placeholder="••••••••" required>
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-txt" for="cConfirmPassword">Confirm Password *</label>
+                <input type="password" id="cConfirmPassword" class="form-control-input" placeholder="••••••••" required>
+              </div>
+            </div>
+
+            <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 8px; padding: 0.65rem; margin-bottom: 1.15rem; font-size: 0.78rem; color: #92400E; display: flex; align-items: center; gap: 0.55rem;">
+              <i class="fa-solid fa-lock" style="font-size: 0.95rem; color: var(--amber-warn);"></i>
+              <div>
+                <strong>Portal Access Status: LOCKED UNTIL VERIFICATION</strong><br>
+                Administrator provisions initial credentials. Account remains LOCKED until administrator verification approval.
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 0.65rem;">
+              <button type="button" onclick="switchView('organizations')" class="btn-action-sm">CANCEL</button>
+              <button type="submit" class="btn-create-org-cta">
+                <i class="fa-solid fa-check"></i> CREATE ORGANIZATION
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 8. VERIFICATION REQUESTS VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-verification-requests" class="view-pane">
+        <!-- 8A. Organization Verification Requests -->
+        <div class="card-white" style="margin-bottom: 1.25rem;">
+          <div style="margin-bottom: 1.15rem;">
+            <h2 style="font-family: var(--font-main); font-size: 1.25rem; font-weight: 700; color: var(--navy-dark);">Organization Verification Requests</h2>
+            <p style="font-size: 0.82rem; color: var(--slate-muted);">Review organizations requesting authorization and portal activation on LIFE LINK.</p>
+          </div>
+
+          <div id="pendingVerificationsGrid" style="display: flex; flex-direction: column; gap: 0.85rem;">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- 8B. Organization Password Reset Requests -->
+        <div class="card-white">
+          <div style="margin-bottom: 1.15rem; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <span class="verified-org-chip" style="margin-bottom: 0.3rem; background: #FFF0F3; color: var(--red-primary);">
+                <i class="fa-solid fa-key"></i> SECURITY RESET QUEUE
+              </span>
+              <h2 style="font-family: var(--font-main); font-size: 1.25rem; font-weight: 700; color: var(--navy-dark);">
+                Organization Password Reset Requests
+              </h2>
+              <p style="font-size: 0.82rem; color: var(--slate-muted);">Manage credential recovery requests submitted by registered organizations.</p>
+            </div>
+          </div>
+
+          <div id="passwordResetRequestsGrid" style="display: flex; flex-direction: column; gap: 0.85rem;">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 9. CHANGE REQUESTS VIEW ⭐ -->
+      <!-- ================================================================= -->
+      <div id="view-change-requests" class="view-pane">
+        <div class="card-white">
+          <div style="margin-bottom: 1.15rem;">
+            <span class="verified-org-chip" style="margin-bottom: 0.3rem;">
+              <i class="fa-solid fa-code-pull-request"></i> CORRECTION REVIEW QUEUE
+            </span>
+            <h2 style="font-family: var(--font-main); font-size: 1.25rem; font-weight: 700; color: var(--navy-dark);">
+              Organization Change Requests
+            </h2>
+            <p style="font-size: 0.82rem; color: var(--slate-muted);">Review corrections and modifications submitted by verified organizations.</p>
+          </div>
+
+          <div id="changeRequestsGrid" style="display: flex; flex-direction: column; gap: 0.85rem;">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 12. SUSPENDED ORGANIZATIONS VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-suspended-orgs" class="view-pane">
+        <div class="card-white">
+          <div style="margin-bottom: 1.15rem;">
+            <h2 style="font-family: var(--font-main); font-size: 1.25rem; font-weight: 700; color: var(--navy-dark);">Suspended Organizations</h2>
+            <p style="font-size: 0.82rem; color: var(--slate-muted);">Restricted entities that are currently blocked from initiating emergency broadcasts.</p>
+          </div>
+
+          <div id="suspendedOrgsGrid" style="display: flex; flex-direction: column; gap: 0.85rem;">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 13. DONOR MANAGEMENT VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-donors" class="view-pane">
+        <div class="stats-4grid">
+          <div class="stat-card-item">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Total Donors</span>
+              <div class="stat-icon-circle icon-blue"><i class="fa-solid fa-users"></i></div>
+            </div>
+            <div class="stat-counter-number">1,248</div>
+            <div style="font-size: 0.68rem; color: var(--slate-muted);">Registered volunteers</div>
+          </div>
+
+          <div class="stat-card-item">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Available Now</span>
+              <div class="stat-icon-circle icon-green"><i class="fa-solid fa-user-check"></i></div>
+            </div>
+            <div class="stat-counter-number" style="color: var(--green-success);">386</div>
+            <div style="font-size: 0.68rem; color: var(--green-success); font-weight: 600;">Active broadcast ready</div>
+          </div>
+
+          <div class="stat-card-item">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Recently Notified</span>
+              <div class="stat-icon-circle icon-amber"><i class="fa-solid fa-bell"></i></div>
+            </div>
+            <div class="stat-counter-number" style="color: var(--amber-warn);">74</div>
+            <div style="font-size: 0.68rem; color: var(--amber-warn); font-weight: 600;">Past 24 hours</div>
+          </div>
+
+          <div class="stat-card-item">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Active Accounts</span>
+              <div class="stat-icon-circle icon-blue"><i class="fa-solid fa-shield-halved"></i></div>
+            </div>
+            <div class="stat-counter-number" style="color: var(--navy-dark);">1,205</div>
+            <div style="font-size: 0.68rem; color: var(--slate-muted); font-weight: 600;">Compliant donor records</div>
+          </div>
+        </div>
+
+        <div class="card-white">
+          <div style="margin-bottom: 0.85rem;">
+            <h2 style="font-family: var(--font-main); font-size: 1.25rem; font-weight: 700; color: var(--navy-dark);">Donor Management</h2>
+            <p style="font-size: 0.82rem; color: var(--slate-muted);">Monitor registered donors while protecting sensitive personal information.</p>
+          </div>
+
+          <div style="background: var(--blue-soft); border: 1px solid #BFDBFE; border-radius: 8px; padding: 0.55rem 0.75rem; margin-bottom: 0.85rem; font-size: 0.76rem; color: #1E40AF; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-shield-halved"></i>
+            <div>
+              <strong>PRIVACY NOTICE:</strong> Exact donor addresses and GPS coordinates are hidden by default to enforce governance privacy standards.
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="custom-org-table">
+              <thead>
+                <tr>
+                  <th>Donor ID</th>
+                  <th>Blood Group</th>
+                  <th>Availability</th>
+                  <th>Approximate Area</th>
+                  <th>Status</th>
+                  <th style="text-align: right;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="donorTableBody">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 15. FULFILLMENT TRACKING VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-fulfillment-tracking" class="view-pane">
+        <div class="card-white">
+          <div style="margin-bottom: 1.15rem;">
+            <h2 style="font-family: var(--font-main); font-size: 1.25rem; font-weight: 700; color: var(--navy-dark);">Fulfillment Tracking</h2>
+            <p style="font-size: 0.82rem; color: var(--slate-muted);">Track real-time emergency dispatch fulfillment lifecycle across network requests.</p>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; margin-bottom: 1.25rem;">
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); padding: 0.75rem; border-radius: 10px; text-align: center;">
+              <span style="font-size: 0.65rem; font-weight: 700; color: var(--slate-muted);">REQUIRED</span>
+              <div style="font-family: var(--font-main); font-weight: 700; font-size: 1.25rem; color: var(--navy-dark);">3</div>
+            </div>
+
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); padding: 0.75rem; border-radius: 10px; text-align: center;">
+              <span style="font-size: 0.65rem; font-weight: 700; color: var(--slate-muted);">NOTIFIED</span>
+              <div style="font-family: var(--font-main); font-weight: 700; font-size: 1.25rem; color: var(--blue-accent);">30</div>
+            </div>
+
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); padding: 0.75rem; border-radius: 10px; text-align: center;">
+              <span style="font-size: 0.65rem; font-weight: 700; color: var(--slate-muted);">RESPONDED</span>
+              <div style="font-family: var(--font-main); font-weight: 700; font-size: 1.25rem; color: var(--amber-warn);">7</div>
+            </div>
+
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); padding: 0.75rem; border-radius: 10px; text-align: center;">
+              <span style="font-size: 0.65rem; font-weight: 700; color: var(--slate-muted);">CONFIRMED</span>
+              <div style="font-family: var(--font-main); font-weight: 700; font-size: 1.25rem; color: var(--green-success);">3</div>
+            </div>
+
+            <div style="background: var(--green-soft); border: 1px solid #A7F3D0; padding: 0.75rem; border-radius: 10px; text-align: center;">
+              <span style="font-size: 0.65rem; font-weight: 700; color: var(--green-success);">FULFILLED</span>
+              <div style="font-family: var(--font-main); font-weight: 700; font-size: 1.25rem; color: var(--green-success);">3 / 3</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 16. REQUEST HISTORY VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-request-history" class="view-pane">
+        <div class="card-white">
+          <div style="margin-bottom: 1.15rem;">
+            <h2 style="font-family: var(--font-main); font-size: 1.25rem; font-weight: 700; color: var(--navy-dark);">Request History</h2>
+            <p style="font-size: 0.82rem; color: var(--slate-muted);">Archived log of past emergency blood dispatch operations.</p>
+          </div>
+
+          <div class="table-container">
+            <table class="custom-org-table">
+              <thead>
+                <tr>
+                  <th>Request ID</th>
+                  <th>Blood Group</th>
+                  <th>Units</th>
+                  <th>Organization</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>REQ-1031</strong></td>
+                  <td><span class="badge-status status-verified">B+</span></td>
+                  <td>2 Units</td>
+                  <td>District Blood Bank</td>
+                  <td>18 Aug 2026</td>
+                  <td><span class="badge-status status-verified">FULFILLED</span></td>
+                </tr>
+                <tr>
+                  <td><strong>REQ-1028</strong></td>
+                  <td><span class="badge-status status-suspended">O-</span></td>
+                  <td>4 Units</td>
+                  <td>Government General Hospital</td>
+                  <td>16 Aug 2026</td>
+                  <td><span class="badge-status status-verified">FULFILLED</span></td>
+                </tr>
+                <tr>
+                  <td><strong>REQ-1024</strong></td>
+                  <td><span class="badge-status status-rejected">AB+</span></td>
+                  <td>2 Units</td>
+                  <td>Salem Regional Blood Bank</td>
+                  <td>14 Aug 2026</td>
+                  <td><span class="badge-status status-rejected">EXPIRED</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 18. ANALYTICS VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-analytics" class="view-pane">
+        <div class="stats-4grid">
+          <div class="stat-card-item">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Avg Response Time</span>
+              <div class="stat-icon-circle icon-green"><i class="fa-solid fa-stopwatch"></i></div>
+            </div>
+            <div class="stat-counter-number" style="color: var(--green-success);">8.4 min</div>
+            <div style="font-size: 0.68rem; color: var(--green-success); font-weight: 600;">Fast response time</div>
+          </div>
+
+          <div class="stat-card-item">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Avg Donors Notified</span>
+              <div class="stat-icon-circle icon-blue"><i class="fa-solid fa-bullhorn"></i></div>
+            </div>
+            <div class="stat-counter-number">18</div>
+            <div style="font-size: 0.68rem; color: var(--slate-muted);">Per emergency request</div>
+          </div>
+
+          <div class="stat-card-item">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Avg Rounds</span>
+              <div class="stat-icon-circle icon-amber"><i class="fa-solid fa-layer-group"></i></div>
+            </div>
+            <div class="stat-counter-number" style="color: var(--amber-warn);">1.8</div>
+            <div style="font-size: 0.68rem; color: var(--slate-muted);">Notification waves</div>
+          </div>
+
+          <div class="stat-card-item">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Fulfillment Rate</span>
+              <div class="stat-icon-circle icon-blue"><i class="fa-solid fa-chart-line"></i></div>
+            </div>
+            <div class="stat-counter-number" style="color: var(--blue-accent);">92%</div>
+            <div style="font-size: 0.68rem; color: var(--blue-accent); font-weight: 600;">Completion success</div>
+          </div>
+        </div>
+
+        <div class="card-white">
+          <div style="margin-bottom: 0.85rem;">
+            <span class="verified-org-chip" style="margin-bottom: 0.2rem;">PROTOTYPE EVALUATION FRAMEWORK</span>
+            <h2 style="font-family: var(--font-main); font-size: 1.15rem; font-weight: 700; color: var(--navy-dark);">
+              Dispatch Efficiency Comparison
+            </h2>
+          </div>
+
+          <div class="table-container">
+            <table class="custom-org-table">
+              <thead>
+                <tr>
+                  <th>Performance Metric</th>
+                  <th>Conventional Broadcast</th>
+                  <th>LIFE LINK Adaptive Notification</th>
+                  <th>Evaluation Outcome</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Response Time</strong></td>
+                  <td>28.5 minutes</td>
+                  <td><strong style="color: var(--green-success);">8.4 minutes</strong></td>
+                  <td><span class="badge-status status-verified">70% Faster</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Donors Notified</strong></td>
+                  <td>120 (Mass Blast)</td>
+                  <td><strong style="color: var(--blue-accent);">18 (Targeted Waves)</strong></td>
+                  <td><span class="badge-status status-verified">85% Alert Reduction</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Notification Rounds</strong></td>
+                  <td>Fixed Unfiltered</td>
+                  <td><strong style="color: var(--navy-dark);">1.8 Rounds Average</strong></td>
+                  <td><span class="badge-status status-pending">Adaptive Escalation</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Fulfillment Rate</strong></td>
+                  <td>64% Complete</td>
+                  <td><strong style="color: var(--green-success);">92% Complete</strong></td>
+                  <td><span class="badge-status status-verified">+28% Success</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 20. AUDIT LOGS VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-audit-logs" class="view-pane">
+        <div class="card-white">
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.15rem;">
+            <div>
+              <h2 style="font-family: var(--font-main); font-size: 1.25rem; font-weight: 700; color: var(--navy-dark);">System Audit Logs</h2>
+              <p style="font-size: 0.82rem; color: var(--slate-muted);">Trace important administrative and emergency-dispatch actions.</p>
+            </div>
+
+            <button onclick="alert('Exporting official admin audit trail CSV...')" class="btn-action-sm">
+              <i class="fa-solid fa-download"></i> Export Audit CSV
+            </button>
+          </div>
+
+          <div class="table-container">
+            <table class="custom-org-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Action</th>
+                  <th>Actor</th>
+                  <th>Target Organization</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody id="auditLogsTableBody">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 21. SYSTEM SETTINGS VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-settings" class="view-pane">
+        <div class="card-white" style="max-width: 740px;">
+          <h2 style="font-family: var(--font-main); font-size: 1.25rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 1.15rem;">System Settings</h2>
+
+          <h4 style="font-family: var(--font-main); font-size: 0.88rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.65rem;">1. Dispatch Radius Configuration</h4>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.15rem;">
+            <div class="form-group-item">
+              <label class="form-label-txt">Round 1 Radius</label>
+              <input type="text" class="form-control-input" value="0–3 km" readonly>
+            </div>
+            <div class="form-group-item">
+              <label class="form-label-txt">Round 2 Radius</label>
+              <input type="text" class="form-control-input" value="3–5 km" readonly>
+            </div>
+            <div class="form-group-item">
+              <label class="form-label-txt">Round 3 Radius</label>
+              <input type="text" class="form-control-input" value="5–8 km" readonly>
+            </div>
+          </div>
+
+          <h4 style="font-family: var(--font-main); font-size: 0.88rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.65rem;">2. Privacy & Governance Settings</h4>
+          <div style="display: flex; flex-direction: column; gap: 0.55rem; margin-bottom: 1.15rem;">
+            <label style="display: flex; align-items: center; gap: 0.45rem; font-size: 0.82rem; font-weight: 500;">
+              <input type="checkbox" checked disabled> Exact donor address hidden (Enabled)
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.45rem; font-size: 0.82rem; font-weight: 500;">
+              <input type="checkbox" checked disabled> Approximate distance display (Enabled)
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.45rem; font-size: 0.82rem; font-weight: 500;">
+              <input type="checkbox" checked disabled> Role-Based Access Control (RBAC Enforced)
+            </label>
+          </div>
+
+          <button onclick="alert('System settings updated.')" class="btn-create-org-cta">
+            SAVE SYSTEM SETTINGS
+          </button>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 23. HELP & SUPPORT VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-help-support" class="view-pane">
+        <div class="card-white">
+          <h2 style="font-family: var(--font-main); font-size: 1.25rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.85rem;">LIFE LINK Support Center</h2>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.85rem;">
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); padding: 0.95rem; border-radius: 10px;">
+              <i class="fa-solid fa-building-circle-check" style="font-size: 1.15rem; color: var(--blue-accent); margin-bottom: 0.4rem;"></i>
+              <h4 style="font-family: var(--font-main); font-weight: 700; font-size: 0.88rem; margin-bottom: 0.2rem;">Organization Verification</h4>
+              <p style="font-size: 0.78rem; color: var(--slate-muted);">Guidelines for reviewing healthcare license documents and approving facilities.</p>
+            </div>
+
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); padding: 0.95rem; border-radius: 10px;">
+              <i class="fa-solid fa-tower-broadcast" style="font-size: 1.15rem; color: var(--red-primary); margin-bottom: 0.4rem;"></i>
+              <h4 style="font-family: var(--font-main); font-weight: 700; font-size: 0.88rem; margin-bottom: 0.2rem;">Emergency Dispatch</h4>
+              <p style="font-size: 0.78rem; color: var(--slate-muted);">Understanding wave escalation timelines and automated donor matching rules.</p>
+            </div>
+
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); padding: 0.95rem; border-radius: 10px;">
+              <i class="fa-solid fa-user-lock" style="font-size: 1.15rem; color: var(--green-success); margin-bottom: 0.4rem;"></i>
+              <h4 style="font-family: var(--font-main); font-weight: 700; font-size: 0.88rem; margin-bottom: 0.2rem;">Donor Privacy</h4>
+              <p style="font-size: 0.78rem; color: var(--slate-muted);">Governance rules protecting donor phone numbers and location masking standards.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- ADMIN NOTIFICATION CENTER VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-notifications" class="view-pane">
+        <!-- Reusable Back Navigation -->
+        <button onclick="switchView('dashboard')" style="display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.82rem; font-weight: 600; color: var(--slate-muted); background: transparent; border: 1px solid transparent; padding: 0.35rem 0.65rem; border-radius: 6px; margin-bottom: 0.85rem; cursor: pointer; transition: all 0.15s ease;" onmouseover="this.style.color='#E4002B'; this.style.background='#FFF0F3';" onmouseout="this.style.color='var(--slate-muted)'; this.style.background='transparent';">
+          <i class="fa-solid fa-arrow-left"></i> Back to Admin Dashboard
+        </button>
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.25rem;">
+          <div>
+            <h1 style="font-family: var(--font-main); font-size: 1.25rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.2rem;">
+              Notification Center
+            </h1>
+            <p style="font-size: 0.82rem; color: var(--slate-muted);">
+              Monitor important emergency, organization and platform events.
+            </p>
+          </div>
+
+          <button onclick="markAllAdminNotificationsRead()" class="btn-action-sm" style="padding: 0.45rem 0.85rem; font-size: 0.78rem; border-radius: 8px; font-weight: 700;">
+            <i class="fa-solid fa-check-double"></i> Mark All as Read
+          </button>
+        </div>
+
+        <!-- 4 COMPACT SUMMARY CARDS -->
+        <div class="stats-4grid" style="margin-bottom: 1.25rem;">
+          <div class="stat-card-item" onclick="filterAdminNotifs('ALL')" style="cursor: pointer;">
+            <div class="stat-top-row">
+              <span class="stat-label-text">All Notifications</span>
+              <div class="stat-icon-circle icon-blue"><i class="fa-solid fa-bell"></i></div>
+            </div>
+            <div class="stat-counter-number" id="notifStatAll">7</div>
+            <div style="font-size: 0.72rem; color: var(--slate-muted); font-weight: 600;">Total platform events</div>
+          </div>
+
+          <div class="stat-card-item" onclick="filterAdminNotifs('UNREAD')" style="cursor: pointer;">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Unread</span>
+              <div class="stat-icon-circle icon-red"><i class="fa-solid fa-envelope-open-text"></i></div>
+            </div>
+            <div class="stat-counter-number" style="color: var(--red-primary);" id="notifStatUnread">4</div>
+            <div style="font-size: 0.72rem; color: var(--red-primary); font-weight: 600;">Requires attention</div>
+          </div>
+
+          <div class="stat-card-item" onclick="filterAdminNotifs('CRITICAL')" style="cursor: pointer;">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Critical Alerts</span>
+              <div class="stat-icon-circle icon-amber"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            </div>
+            <div class="stat-counter-number" style="color: var(--amber-warn);" id="notifStatCritical">2</div>
+            <div style="font-size: 0.72rem; color: var(--amber-warn); font-weight: 600;">Urgent dispatch status</div>
+          </div>
+
+          <div class="stat-card-item" onclick="filterAdminNotifs('ORGANIZATION')" style="cursor: pointer;">
+            <div class="stat-top-row">
+              <span class="stat-label-text">Organization</span>
+              <div class="stat-icon-circle icon-green"><i class="fa-solid fa-building-shield"></i></div>
+            </div>
+            <div class="stat-counter-number" style="color: var(--green-success);" id="notifStatOrg">2</div>
+            <div style="font-size: 0.72rem; color: var(--slate-muted); font-weight: 600;">Governance & requests</div>
+          </div>
+        </div>
+
+        <!-- FILTER TABS & SEARCH BAR -->
+        <div class="card-white" style="padding: 0.85rem 1.15rem; margin-bottom: 1rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;" id="adminNotifFilterTabs">
+              <button onclick="filterAdminNotifs('ALL')" class="btn-action-sm btn-action-primary" id="tabNotifALL">All</button>
+              <button onclick="filterAdminNotifs('UNREAD')" class="btn-action-sm" id="tabNotifUNREAD">Unread</button>
+              <button onclick="filterAdminNotifs('EMERGENCY')" class="btn-action-sm" id="tabNotifEMERGENCY">Emergency</button>
+              <button onclick="filterAdminNotifs('ORGANIZATION')" class="btn-action-sm" id="tabNotifORGANIZATION">Organization</button>
+              <button onclick="filterAdminNotifs('SECURITY')" class="btn-action-sm" id="tabNotifSECURITY">Security</button>
+              <button onclick="filterAdminNotifs('SYSTEM')" class="btn-action-sm" id="tabNotifSYSTEM">System</button>
+            </div>
+
+            <div style="display: flex; align-items: center; background: #F8FAFC; border: 1px solid var(--slate-border); border-radius: 8px; padding: 0.35rem 0.75rem; width: 260px;">
+              <i class="fa-solid fa-magnifying-glass" style="color: var(--slate-muted); font-size: 0.8rem; margin-right: 0.4rem;"></i>
+              <input type="text" id="adminNotifSearch" onkeyup="renderAdminNotificationList()" placeholder="Search notifications..." style="border: none; background: transparent; font-size: 0.8rem; width: 100%; outline: none;">
+            </div>
+          </div>
+        </div>
+
+        <!-- NOTIFICATION LIST CONTAINER -->
+        <div id="adminNotificationList" style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <!-- Dynamically Rendered Notifications -->
+        </div>
+      </div>
+
     </main>
   </div>
 
-  <footer class="site-footer">
-    <div class="footer-bottom">
-      <p>© 2026 LIFE LINK Healthcare System</p>
+  <!-- MODAL 1: CHANGE REQUEST REVIEW COMPARISON MODAL -->
+  <div class="modal-overlay" id="reviewChangeModal">
+    <div class="modal-card-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--slate-border); padding-bottom: 0.65rem; margin-bottom: 0.85rem;">
+        <h3 style="font-family: var(--font-main); font-size: 1.05rem; font-weight: 700; color: var(--navy-dark);" id="mReviewTitle">
+          Review Organization Change
+        </h3>
+        <button onclick="closeModal('reviewChangeModal')" style="background: none; border: none; font-size: 1.2rem; color: var(--slate-muted); cursor: pointer;">&times;</button>
+      </div>
+
+      <div style="margin-bottom: 0.75rem; font-size: 0.8rem;">
+        Organization: <strong id="mReviewOrgName">Government General Hospital</strong><br>
+        Request ID: <strong id="mReviewReqId" style="color: var(--blue-accent);">CHG-1024</strong>
+      </div>
+
+      <div style="background: #F8FAFC; border: 1px solid var(--slate-border); border-radius: 10px; padding: 0.85rem; margin-bottom: 0.85rem;">
+        <div style="font-size: 0.7rem; font-weight: 700; color: var(--slate-muted); text-transform: uppercase; margin-bottom: 0.4rem;">
+          FIELD COMPARISON: <span id="mReviewFieldName" style="color: var(--navy-dark);">Official Emergency Phone</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 25px 1fr; gap: 0.35rem; align-items: center; text-align: center;">
+          <div style="background: #FFF0F3; border: 1px solid #FFE0E6; padding: 0.55rem; border-radius: 8px;">
+            <div style="font-size: 0.65rem; font-weight: 700; color: var(--red-primary);">CURRENT RECORD</div>
+            <div style="font-family: var(--font-main); font-weight: 700; font-size: 0.82rem; color: var(--navy-dark); margin-top: 0.15rem;" id="mReviewCurrentVal">
+              +91 4344 220000
+            </div>
+          </div>
+
+          <div style="font-size: 1rem; color: var(--blue-accent);">➔</div>
+
+          <div style="background: #ECFDF5; border: 1px solid #A7F3D0; padding: 0.55rem; border-radius: 8px;">
+            <div style="font-size: 0.65rem; font-weight: 700; color: var(--green-success);">REQUESTED UPDATE</div>
+            <div style="font-family: var(--font-main); font-weight: 700; font-size: 0.82rem; color: var(--navy-dark); margin-top: 0.15rem;" id="mReviewRequestedVal">
+              +91 4344 229999
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 0.65rem; font-size: 0.78rem; color: var(--slate-muted);">
+          <strong>Submitted Reason:</strong> <span id="mReviewReason">Official emergency contact desk number updated by health department.</span>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 0.55rem; justify-content: flex-end;">
+        <button onclick="promptRejectionReason()" class="btn-action-sm" style="color: var(--red-primary); border-color: #FCA5A5;">
+          <i class="fa-solid fa-xmark"></i> REJECT CHANGE
+        </button>
+        <button onclick="executeApproveChange()" class="btn-create-org-cta" style="background: linear-gradient(135deg, var(--green-success) 0%, #059669 100%);">
+          <i class="fa-solid fa-check"></i> APPROVE CHANGE
+        </button>
+      </div>
     </div>
-  </footer>
+  </div>
+
+  <!-- MODAL 2: REJECTION REASON MODAL -->
+  <div class="modal-overlay" id="rejectReasonModal">
+    <div class="modal-card-box">
+      <h3 style="font-family: var(--font-main); font-size: 1.05rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.35rem;">
+        Reject Change Request
+      </h3>
+      <p style="font-size: 0.8rem; color: var(--slate-muted); margin-bottom: 0.85rem;">
+        Please provide a reason for rejecting this correction request.
+      </p>
+
+      <div class="form-group-item">
+        <label class="form-label-txt" for="rejectReasonTxt">Reason for Rejection *</label>
+        <textarea id="rejectReasonTxt" class="form-control-textarea" rows="3" placeholder="e.g. Official government authorization document missing for telephone change verification."></textarea>
+      </div>
+
+      <div style="display: flex; gap: 0.55rem; justify-content: flex-end;">
+        <button onclick="closeModal('rejectReasonModal')" class="btn-action-sm">Cancel</button>
+        <button onclick="executeRejectChange()" class="btn-action-red" style="padding: 0.45rem 0.95rem; border-radius: 9999px;">
+          Confirm Rejection
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: SUSPEND ORGANIZATION MODAL -->
+  <div class="modal-overlay" id="suspendOrgModal">
+    <div class="modal-card-box">
+      <h3 style="font-family: var(--font-main); font-size: 1.05rem; font-weight: 700; color: var(--red-primary); margin-bottom: 0.35rem;">
+        <i class="fa-solid fa-ban"></i> Suspend Organization?
+      </h3>
+      <p style="font-size: 0.8rem; color: var(--slate-muted); margin-bottom: 0.85rem;">
+        Suspended organizations cannot create new emergency blood requests until reactivated by Admin.
+      </p>
+
+      <div class="form-group-item">
+        <label class="form-label-txt" for="suspendReasonTxt">Reason for Suspension *</label>
+        <textarea id="suspendReasonTxt" class="form-control-textarea" rows="3" placeholder="e.g. Mandatory blood storage license expired or compliance audit pending."></textarea>
+      </div>
+
+      <div style="display: flex; gap: 0.55rem; justify-content: flex-end;">
+        <button onclick="closeModal('suspendOrgModal')" class="btn-action-sm">Cancel</button>
+        <button onclick="executeSuspendOrg()" class="btn-action-red" style="padding: 0.45rem 0.95rem; border-radius: 9999px;">
+          SUSPEND ORGANIZATION
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 4: ADMIN RESET ORGANIZATION PASSWORD MODAL -->
+  <div class="modal-overlay" id="adminResetOrgPasswordModal">
+    <div class="modal-card-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--slate-border); padding-bottom: 0.65rem; margin-bottom: 0.85rem;">
+        <h3 style="font-family: var(--font-main); font-size: 1.05rem; font-weight: 700; color: var(--navy-dark);">
+          Reset Organization Password
+        </h3>
+        <button onclick="closeModal('adminResetOrgPasswordModal')" style="background: none; border: none; font-size: 1.2rem; color: var(--slate-muted); cursor: pointer;">&times;</button>
+      </div>
+
+      <div style="margin-bottom: 0.85rem; font-size: 0.83rem;">
+        Organization: <strong id="mResetOrgName">Government General Hospital</strong><br>
+        Username: <strong id="mResetOrgUser" style="color: var(--blue-accent);">govgeneralhosur</strong><br>
+        Registered Mobile: <strong id="mResetOrgMobile">+91 ******2345</strong>
+      </div>
+
+      <div class="form-group-item">
+        <label class="form-label-txt" for="mNewTempPassword">Temporary Portal Password *</label>
+        <div style="display: flex; gap: 0.5rem;">
+          <input type="text" id="mNewTempPassword" class="form-control-input" value="TempPass@2026" required>
+          <button type="button" onclick="generateRandomTempPassword()" class="btn-action-sm">GENERATE</button>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 0.55rem; justify-content: flex-end; margin-top: 1rem;">
+        <button onclick="closeModal('adminResetOrgPasswordModal')" class="btn-action-sm">Cancel</button>
+        <button onclick="executeResetOrgPassword()" class="btn-create-org-cta">
+          <i class="fa-solid fa-key"></i> RESET PASSWORD
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 5: ORGANIZATION DETAILS & PORTAL ACCESS MODAL -->
+  <div class="modal-overlay" id="viewOrgDetailsModal">
+    <div class="modal-card-box" style="max-width: 580px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--slate-border); padding-bottom: 0.65rem; margin-bottom: 0.85rem;">
+        <div>
+          <h3 style="font-family: var(--font-main); font-size: 1.1rem; font-weight: 700; color: var(--navy-dark);" id="vOrgTitle">
+            Government General Hospital
+          </h3>
+          <span style="font-size: 0.72rem; color: var(--slate-muted);" id="vOrgId">LL-GH-2026-001</span>
+        </div>
+        <button onclick="closeModal('viewOrgDetailsModal')" style="background: none; border: none; font-size: 1.2rem; color: var(--slate-muted); cursor: pointer;">&times;</button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; font-size: 0.8rem; margin-bottom: 1rem;">
+        <div style="background: #F8FAFC; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--slate-border);">
+          <div style="font-weight: 700; font-size: 0.7rem; color: var(--slate-muted); text-transform: uppercase; margin-bottom: 0.35rem;">ORGANIZATION INFORMATION</div>
+          <div>Type: <strong id="vOrgType">Government Hospital</strong></div>
+          <div>Reg #: <strong id="vOrgReg">GOVT-TN-HOSP-9912</strong></div>
+          <div>Authority: <strong id="vOrgAuthority">Dept of Health</strong></div>
+          <div>Valid Until: <strong id="vOrgValid">2030-12-31</strong></div>
+        </div>
+
+        <div style="background: #F8FAFC; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--slate-border);">
+          <div style="font-weight: 700; font-size: 0.7rem; color: var(--slate-muted); text-transform: uppercase; margin-bottom: 0.35rem;">PORTAL ACCESS & ACCOUNT</div>
+          <div>Username: <strong id="vOrgUsername" style="color: var(--blue-accent);">govgeneralhosur</strong></div>
+          <div>Account Status: <strong id="vOrgAccountStatus" style="color: var(--green-success);">VERIFIED / ACTIVE</strong></div>
+          <div>Reg Mobile: <strong id="vOrgRegMobile">+91 98430 12345</strong></div>
+          <div>Last Login: <strong id="vOrgLastLogin">28 Sep 2026 • 10:45 AM</strong></div>
+        </div>
+      </div>
+
+      <div style="background: #F8FAFC; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--slate-border); font-size: 0.8rem; margin-bottom: 1rem;">
+        <div style="font-weight: 700; font-size: 0.7rem; color: var(--slate-muted); text-transform: uppercase; margin-bottom: 0.35rem;">CONTACT INFORMATION & LOCATION</div>
+        <div>Address: <span id="vOrgAddress">Government Hospital Road, Hosur</span></div>
+        <div>Phone: <span id="vOrgPhone">+91 4344 220000</span> | Email: <span id="vOrgEmail">dispatch@ggh-hosur.tn.gov.in</span></div>
+      </div>
+
+      <div style="display: flex; gap: 0.45rem; justify-content: flex-end; flex-wrap: wrap;">
+        <button id="vBtnResetPass" class="btn-action-sm"><i class="fa-solid fa-key"></i> RESET PASSWORD</button>
+        <button id="vBtnToggleLock" class="btn-action-sm btn-action-red"><i class="fa-solid fa-lock"></i> LOCK ACCOUNT</button>
+        <button onclick="closeModal('viewOrgDetailsModal')" class="btn-action-sm">Close</button>
+      </div>
+    </div>
+  </div>
 
   <script>
+    // State Variables
+    let currentSelectedChangeReqId = null;
+    let currentSelectedOrgId = null;
+
     document.addEventListener('DOMContentLoaded', () => {
-      MockAuth.renderRoleNavigation('admin');
-      renderOverview();
-      renderIeeeMetrics();
-      renderForecastTable();
-      renderAdminOrgTable();
+      // Require Admin Role
+      const user = MockAuth.getCurrentUser();
+      if (!user || user.role !== 'Admin') {
+        MockAuth.quickDemoLogin('Admin');
+      }
+
+      // Explicitly switch to dashboard on page load so content is immediately visible
+      switchView('dashboard');
+
+      renderMasterOrgTable();
+      renderEmergencyReqTable();
+      renderChangeRequests();
+      renderPendingVerifications();
+      renderPasswordResetRequests();
+      renderSuspendedOrgs();
+      renderDonorTable();
       renderAuditLogs();
+      renderAdminNotificationList();
+      updateStatCounts();
     });
 
-    function switchAdminView(viewName, element) {
-      document.querySelectorAll('.admin-nav-item').forEach(el => el.classList.remove('active'));
-      if (element) element.classList.add('active');
+    // Collapsible Sidebar Group Mapping
+    const navGroupMapping = {
+      'live-dispatch': 'operations',
+      'live-dispatch-details': 'operations',
+      'emergency-requests': 'operations',
+      'fulfillment-tracking': 'operations',
+      'request-history': 'operations',
+      
+      'organizations': 'organizations',
+      'create-org': 'organizations',
+      'verification-requests': 'organizations',
+      'change-requests': 'organizations',
+      'suspended-orgs': 'organizations',
 
-      document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
+      'donors': 'donors',
 
-      const target = document.getElementById('tab' + viewName.charAt(0).toUpperCase() + viewName.slice(1));
-      if (target) target.classList.add('active');
+      'audit-logs': 'governance',
+      'settings': 'governance'
+    };
 
-      document.getElementById('tabTitleHeader').textContent = element ? element.textContent.replace(/^[^\s]+\s*/, '') : 'Admin Portal';
+    function toggleNavGroup(groupId) {
+      const submenu = document.getElementById(`submenu-${groupId}`);
+      const parentBtn = document.getElementById(`parent-${groupId}`);
+      if (!submenu || !parentBtn) return;
+
+      const isOpen = submenu.classList.contains('open');
+      if (isOpen) {
+        submenu.classList.remove('open');
+        parentBtn.classList.remove('expanded');
+      } else {
+        submenu.classList.add('open');
+        parentBtn.classList.add('expanded');
+      }
     }
 
-    function renderOverview() {
-      const container = document.getElementById('overviewRequestsPreview');
-      if (!container) return;
-      container.innerHTML = MockData.emergencyRequests.map(r => `
-        <div style="padding: 0.85rem 0; border-bottom: 1px solid var(--navy-border); display: flex; justify-content: space-between;">
-          <div>
-            <strong>${r.patientName} (${r.bloodGroup})</strong> — ${r.orgName}
-            <div style="font-size: 0.82rem; color: var(--navy-muted);">Status: ${r.status} • Radius: ${r.searchRadiusKm} km</div>
-          </div>
-          <span class="badge ${r.urgency === 'CRITICAL' ? 'badge-critical' : 'badge-warning'}">${r.urgency}</span>
-        </div>
-      `).join('');
+    function expandNavGroup(groupId) {
+      const submenu = document.getElementById(`submenu-${groupId}`);
+      const parentBtn = document.getElementById(`parent-${groupId}`);
+      if (submenu && parentBtn) {
+        submenu.classList.add('open');
+        parentBtn.classList.add('expanded');
+      }
     }
 
-    function renderIeeeMetrics() {
-      if (typeof AnalyticsService === 'undefined') return;
-      const m = AnalyticsService.getResearchMetrics();
-      if (document.getElementById('metricNotifCount')) document.getElementById('metricNotifCount').textContent = m.donorsNotifiedAverage;
-      if (document.getElementById('metricRounds')) document.getElementById('metricRounds').textContent = m.notificationRoundsAverage;
-      if (document.getElementById('metricRespTime')) document.getElementById('metricRespTime').textContent = m.averageResponseTimeMins + 'm';
-      if (document.getElementById('metricFulfillRate')) document.getElementById('metricFulfillRate').textContent = m.fulfillmentRatePercent + '%';
+    function switchView(viewId) {
+      document.querySelectorAll('.view-pane').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item-btn, .nav-child-btn').forEach(el => el.classList.remove('active'));
+
+      const targetPane = document.getElementById(`view-${viewId}`);
+      const targetNav = document.getElementById(`nav-${viewId}`);
+
+      if (targetPane) targetPane.classList.add('active');
+      if (targetNav) targetNav.classList.add('active');
+
+      // Automatically expand parent group for active child view
+      const parentGroup = navGroupMapping[viewId];
+      if (parentGroup) {
+        expandNavGroup(parentGroup);
+      }
+
+      const titles = {
+        'dashboard': 'Admin Dashboard',
+        'live-dispatch': 'Live Dispatch Monitor',
+        'live-dispatch-details': 'Live Emergency Dispatch',
+        'emergency-requests': 'Emergency Requests',
+        'organizations': 'Organization Management',
+        'create-org': 'Create New Organization',
+        'verification-requests': 'Verification Requests & Security',
+        'change-requests': 'Organization Change Requests',
+        'suspended-orgs': 'Suspended Organizations',
+        'donors': 'Donor Management',
+        'fulfillment-tracking': 'Fulfillment Tracking',
+        'request-history': 'Request History',
+        'notifications': 'Notification Center',
+        'analytics': 'LIFE LINK Analytics',
+        'audit-logs': 'System Audit Logs',
+        'settings': 'System Settings',
+        'help-support': 'Support Center'
+      };
+
+      const topTitle = document.getElementById('topPageTitle');
+      if (topTitle) topTitle.textContent = titles[viewId] || 'Admin Dashboard';
     }
 
-    function renderForecastTable() {
-      const tbody = document.getElementById('forecastTableBody');
-      if (!tbody || typeof AnalyticsService === 'undefined') return;
-      const forecasts = AnalyticsService.getDemandForecast();
-      tbody.innerHTML = forecasts.map(f => `
-        <tr style="border-bottom: 1px solid var(--navy-border);">
-          <td style="padding: 0.75rem 1rem;"><strong>${f.bloodGroup}</strong></td>
-          <td style="padding: 0.75rem 1rem;"><span class="badge ${f.currentDemand === 'HIGH' ? 'badge-critical' : 'badge-neutral'}">${f.currentDemand}</span></td>
-          <td style="padding: 0.75rem 1rem;"><span class="badge ${f.expectedDemand === 'HIGH' || f.expectedDemand === 'CRITICAL' ? 'badge-critical' : 'badge-warning'}">${f.expectedDemand}</span></td>
-          <td style="padding: 0.75rem 1rem;">${f.trend}</td>
-          <td style="padding: 0.75rem 1rem;"><span class="badge badge-neutral">${f.urgencyLevel}</span></td>
-        </tr>
-      `).join('');
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) modal.style.display = 'none';
     }
 
-    function renderAdminOrgTable() {
-      const tbody = document.getElementById('adminOrgTableBody');
+    function viewLiveDispatchDetails(reqId) {
+      switchView('live-dispatch-details');
+    }
+
+    // STATS COUNTS
+    function updateStatCounts() {
+      const orgs = MockData.organizations;
+      const total = orgs.length;
+      const verified = orgs.filter(o => o.status === 'VERIFIED').length;
+      const pending = orgs.filter(o => o.status === 'PENDING' || o.status === 'PENDING VERIFICATION').length;
+      const suspended = orgs.filter(o => o.status === 'SUSPENDED').length;
+
+      const statTotalEl = document.getElementById('statTotalOrgs');
+      if (statTotalEl) statTotalEl.textContent = total;
+      const statVerEl = document.getElementById('statVerifiedOrgs');
+      if (statVerEl) statVerEl.textContent = verified;
+      const statPenEl = document.getElementById('statPendingOrgs');
+      if (statPenEl) statPenEl.textContent = pending;
+      const statSusEl = document.getElementById('statSuspendedOrgs');
+      if (statSusEl) statSusEl.textContent = suspended;
+
+      const navTot = document.getElementById('navBadgeTotalOrg');
+      if (navTot) navTot.textContent = total;
+      const navPen = document.getElementById('navBadgePending');
+      if (navPen) navPen.textContent = pending;
+      const navSus = document.getElementById('navBadgeSuspended');
+      if (navSus) navSus.textContent = suspended;
+
+      const pendingChanges = MockData.changeRequests.filter(c => c.status === 'PENDING').length;
+      const navChg = document.getElementById('navBadgeChanges');
+      if (navChg) navChg.textContent = pendingChanges;
+    }
+
+    // EMERGENCY REQUESTS TABLE
+    function renderEmergencyReqTable() {
+      const tbody = document.getElementById('emergencyReqTableBody');
       if (!tbody) return;
-      tbody.innerHTML = MockData.organizations.map(org => `
-        <tr style="border-bottom: 1px solid var(--navy-border);">
-          <td style="padding: 0.85rem 1rem;"><strong>${org.orgName}</strong></td>
-          <td style="padding: 0.85rem 1rem;"><span class="badge badge-neutral">${org.orgType}</span></td>
-          <td style="padding: 0.85rem 1rem;"><code>${org.certificationNumber}</code></td>
-          <td style="padding: 0.85rem 1rem;">${org.representativeName}</td>
-          <td style="padding: 0.85rem 1rem;"><span class="badge ${org.verificationStatus === 'VERIFIED' ? 'badge-success' : 'badge-warning'}">${org.verificationStatus}</span></td>
-          <td style="padding: 0.85rem 1rem; text-align: right;">
-            <button onclick="alert('Updating org status')" class="btn btn-secondary btn-sm">Review</button>
+
+      const gFilter = document.getElementById('reqFilterGroup').value;
+      const sFilter = document.getElementById('reqFilterStatus').value;
+
+      let list = MockData.emergencyRequests;
+      if (gFilter !== 'ALL') list = list.filter(r => r.bloodGroup === gFilter);
+      if (sFilter !== 'ALL') list = list.filter(r => r.status === sFilter);
+
+      tbody.innerHTML = list.map(r => `
+        <tr>
+          <td><strong>${r.id}</strong></td>
+          <td><span class="badge-status ${r.bloodGroup === 'O+' ? 'status-suspended' : 'status-verified'}">${r.bloodGroup}</span></td>
+          <td>${r.unitsNeeded} units</td>
+          <td><span class="badge-status ${r.urgency === 'CRITICAL' ? 'status-suspended' : 'status-pending'}">${r.urgency}</span></td>
+          <td>${r.orgName}</td>
+          <td><span class="badge-status status-pending">${r.currentWave || 'Round 1 (0–3 km)'}</span></td>
+          <td><strong style="color: var(--navy-dark);">${r.confirmedCount || 0} / ${r.unitsNeeded}</strong></td>
+          <td>
+            <span class="badge-status ${r.status === 'ACTIVE' ? 'status-pending' : r.status === 'FULFILLED' ? 'status-verified' : 'status-suspended'}">
+              ${r.status}
+            </span>
+          </td>
+          <td style="text-align: right;">
+            <button onclick="viewLiveDispatchDetails('${r.id}')" class="btn-action-sm btn-action-primary">VIEW DISPATCH</button>
           </td>
         </tr>
       `).join('');
     }
 
-    function renderAuditLogs() {
-      const container = document.getElementById('auditLogContainer');
-      if (!container || typeof AuditLogger === 'undefined') return;
-      const logs = AuditLogger.getAuditTrail('REQ-8821');
-      container.innerHTML = logs.map(l => `
-        <div style="padding: 0.85rem; border-bottom: 1px solid var(--navy-border); display: flex; justify-content: space-between;">
+    function filterReqTable() { renderEmergencyReqTable(); }
+
+    // MASTER ORGANIZATIONS TABLE
+    function renderMasterOrgTable() {
+      const tbody = document.getElementById('orgMasterTableBody');
+      if (!tbody) return;
+
+      const typeFilter = document.getElementById('filterType').value;
+      const statusFilter = document.getElementById('filterStatus').value;
+      const searchVal = document.getElementById('globalAdminSearch').value.toLowerCase().trim();
+
+      let list = MockData.organizations;
+      if (typeFilter !== 'ALL') list = list.filter(o => o.type === typeFilter);
+      if (statusFilter !== 'ALL') list = list.filter(o => o.status === statusFilter);
+      if (searchVal) {
+        list = list.filter(o => 
+          o.name.toLowerCase().includes(searchVal) || 
+          o.id.toLowerCase().includes(searchVal) || 
+          o.location.toLowerCase().includes(searchVal) ||
+          (o.username && o.username.toLowerCase().includes(searchVal))
+        );
+      }
+
+      tbody.innerHTML = list.map(o => `
+        <tr>
+          <td>
+            <strong>${o.name}</strong>
+            <div style="font-size: 0.7rem; color: var(--slate-muted); font-family: monospace;">
+              ${o.id} • User: <strong>${o.username || 'n/a'}</strong>
+            </div>
+          </td>
+          <td><span class="badge-status" style="background: #F1F5F9;">${o.type}</span></td>
+          <td>${o.location}</td>
+          <td>
+            <span class="badge-status ${o.status === 'VERIFIED' ? 'status-verified' : (o.status === 'PENDING' || o.status === 'PENDING VERIFICATION') ? 'status-pending' : 'status-suspended'}">
+              ${o.status === 'VERIFIED' ? '✓ VERIFIED' : (o.status === 'PENDING' || o.status === 'PENDING VERIFICATION') ? '⌛ PENDING' : '⛔ SUSPENDED'}
+            </span>
+          </td>
+          <td><span style="font-size: 0.75rem; color: var(--slate-muted);">${o.lastUpdated || 'Recently'}</span></td>
+          <td style="text-align: right;">
+            <div style="display: inline-flex; gap: 0.3rem;">
+              <button onclick="viewOrgDetails('${o.id}')" class="btn-action-sm btn-action-primary">VIEW</button>
+              <button onclick="openResetOrgPasswordModal('${o.id}')" class="btn-action-sm" title="Reset Password"><i class="fa-solid fa-key"></i></button>
+              ${o.status === 'SUSPENDED' 
+                ? `<button onclick="reactivateOrgDirect('${o.id}')" class="btn-action-sm" style="color: var(--green-success);">REACTIVATE</button>` 
+                : `<button onclick="promptSuspendOrg('${o.id}')" class="btn-action-sm" style="color: var(--red-primary);">SUSPEND</button>`
+              }
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function filterOrgTable() { renderMasterOrgTable(); }
+    function handleGlobalSearch(val) { renderMasterOrgTable(); }
+
+    // VIEW ORGANIZATION DETAILS & PORTAL ACCESS
+    function viewOrgDetails(orgId) {
+      const o = MockData.organizations.find(item => item.id === orgId);
+      if (!o) return;
+
+      currentSelectedOrgId = orgId;
+      document.getElementById('vOrgTitle').textContent = o.name;
+      document.getElementById('vOrgId').textContent = o.id;
+      document.getElementById('vOrgType').textContent = o.type;
+      document.getElementById('vOrgReg').textContent = o.regNumber || 'N/A';
+      document.getElementById('vOrgAuthority').textContent = o.issuingAuthority || 'Health Dept';
+      document.getElementById('vOrgValid').textContent = o.validUntil || '2030';
+      document.getElementById('vOrgUsername').textContent = o.username || 'govgeneralhosur';
+      document.getElementById('vOrgAccountStatus').textContent = o.status || 'VERIFIED';
+      document.getElementById('vOrgRegMobile').textContent = o.registeredMobile || o.emergencyContact || '+91 98430 12345';
+      document.getElementById('vOrgLastLogin').textContent = o.lastLogin || 'Recent';
+      document.getElementById('vOrgAddress').textContent = o.address || o.location;
+      document.getElementById('vOrgPhone').textContent = o.phone;
+      document.getElementById('vOrgEmail').textContent = o.email;
+
+      document.getElementById('vBtnResetPass').onclick = () => {
+        closeModal('viewOrgDetailsModal');
+        openResetOrgPasswordModal(orgId);
+      };
+
+      document.getElementById('viewOrgDetailsModal').style.display = 'flex';
+    }
+
+    // CREATE ORGANIZATION (WITH PORTAL ACCESS CREDENTIALS)
+    function handleCreateOrgSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('cName').value.trim();
+      const type = document.getElementById('cType').value;
+      const phone = document.getElementById('cPhone').value.trim();
+      const email = document.getElementById('cEmail').value.trim();
+      const emergency = document.getElementById('cEmergency').value.trim();
+      const address = document.getElementById('cAddress').value.trim();
+      const city = document.getElementById('cCity').value.trim();
+      const state = document.getElementById('cState').value.trim();
+      const pincode = document.getElementById('cPincode').value.trim();
+      const reg = document.getElementById('cReg').value.trim();
+      const authority = document.getElementById('cAuthority').value.trim();
+      const valid = document.getElementById('cValid').value;
+      const rep = document.getElementById('cRep').value.trim();
+      const username = document.getElementById('cUsername').value.trim();
+      const regMobile = document.getElementById('cRegMobile').value.trim();
+      const password = document.getElementById('cPassword').value.trim();
+      const confirmPassword = document.getElementById('cConfirmPassword').value.trim();
+
+      if (password !== confirmPassword) {
+        alert('Password and Confirm Password do not match.');
+        return;
+      }
+
+      const newId = `LL-ORG-2026-00${MockData.organizations.length + 1}`;
+
+      const newOrg = {
+        id: newId,
+        name,
+        type,
+        location: `${city}, ${state}`,
+        address,
+        city,
+        state,
+        pincode,
+        phone,
+        email,
+        emergencyContact: emergency,
+        regNumber: reg,
+        issuingAuthority: authority,
+        validUntil: valid,
+        representative: rep,
+        username,
+        password,
+        registeredMobile: regMobile,
+        status: 'PENDING VERIFICATION',
+        portalAccess: 'LOCKED',
+        verifiedBy: 'Pending Review',
+        verificationDate: 'Pending',
+        lastUpdated: 'Today',
+        lastLogin: 'Never',
+        history: [{ date: 'Today', event: 'Organization created by System Admin. Credentials provisioned.', author: 'System Admin' }]
+      };
+
+      MockData.organizations.unshift(newOrg);
+      
+      // Save localOrgs to localStorage
+      const localOrgs = JSON.parse(localStorage.getItem('lifelink_organizations') || '[]');
+      localOrgs.unshift(newOrg);
+      localStorage.setItem('lifelink_organizations', JSON.stringify(localOrgs));
+
+      MockData.logAudit('Organization Created', name, 'ORGANIZATION_CREATED', `Organization record ${newId} created with username [${username}]. Portal Access: LOCKED UNTIL VERIFICATION.`, 'System Admin');
+
+      alert(`✓ Organization Created Successfully!\n\nOrganization: ${name}\nOrganization ID: ${newId}\nUsername: ${username}\nVerification Status: PENDING VERIFICATION\nPortal Access: LOCKED\n\nInitial portal credentials have been provisioned by Administrator.`);
+
+      updateStatCounts();
+      renderMasterOrgTable();
+      renderPendingVerifications();
+      renderAuditLogs();
+
+      document.getElementById('createOrgForm').reset();
+      switchView('organizations');
+    }
+
+    // DONOR TABLE RENDER
+    function renderDonorTable() {
+      const tbody = document.getElementById('donorTableBody');
+      if (!tbody) return;
+
+      tbody.innerHTML = MockData.donors.map(d => `
+        <tr>
+          <td><strong>${d.id}</strong></td>
+          <td><span class="badge-status status-verified">${d.bloodGroup}</span></td>
+          <td>
+            <span class="badge-status ${d.isAvailable ? 'status-verified' : 'status-rejected'}">
+              ${d.isAvailable ? '🟢 Available' : '🔴 Unavailable'}
+            </span>
+          </td>
+          <td>${d.approxArea || 'Hosur Area'}</td>
+          <td><span class="badge-status status-verified">${d.accountStatus || 'ACTIVE'}</span></td>
+          <td style="text-align: right;">
+            <button onclick="alert('Viewing masked donor profile for ${d.id} while preserving privacy standards.')" class="btn-action-sm btn-action-primary">VIEW PROFILE</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // CHANGE REQUESTS
+    function renderChangeRequests() {
+      const container = document.getElementById('changeRequestsGrid');
+      if (!container) return;
+
+      const pending = MockData.changeRequests.filter(c => c.status === 'PENDING');
+      if (pending.length === 0) {
+        container.innerHTML = `<div style="text-align: center; padding: 1.25rem; color: var(--slate-muted);">No pending organization change requests.</div>`;
+        return;
+      }
+
+      container.innerHTML = pending.map(c => `
+        <div style="background: #FFFFFF; border: 1px solid var(--slate-border); border-radius: 10px; padding: 0.95rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
           <div>
-            <strong style="font-size: 0.95rem;">${l.event}</strong>
-            <div style="font-size: 0.85rem; color: var(--navy-muted);">${l.description}</div>
+            <div style="display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.2rem;">
+              <strong style="font-family: var(--font-main); font-size: 0.92rem; color: var(--navy-dark);">${c.orgName}</strong>
+              <span class="badge-status status-pending">${c.id}</span>
+            </div>
+            <div style="font-size: 0.78rem; color: var(--slate-muted); margin-bottom: 0.35rem;">
+              Requested Change: <strong style="color: var(--navy-dark);">${c.changeType}</strong>
+            </div>
+            <div style="background: #F8FAFC; padding: 0.4rem 0.65rem; border-radius: 6px; font-size: 0.75rem; border: 1px solid var(--slate-border);">
+              Reason: <em>"${c.reason}"</em> • Submitted: ${c.submittedDate}
+            </div>
           </div>
-          <span style="font-size: 0.8rem; color: var(--navy-muted);">${l.timestamp}</span>
+          <div style="display: flex; gap: 0.45rem;">
+            <button onclick="openReviewChangeModal('${c.id}')" class="btn-action-sm btn-action-primary">REVIEW</button>
+            <button onclick="quickApproveChange('${c.id}')" class="btn-action-sm" style="color: var(--green-success);">APPROVE</button>
+          </div>
         </div>
       `).join('');
     }
-  </script>
 
+    function openReviewChangeModal(reqId) {
+      const c = MockData.changeRequests.find(item => item.id === reqId);
+      if (!c) return;
+
+      currentSelectedChangeReqId = reqId;
+      document.getElementById('mReviewTitle').textContent = `Review Change — ${c.id}`;
+      document.getElementById('mReviewOrgName').textContent = c.orgName;
+      document.getElementById('mReviewReqId').textContent = c.id;
+      document.getElementById('mReviewFieldName').textContent = c.changeType;
+      document.getElementById('mReviewCurrentVal').textContent = c.currentValue;
+      document.getElementById('mReviewRequestedVal').textContent = c.requestedValue;
+      document.getElementById('mReviewReason').textContent = c.reason;
+
+      document.getElementById('reviewChangeModal').style.display = 'flex';
+    }
+
+    function executeApproveChange() {
+      closeModal('reviewChangeModal');
+      quickApproveChange(currentSelectedChangeReqId);
+    }
+
+    function quickApproveChange(reqId) {
+      const c = MockData.changeRequests.find(item => item.id === reqId);
+      if (!c) return;
+
+      c.status = 'APPROVED';
+      const org = MockData.organizations.find(o => o.id === c.orgId || o.name.toLowerCase() === c.orgName.toLowerCase());
+      if (org) {
+        if (c.fieldToUpdate && org[c.fieldToUpdate] !== undefined) org[c.fieldToUpdate] = c.requestedValue;
+        org.lastUpdated = 'Just now';
+        org.history.unshift({ date: 'Just now', event: `Admin approved change request ${c.id}`, author: 'System Admin' });
+      }
+
+      MockData.logAudit('Change Request Approved', c.orgName, 'APPROVAL', `${c.id} approved: ${c.changeType} updated`, 'System Admin');
+      alert(`✓ Change Request ${c.id} Approved Successfully!`);
+
+      updateStatCounts();
+      renderChangeRequests();
+      renderMasterOrgTable();
+      renderAuditLogs();
+    }
+
+    function promptRejectionReason() {
+      closeModal('reviewChangeModal');
+      document.getElementById('rejectReasonModal').style.display = 'flex';
+    }
+
+    function executeRejectChange() {
+      const reason = document.getElementById('rejectReasonTxt').value.trim();
+      if (!reason) { alert('Please provide a reason for rejection.'); return; }
+
+      const c = MockData.changeRequests.find(item => item.id === currentSelectedChangeReqId);
+      if (c) {
+        c.status = 'REJECTED';
+        MockData.logAudit('Change Request Rejected', c.orgName, 'REJECTION', `${c.id} rejected. Reason: ${reason}`, 'System Admin');
+      }
+
+      closeModal('rejectReasonModal');
+      alert(`✕ Change Request ${currentSelectedChangeReqId} Rejected.`);
+
+      updateStatCounts();
+      renderChangeRequests();
+      renderAuditLogs();
+    }
+
+    // VERIFICATIONS & PASSWORD RESET REQUESTS QUEUE
+    function renderPendingVerifications() {
+      const container = document.getElementById('pendingVerificationsGrid');
+      if (!container) return;
+
+      const pending = MockData.organizations.filter(o => o.status === 'PENDING' || o.status === 'PENDING VERIFICATION');
+      if (pending.length === 0) {
+        container.innerHTML = `<div style="text-align: center; padding: 1.25rem; color: var(--slate-muted);">All verification requests processed.</div>`;
+        return;
+      }
+
+      container.innerHTML = pending.map(o => `
+        <div style="background: #FFFFFF; border: 1px solid var(--slate-border); border-radius: 10px; padding: 0.95rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+          <div>
+            <strong style="font-family: var(--font-main); font-size: 0.92rem; color: var(--navy-dark);">${o.name}</strong>
+            <div style="font-size: 0.78rem; color: var(--slate-muted);">Type: <strong>${o.type}</strong> • Username: <strong style="color: var(--blue-accent);">${o.username || 'n/a'}</strong> • Location: <strong>${o.location}</strong></div>
+          </div>
+          <button onclick="approveVerificationDirect('${o.id}')" class="btn-action-sm btn-action-primary" style="background: var(--green-success); border-color: var(--green-success);">
+            <i class="fa-solid fa-check"></i> APPROVE & ACTIVATE PORTAL
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function approveVerificationDirect(orgId) {
+      const org = MockData.organizations.find(o => o.id === orgId);
+      if (!org) return;
+
+      org.status = 'VERIFIED';
+      org.portalAccess = 'ACTIVE';
+      org.verifiedBy = 'System Admin';
+      org.history.unshift({ date: 'Just now', event: 'Verified & Portal Access Activated by System Admin', author: 'System Admin' });
+      
+      MockData.logAudit('Organization Verified', org.name, 'ORGANIZATION_VERIFIED', `Verification completed for ${org.id}. Portal access activated.`, 'System Admin');
+      MockData.logAudit('Portal Access Enabled', org.name, 'PORTAL_ACCESS_ENABLED', `Portal access status updated to ACTIVE for ${org.username}`, 'System Admin');
+
+      alert(`✓ ${org.name} Verified Successfully!\nPortal Access Status: ACTIVE\nOrganization can now sign in using Username: ${org.username}`);
+
+      updateStatCounts();
+      renderMasterOrgTable();
+      renderPendingVerifications();
+      renderAuditLogs();
+    }
+
+    // ORGANIZATION PASSWORD RESET REQUESTS QUEUE
+    function renderPasswordResetRequests() {
+      const container = document.getElementById('passwordResetRequestsGrid');
+      if (!container) return;
+
+      const localReqs = JSON.parse(localStorage.getItem('lifelink_reset_requests') || '[]');
+      const mockReqs = MockData.passwordResetRequests || [];
+      const combined = [...localReqs, ...mockReqs];
+      const pending = combined.filter((r, idx, self) => r.status === 'PENDING' && self.findIndex(t => t.id === r.id) === idx);
+
+      if (pending.length === 0) {
+        container.innerHTML = `<div style="text-align: center; padding: 1.25rem; color: var(--slate-muted);">No pending organization password reset requests.</div>`;
+        return;
+      }
+
+      container.innerHTML = pending.map(r => `
+        <div style="background: #FFFFFF; border: 1px solid var(--slate-border); border-radius: 10px; padding: 0.95rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.2rem;">
+              <strong style="font-family: var(--font-main); font-size: 0.92rem; color: var(--navy-dark);">${r.orgName}</strong>
+              <span class="badge-status status-suspended">PASSWORD RESET REQUESTED</span>
+            </div>
+            <div style="font-size: 0.78rem; color: var(--slate-muted); margin-bottom: 0.25rem;">
+              Username: <strong style="color: var(--blue-accent);">${r.username}</strong> • Mobile: <strong>${r.registeredMobile}</strong> • Time: ${r.submittedTime}
+            </div>
+            <div style="font-size: 0.75rem; color: var(--slate-muted);">
+              Reason: <em>"${r.reason}"</em>
+            </div>
+          </div>
+          <div style="display: flex; gap: 0.45rem;">
+            <button onclick="openResetOrgPasswordModal('${r.orgId}')" class="btn-action-sm btn-action-primary">
+              <i class="fa-solid fa-key"></i> RESET PASSWORD
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openResetOrgPasswordModal(orgId) {
+      const org = MockData.organizations.find(o => o.id === orgId || o.username === orgId);
+      if (!org) return;
+
+      currentSelectedOrgId = org.id;
+      document.getElementById('mResetOrgName').textContent = org.name;
+      document.getElementById('mResetOrgUser').textContent = org.username || 'govgeneralhosur';
+      document.getElementById('mResetOrgMobile').textContent = org.registeredMobile || org.phone || '+91 98430 12345';
+      document.getElementById('mNewTempPassword').value = 'TempPass@2026';
+
+      document.getElementById('adminResetOrgPasswordModal').style.display = 'flex';
+    }
+
+    function generateRandomTempPassword() {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$';
+      let pass = 'LL';
+      for (let i = 0; i < 8; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
+      document.getElementById('mNewTempPassword').value = pass;
+    }
+
+    function executeResetOrgPassword() {
+      const tempPass = document.getElementById('mNewTempPassword').value.trim();
+      if (!tempPass) { alert('Please enter or generate a temporary password.'); return; }
+
+      const res = MockAuth.resetOrganizationPasswordByAdmin(currentSelectedOrgId, tempPass);
+      closeModal('adminResetOrgPasswordModal');
+
+      if (res.success) {
+        alert(`✓ Organization Password Reset Successful!\n\nTemporary Password set to: ${tempPass}\nPortal Access status is ACTIVE.`);
+        updateStatCounts();
+        renderMasterOrgTable();
+        renderPasswordResetRequests();
+        renderAuditLogs();
+      } else {
+        alert(res.message);
+      }
+    }
+
+    // SUSPEND & REACTIVATE
+    function promptSuspendOrg(orgId) {
+      currentSelectedOrgId = orgId;
+      document.getElementById('suspendOrgModal').style.display = 'flex';
+    }
+
+    function executeSuspendOrg() {
+      const reason = document.getElementById('suspendReasonTxt').value.trim();
+      if (!reason) { alert('Please specify a reason.'); return; }
+
+      const org = MockData.organizations.find(o => o.id === currentSelectedOrgId);
+      if (org) {
+        org.status = 'SUSPENDED';
+        org.portalAccess = 'LOCKED';
+        org.suspensionReason = reason;
+        org.history.unshift({ date: 'Just now', event: `Suspended by Admin. Reason: ${reason}`, author: 'System Admin' });
+        
+        MockData.logAudit('Organization Account Suspended', org.name, 'ORGANIZATION_ACCOUNT_SUSPENDED', `Suspended: ${reason}`, 'System Admin');
+        MockData.logAudit('Portal Access Disabled', org.name, 'PORTAL_ACCESS_DISABLED', `Portal access locked due to suspension`, 'System Admin');
+      }
+
+      closeModal('suspendOrgModal');
+      alert(`⛔ Organization Suspended.`);
+
+      updateStatCounts();
+      renderMasterOrgTable();
+      renderSuspendedOrgs();
+      renderAuditLogs();
+    }
+
+    function renderSuspendedOrgs() {
+      const container = document.getElementById('suspendedOrgsGrid');
+      if (!container) return;
+
+      const suspended = MockData.organizations.filter(o => o.status === 'SUSPENDED');
+      if (suspended.length === 0) {
+        container.innerHTML = `<div style="text-align: center; padding: 1.25rem; color: var(--slate-muted);">No suspended organizations.</div>`;
+        return;
+      }
+
+      container.innerHTML = suspended.map(o => `
+        <div style="background: #FFFFFF; border: 1px solid var(--slate-border); border-radius: 10px; padding: 0.95rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+          <div>
+            <strong style="font-family: var(--font-main); font-size: 0.92rem; color: var(--navy-dark);">${o.name}</strong>
+            <div style="font-size: 0.78rem; color: var(--red-primary);">Reason: ${o.suspensionReason || 'License compliance audit'}</div>
+          </div>
+          <button onclick="reactivateOrgDirect('${o.id}')" class="btn-action-sm" style="color: var(--green-success);">REACTIVATE ORGANIZATION</button>
+        </div>
+      `).join('');
+    }
+
+    function reactivateOrgDirect(orgId) {
+      if (!confirm('Reactivate this organization?')) return;
+
+      const org = MockData.organizations.find(o => o.id === orgId);
+      if (org) {
+        org.status = 'VERIFIED';
+        org.portalAccess = 'ACTIVE';
+        org.history.unshift({ date: 'Just now', event: 'Reactivated by System Admin', author: 'System Admin' });
+        
+        MockData.logAudit('Organization Reactivated', org.name, 'ORGANIZATION_ACCOUNT_REACTIVATED', `Reactivated by Admin`, 'System Admin');
+        MockData.logAudit('Portal Access Enabled', org.name, 'PORTAL_ACCESS_ENABLED', `Portal access status updated to ACTIVE`, 'System Admin');
+      }
+
+      alert(`✓ ${org.name} Reactivated!`);
+
+      updateStatCounts();
+      renderMasterOrgTable();
+      renderSuspendedOrgs();
+      renderAuditLogs();
+    }
+
+    // AUDIT LOGS
+    function renderAuditLogs() {
+      const tbody = document.getElementById('auditLogsTableBody');
+      if (!tbody) return;
+
+      const localLogs = JSON.parse(localStorage.getItem('lifelink_audit_logs') || '[]');
+      const mockLogs = MockData.auditLogs || [];
+      const combined = [...localLogs, ...mockLogs];
+
+      tbody.innerHTML = combined.map(l => `
+        <tr>
+          <td><span style="font-size: 0.75rem; color: var(--slate-muted);">${l.timestamp}</span></td>
+          <td>
+            <strong>${l.action}</strong>
+            <div style="font-size: 0.68rem; color: var(--blue-accent); font-family: monospace;">${l.actionType || 'AUDIT_EVENT'}</div>
+          </td>
+          <td><span class="badge-status status-verified">${l.user || 'System Admin'}</span></td>
+          <td>${l.orgName || 'System'}</td>
+          <td style="font-size: 0.78rem; color: var(--slate-muted);">${l.details}</td>
+        </tr>
+      `).join('');
+    }
+
+    // ADMIN NOTIFICATIONS DATA & LOGIC
+    let adminCurrentNotifFilter = 'ALL';
+    let adminNotificationsData = [
+      {
+        id: 'NOTIF-001',
+        category: 'CRITICAL',
+        title: 'REQ-1042 requires 1 additional O+ donor.',
+        description: 'Government General Hospital emergency request is nearing the wave deadline.',
+        orgName: 'Government General Hospital',
+        timestamp: '2 minutes ago',
+        unread: true,
+        actionText: 'VIEW REQUEST',
+        targetView: 'live-dispatch',
+        badgeColor: '#E4002B',
+        badgeBg: '#FFF0F3',
+        iconClass: 'fa-triangle-exclamation'
+      },
+      {
+        id: 'NOTIF-002',
+        category: 'EMERGENCY',
+        title: 'Round 2 activated for REQ-1042.',
+        description: 'The first notification round did not reach the required confirmation count. Radius expanded to 5 km.',
+        orgName: 'Government General Hospital',
+        timestamp: '5 minutes ago',
+        unread: true,
+        actionText: 'VIEW DISPATCH',
+        targetView: 'live-dispatch',
+        badgeColor: '#E4002B',
+        badgeBg: '#FFF0F3',
+        iconClass: 'fa-tower-broadcast'
+      },
+      {
+        id: 'NOTIF-003',
+        category: 'ORGANIZATION',
+        title: 'City Blood Bank verification request pending review.',
+        description: 'City Blood Bank submitted registration license documents for verification.',
+        orgName: 'City Blood Bank',
+        timestamp: '20 minutes ago',
+        unread: true,
+        actionText: 'REVIEW REQUEST',
+        targetView: 'verification-requests',
+        badgeColor: '#2563EB',
+        badgeBg: '#EFF6FF',
+        iconClass: 'fa-building-circle-check'
+      },
+      {
+        id: 'NOTIF-004',
+        category: 'ORGANIZATION',
+        title: 'Organization Change Request submitted.',
+        description: 'Government General Hospital submitted a change to its official emergency contact number.',
+        orgName: 'Government General Hospital',
+        timestamp: '32 minutes ago',
+        unread: true,
+        actionText: 'REVIEW CHANGE',
+        targetView: 'change-requests',
+        badgeColor: '#2563EB',
+        badgeBg: '#EFF6FF',
+        iconClass: 'fa-code-pull-request'
+      },
+      {
+        id: 'NOTIF-005',
+        category: 'FULFILLMENT',
+        title: 'REQ-1031 fulfilled successfully.',
+        description: 'REQ-1031 has reached the required donor confirmation count (3/3 units secured).',
+        orgName: 'Apollo Speciality Hospital',
+        timestamp: '45 minutes ago',
+        unread: false,
+        actionText: 'VIEW REQUEST',
+        targetView: 'request-history',
+        badgeColor: '#16A34A',
+        badgeBg: '#F0FDF4',
+        iconClass: 'fa-circle-check'
+      },
+      {
+        id: 'NOTIF-006',
+        category: 'SECURITY',
+        title: 'Organization Password Reset Request received.',
+        description: 'Organization password reset request received from: Government General Hospital (Username: govgeneralhosur).',
+        orgName: 'Government General Hospital',
+        timestamp: '1 hour ago',
+        unread: false,
+        actionText: 'REVIEW REQUEST',
+        targetView: 'verification-requests',
+        badgeColor: '#D97706',
+        badgeBg: '#FEF3C7',
+        iconClass: 'fa-key'
+      },
+      {
+        id: 'NOTIF-007',
+        category: 'SYSTEM',
+        title: 'Daily platform audit completed successfully.',
+        description: 'All active dispatch channels and RBAC permission schemas verified cleanly.',
+        orgName: 'LIFE LINK System',
+        timestamp: '2 hours ago',
+        unread: false,
+        actionText: 'VIEW AUDIT',
+        targetView: 'audit-logs',
+        badgeColor: '#64748B',
+        badgeBg: '#F1F5F9',
+        iconClass: 'fa-shield-halved'
+      }
+    ];
+
+    function filterAdminNotifs(filterKey) {
+      adminCurrentNotifFilter = filterKey;
+      const tabs = ['ALL', 'UNREAD', 'EMERGENCY', 'ORGANIZATION', 'SECURITY', 'SYSTEM'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tabNotif${t}`);
+        if (btn) {
+          if (t === filterKey) {
+            btn.className = 'btn-action-sm btn-action-primary';
+          } else {
+            btn.className = 'btn-action-sm';
+          }
+        }
+      });
+      renderAdminNotificationList();
+    }
+
+    function renderAdminNotificationList() {
+      const container = document.getElementById('adminNotificationList');
+      if (!container) return;
+
+      const searchVal = (document.getElementById('adminNotifSearch')?.value || '').toLowerCase().trim();
+
+      let list = adminNotificationsData;
+
+      if (adminCurrentNotifFilter === 'UNREAD') {
+        list = list.filter(n => n.unread);
+      } else if (adminCurrentNotifFilter === 'CRITICAL') {
+        list = list.filter(n => n.category === 'CRITICAL');
+      } else if (adminCurrentNotifFilter !== 'ALL') {
+        list = list.filter(n => n.category === adminCurrentNotifFilter || (adminCurrentNotifFilter === 'EMERGENCY' && (n.category === 'CRITICAL' || n.category === 'EMERGENCY')));
+      }
+
+      if (searchVal) {
+        list = list.filter(n =>
+          n.title.toLowerCase().includes(searchVal) ||
+          n.description.toLowerCase().includes(searchVal) ||
+          n.orgName.toLowerCase().includes(searchVal) ||
+          n.category.toLowerCase().includes(searchVal)
+        );
+      }
+
+      const totalCount = adminNotificationsData.length;
+      const unreadCount = adminNotificationsData.filter(n => n.unread).length;
+      const criticalCount = adminNotificationsData.filter(n => n.category === 'CRITICAL').length;
+      const orgCount = adminNotificationsData.filter(n => n.category === 'ORGANIZATION').length;
+
+      const notifStatAll = document.getElementById('notifStatAll');
+      if (notifStatAll) notifStatAll.textContent = totalCount;
+      const notifStatUnread = document.getElementById('notifStatUnread');
+      if (notifStatUnread) notifStatUnread.textContent = unreadCount;
+      const notifStatCritical = document.getElementById('notifStatCritical');
+      if (notifStatCritical) notifStatCritical.textContent = criticalCount;
+      const notifStatOrg = document.getElementById('notifStatOrg');
+      if (notifStatOrg) notifStatOrg.textContent = orgCount;
+
+      const navBadgeNotifs = document.getElementById('navBadgeNotifs');
+      if (navBadgeNotifs) {
+        navBadgeNotifs.textContent = unreadCount;
+        navBadgeNotifs.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+      }
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="card-white" style="text-align: center; padding: 2.5rem 1.5rem; margin-top: 0.5rem;">
+            <i class="fa-solid fa-bell-slash" style="font-size: 2.2rem; color: var(--slate-muted); margin-bottom: 0.75rem;"></i>
+            <h3 style="font-family: var(--font-main); font-weight: 700; font-size: 1.1rem; color: var(--navy-dark); margin-bottom: 0.35rem;">No Notifications Found</h3>
+            <p style="font-size: 0.83rem; color: var(--slate-muted); margin-bottom: 1.25rem;">You currently have no matching platform notifications.</p>
+            <button onclick="switchView('dashboard')" class="btn-create-org-cta">Back to Dashboard</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = list.map(n => `
+        <div style="background: ${n.unread ? (n.category === 'CRITICAL' ? '#FFF0F3' : '#F8FAFC') : '#FFFFFF'}; border: 1px solid ${n.unread ? (n.category === 'CRITICAL' ? '#FCA5A5' : '#CBD5E1') : 'var(--slate-border)'}; border-radius: 12px; padding: 1.1rem 1.25rem; display: flex; gap: 1rem; align-items: flex-start; transition: all 0.15s ease;">
+          <div style="width: 36px; height: 36px; border-radius: 9999px; background: ${n.badgeBg}; color: ${n.badgeColor}; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem;">
+            <i class="fa-solid ${n.iconClass}"></i>
+          </div>
+
+          <div style="flex: 1;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem; flex-wrap: wrap; gap: 0.5rem;">
+              <div style="display: flex; align-items: center; gap: 0.45rem;">
+                <span style="font-size: 0.68rem; font-weight: 800; color: ${n.badgeColor}; background: ${n.badgeBg}; padding: 0.15rem 0.5rem; border-radius: 9999px; letter-spacing: 0.04em;">${n.category}</span>
+                <span style="font-size: 0.78rem; color: var(--slate-muted); font-weight: 600;">• ${n.orgName}</span>
+                ${n.unread ? `<span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--red-primary);" title="Unread"></span>` : ''}
+              </div>
+              <span style="font-size: 0.75rem; color: var(--slate-muted);">${n.timestamp}</span>
+            </div>
+
+            <h4 style="font-family: var(--font-main); font-size: 0.92rem; font-weight: ${n.unread ? '700' : '600'}; color: var(--navy-dark); margin-bottom: 0.3rem;">${n.title}</h4>
+            <p style="font-size: 0.8rem; color: var(--slate-muted); line-height: 1.45; margin-bottom: 0.75rem;">${n.description}</p>
+
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <button onclick="handleAdminNotifAction('${n.id}')" class="btn-action-sm btn-action-primary" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">
+                ${n.actionText} →
+              </button>
+              ${n.unread ? `<button onclick="markSingleAdminNotifRead('${n.id}')" class="btn-action-sm" style="font-size: 0.72rem; padding: 0.35rem 0.6rem; color: var(--slate-muted);">Mark Read</button>` : ''}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function handleAdminNotifAction(id) {
+      const n = adminNotificationsData.find(item => item.id === id);
+      if (n) {
+        n.unread = false;
+        renderAdminNotificationList();
+        if (n.targetView) {
+          switchView(n.targetView);
+        }
+      }
+    }
+
+    function markSingleAdminNotifRead(id) {
+      const n = adminNotificationsData.find(item => item.id === id);
+      if (n) {
+        n.unread = false;
+        renderAdminNotificationList();
+      }
+    }
+
+    function markAllAdminNotificationsRead() {
+      adminNotificationsData.forEach(n => n.unread = false);
+      renderAdminNotificationList();
+    }
+  </script>
 </body>
 </html>

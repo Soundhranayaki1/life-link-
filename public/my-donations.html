@@ -914,6 +914,39 @@
         padding: 0 1.5rem;
       }
     }
+
+    /* Universal Back Navigation Link */
+    .back-nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--slate-muted);
+      text-decoration: none;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      margin-bottom: 1.25rem;
+      transition: all 0.15s ease;
+      background: transparent;
+      border: 1px solid transparent;
+    }
+
+    .back-nav-link:hover {
+      color: var(--red-primary);
+      background: #FFF0F3;
+      border-color: #FCA5A5;
+    }
+
+    .back-nav-link i {
+      font-size: 0.85rem;
+      color: var(--slate-muted);
+      transition: color 0.15s ease;
+    }
+
+    .back-nav-link:hover i {
+      color: var(--red-primary);
+    }
   </style>
 </head>
 <body>
@@ -1081,6 +1114,11 @@
 
   <!-- MAIN DASHBOARD CONTAINER MATCHING REFERENCE IMAGE -->
   <main class="dashboard-container" id="impactSection">
+
+    <!-- Reusable Back Navigation -->
+    <a href="donor-dashboard.html" class="back-nav-link">
+      <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+    </a>
 
     <!-- HERO BANNER SECTION (YOUR IMPACT & STATS) -->
     <div class="hero-banner-card">
@@ -1256,6 +1294,60 @@
   </footer>
 
   <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadMyDonationHistory();
+    });
+
+    function loadMyDonationHistory() {
+      let user = MockAuth.getCurrentUser();
+      if (!user) {
+        user = MockAuth.quickDemoLogin('Donor');
+      }
+
+      const history = JSON.parse(localStorage.getItem('lifelink_donation_history') || '[]');
+      const timelineContainer = document.querySelector('.journey-timeline-table');
+      const countEl = document.querySelector('.stat-num-pink');
+      const livesEl = document.querySelector('.stat-num-blue');
+
+      if (countEl) countEl.textContent = (user.totalDonations || 4).toString().padStart(2, '0');
+      if (livesEl) livesEl.textContent = (user.livesHelped || 12).toString().padStart(2, '0');
+
+      if (history.length > 0 && timelineContainer) {
+        timelineContainer.innerHTML = history.map(item => `
+          <div class="timeline-item-row">
+            <div class="date-column">${(item.donationDate || '').toUpperCase()}</div>
+            <div class="facility-info-column">
+              <div class="facility-icon-square">🏥</div>
+              <div>
+                <div class="facility-name">${item.location || 'Hosur Healthcare Center'}</div>
+                <div class="facility-location">Donation Type: ${item.donationType || 'Whole Blood'} (${item.bloodGroup || 'O+'})</div>
+              </div>
+            </div>
+            <div class="pill-completed">
+              <i class="fa-solid fa-check"></i> ${item.status || 'COMPLETED'}
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Update 48-Day Eligibility Box
+      if (typeof MockData !== 'undefined' && MockData.calculateEligibility) {
+        const lastDate = user.lastDonationDate || '2026-06-15';
+        const eligibility = MockData.calculateEligibility(lastDate);
+        const lastDonDateEl = document.querySelector('.last-don-date');
+        const lastDonFacilityEl = document.querySelector('.last-don-facility');
+        const lastDonSubtextEl = document.querySelector('.last-don-subtext');
+
+        if (lastDonDateEl) lastDonDateEl.textContent = eligibility.lastDonationFormatted;
+        if (lastDonFacilityEl) lastDonFacilityEl.textContent = `Status: ${eligibility.statusText}`;
+        if (lastDonSubtextEl) {
+          lastDonSubtextEl.innerHTML = eligibility.isEligible 
+            ? '<strong style="color: #16A34A;">✓ You are eligible to donate blood today.</strong>' 
+            : `<strong style="color: var(--red-primary);">⚠️ Next Eligible Date: ${eligibility.nextEligibleFormatted} (${eligibility.daysRemaining} days remaining)</strong>`;
+        }
+      }
+    }
+
     // Notifications Popup Dropdown Handlers
     function toggleNotifPopup(event) {
       if (event) event.stopPropagation();

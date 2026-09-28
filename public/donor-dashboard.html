@@ -1272,6 +1272,18 @@
             "You're currently visible to nearby emergency blood requests within 8 km."
           </p>
 
+          <!-- 48-Day Donation Eligibility Tracking Widget -->
+          <div style="margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid rgba(0,0,0,0.08);" id="eligibilityWidget">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.45rem;">
+              <span style="font-size: 0.72rem; font-weight: 800; color: var(--slate-muted); text-transform: uppercase; letter-spacing: 0.04em;">48-DAY ELIGIBILITY</span>
+              <span class="pill-green" id="eligibilityBadgePill" style="font-size: 0.7rem; padding: 0.15rem 0.5rem;">✓ Eligible to Donate</span>
+            </div>
+            <div style="font-size: 0.8rem; color: var(--slate-body); display: flex; justify-content: space-between; background: rgba(255,255,255,0.7); padding: 0.45rem 0.65rem; border-radius: 8px;">
+              <span>LAST DONATION: <strong id="lastDonationText">Aug 2026</strong></span>
+              <span>NEXT ELIGIBLE: <strong id="nextEligibleText">Oct 2026</strong></span>
+            </div>
+          </div>
+
           <button id="toggleStatusBtn" onclick="toggleStatusState()" class="btn-pause-donation">
             <i class="fa-solid fa-pause"></i> Pause Donation Requests
           </button>
@@ -1542,6 +1554,47 @@
   </div>
 
   <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initDonorDashboard();
+    });
+
+    function initDonorDashboard() {
+      const user = MockAuth.getCurrentUser();
+      if (!user) return;
+
+      // Update Header & Welcome User Info
+      const nameEl = document.getElementById('donorGreetingName');
+      if (nameEl) nameEl.textContent = (user.name || 'Arun').split(' ')[0] + '.';
+
+      const bloodPill = document.getElementById('donorBloodTypePill');
+      if (bloodPill) bloodPill.innerHTML = `<i class="fa-solid fa-droplet"></i> ${user.bloodGroup || 'O+'} DONOR`;
+
+      const locEl = document.getElementById('donorLocationText');
+      if (locEl) locEl.textContent = `📍 ${user.city || 'Mumbai'}`;
+
+      // Calculate 48-Day Eligibility Status
+      if (typeof MockData !== 'undefined' && MockData.calculateEligibility) {
+        const eligibility = MockData.calculateEligibility(user.lastDonationDate);
+        
+        const pill = document.getElementById('eligibilityBadgePill');
+        const lastEl = document.getElementById('lastDonationText');
+        const nextEl = document.getElementById('nextEligibleText');
+
+        if (pill) {
+          if (eligibility.isEligible) {
+            pill.className = 'pill-green';
+            pill.innerHTML = '✓ Eligible to Donate';
+          } else {
+            pill.className = 'pill-red';
+            pill.innerHTML = `⚠️ Not Eligible Yet (${eligibility.daysRemaining}d left)`;
+          }
+        }
+
+        if (lastEl) lastEl.textContent = eligibility.lastDonationFormatted;
+        if (nextEl) nextEl.textContent = eligibility.nextEligibleFormatted;
+      }
+    }
+
     // Status State Toggle Handler
     let isAvailableState = true;
 

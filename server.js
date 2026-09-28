@@ -17,6 +17,7 @@ const stockRoutes = require('./src/routes/stockRoutes');
 const bankRoutes = require('./src/routes/bankRoutes');
 const notificationRoutes = require('./src/routes/notificationRoutes');
 const adminRoutes = require('./src/routes/adminRoutes');
+const donationRoutes = require('./src/routes/donationRoutes');
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use('/api/stock', stockRoutes);
 app.use('/api/blood-banks', bankRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/donations', donationRoutes);
 
 // Health & Status Endpoint
 app.get('/api/status', (req, res) => {

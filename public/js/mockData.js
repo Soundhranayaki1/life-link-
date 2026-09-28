@@ -1,5 +1,5 @@
 /**
- * LIFE LINK – Mock Data Store for Role-Based Experience
+ * LIFE LINK – Mock Data Store & Core Logic Engine
  */
 
 const MockData = {
@@ -11,7 +11,245 @@ const MockData = {
     return false;
   },
 
-  // Logged-in Donor's Personal Notifications
+  // 48-Day Donation Eligibility Calculator
+  calculateEligibility(lastDonationDate) {
+    if (!lastDonationDate) {
+      return {
+        isEligible: true,
+        daysRemaining: 0,
+        nextEligibleFormatted: 'Eligible Now',
+        statusText: 'Eligible to Donate',
+        lastDonationFormatted: 'No prior donations recorded'
+      };
+    }
+
+    const lastDate = new Date(lastDonationDate);
+    if (isNaN(lastDate.getTime())) {
+      return {
+        isEligible: true,
+        daysRemaining: 0,
+        nextEligibleFormatted: 'Eligible Now',
+        statusText: 'Eligible to Donate',
+        lastDonationFormatted: 'No prior donations recorded'
+      };
+    }
+
+    const nextEligible = new Date(lastDate.getTime() + (48 * 24 * 60 * 60 * 1000));
+    const now = new Date();
+    const diffMs = nextEligible.getTime() - now.getTime();
+    const daysRemaining = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+    const isEligible = daysRemaining === 0;
+
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const lastDonationFormatted = lastDate.toLocaleDateString('en-US', options);
+    const nextEligibleFormatted = nextEligible.toLocaleDateString('en-US', options);
+
+    return {
+      isEligible,
+      daysRemaining,
+      nextEligibleDate: nextEligible,
+      nextEligibleFormatted,
+      statusText: isEligible ? 'Eligible to Donate' : 'Not Eligible Yet',
+      lastDonationFormatted
+    };
+  },
+
+  // Registered Donors for Smart Matching & Admin Governance (Privacy Masked)
+  donors: [
+    {
+      id: 'LL-D1024',
+      name: 'Arun Kumar',
+      bloodGroup: 'O+',
+      distanceKm: 2.8,
+      approxArea: 'Hosur (~2.8 km from request)',
+      isAvailable: true,
+      isVerified: true,
+      city: 'Hosur',
+      maskedPhone: '+91 ******4321',
+      lastDonationDate: '2025-11-10',
+      totalDonations: 4,
+      livesHelped: 12,
+      accountStatus: 'ACTIVE',
+      eligibilityStatus: 'Eligible to Donate',
+      notificationHistory: [
+        { id: 'notif_1', title: '🚨 Emergency Request REQ-1042', time: '10 mins ago', action: 'Accepted' },
+        { id: 'notif_2', title: '✓ Donation Confirmed', time: '1 month ago', action: 'Completed' }
+      ]
+    },
+    {
+      id: 'LL-D1025',
+      name: 'Priya Patel',
+      bloodGroup: 'B+',
+      distanceKm: 4.1,
+      approxArea: 'Bengaluru (~4.1 km from request)',
+      isAvailable: true,
+      isVerified: true,
+      city: 'Bengaluru',
+      maskedPhone: '+91 ******9876',
+      lastDonationDate: '2026-01-15',
+      totalDonations: 2,
+      livesHelped: 6,
+      accountStatus: 'ACTIVE',
+      eligibilityStatus: 'Eligible to Donate',
+      notificationHistory: [
+        { id: 'notif_3', title: '🚨 Emergency Request REQ-1041', time: '45 mins ago', action: 'Accepted' }
+      ]
+    },
+    {
+      id: 'LL-D1026',
+      name: 'Rahul Sharma',
+      bloodGroup: 'A-',
+      distanceKm: 5.5,
+      approxArea: 'Chennai (~5.5 km from request)',
+      isAvailable: false,
+      isVerified: true,
+      city: 'Chennai',
+      maskedPhone: '+91 ******1122',
+      lastDonationDate: '2026-02-28',
+      totalDonations: 5,
+      livesHelped: 15,
+      accountStatus: 'ACTIVE',
+      eligibilityStatus: 'Not Eligible Yet (Cooldown: 18 days remaining)',
+      notificationHistory: [
+        { id: 'notif_4', title: '🚨 Emergency Request REQ-1039', time: '2 hours ago', action: 'Declined' }
+      ]
+    },
+    {
+      id: 'LL-D1027',
+      name: 'Vikram Singh',
+      bloodGroup: 'O-',
+      distanceKm: 1.9,
+      approxArea: 'Krishnagiri (~1.9 km from request)',
+      isAvailable: true,
+      isVerified: true,
+      city: 'Krishnagiri',
+      maskedPhone: '+91 ******3344',
+      lastDonationDate: '2025-09-12',
+      totalDonations: 6,
+      livesHelped: 18,
+      accountStatus: 'ACTIVE',
+      eligibilityStatus: 'Eligible to Donate (Universal Donor)',
+      notificationHistory: [
+        { id: 'notif_5', title: '🚨 Emergency Request REQ-1028', time: '3 days ago', action: 'Completed' }
+      ]
+    },
+    {
+      id: 'LL-D1028',
+      name: 'Neha Gupta',
+      bloodGroup: 'AB+',
+      distanceKm: 6.2,
+      approxArea: 'Hosur (~6.2 km from request)',
+      isAvailable: false,
+      isVerified: true,
+      city: 'Hosur',
+      maskedPhone: '+91 ******5566',
+      lastDonationDate: '2025-10-05',
+      totalDonations: 3,
+      livesHelped: 9,
+      accountStatus: 'SUSPENDED',
+      eligibilityStatus: 'Account Temporarily Inactive',
+      notificationHistory: []
+    }
+  ],
+
+  // Smart Donor Search & Ranked Matching Engine
+  matchDonors(requestGroup = 'O+', city = 'Mumbai') {
+    return this.donors
+      .filter(d => this.isCompatible(d.bloodGroup, requestGroup))
+      .map(d => {
+        const eligibility = this.calculateEligibility(d.lastDonationDate);
+        let dist = d.distanceKm || 2.5;
+        
+        let waveRound = 'Round 1 (0–3 km)';
+        if (dist > 3.0 && dist <= 5.0) waveRound = 'Round 2 (3–5 km)';
+        else if (dist > 5.0) waveRound = 'Round 3 (5–8 km)';
+
+        let matchStatus = 'Compatible';
+        if (d.bloodGroup === requestGroup && d.isAvailable && eligibility.isEligible) {
+          matchStatus = '100% Match • Eligible';
+        } else if (!eligibility.isEligible) {
+          matchStatus = 'Ineligible (Recent Donor)';
+        } else if (!d.isAvailable) {
+          matchStatus = 'Unavailable';
+        } else if (d.bloodGroup === 'O-') {
+          matchStatus = 'Universal Donor Match';
+        }
+
+        return {
+          ...d,
+          approxDistance: `~${dist} km`,
+          isEligible: eligibility.isEligible,
+          eligibilityStatus: eligibility.statusText,
+          nextEligibleFormatted: eligibility.nextEligibleFormatted,
+          matchStatus,
+          waveRound
+        };
+      });
+  },
+
+  // All 8 Blood Stock Groups Tracking
+  bloodStock: [
+    { bloodGroup: 'A+', unitsAvailable: 45, maxCapacity: 100, status: 'AVAILABLE' },
+    { bloodGroup: 'A-', unitsAvailable: 12, maxCapacity: 100, status: 'LOW' },
+    { bloodGroup: 'B+', unitsAvailable: 58, maxCapacity: 100, status: 'AVAILABLE' },
+    { bloodGroup: 'B-', unitsAvailable: 18, maxCapacity: 100, status: 'LOW' },
+    { bloodGroup: 'AB+', unitsAvailable: 30, maxCapacity: 100, status: 'AVAILABLE' },
+    { bloodGroup: 'AB-', unitsAvailable: 6, maxCapacity: 100, status: 'CRITICAL' },
+    { bloodGroup: 'O+', unitsAvailable: 75, maxCapacity: 100, status: 'AVAILABLE' },
+    { bloodGroup: 'O-', unitsAvailable: 0, maxCapacity: 100, status: 'OUT OF STOCK' }
+  ],
+
+  // Update Blood Stock (Authorized User Only)
+  updateStock(bloodGroup, action, units = 1) {
+    const item = this.bloodStock.find(s => s.bloodGroup === bloodGroup);
+    if (!item) return false;
+
+    let qty = parseInt(units) || 1;
+    if (action === 'add') item.unitsAvailable += qty;
+    else if (action === 'subtract') item.unitsAvailable = Math.max(0, item.unitsAvailable - qty);
+    else item.unitsAvailable = Math.max(0, qty);
+
+    if (item.unitsAvailable === 0) item.status = 'OUT OF STOCK';
+    else if (item.unitsAvailable <= 8) item.status = 'CRITICAL';
+    else if (item.unitsAvailable <= 20) item.status = 'LOW';
+    else item.status = 'AVAILABLE';
+
+    return true;
+  },
+
+  // Authorized Donation Recording Workflow
+  recordDonation(donorId, bloodGroup, donationDate, hospitalName, donationType = 'Whole Blood', units = 1) {
+    const donor = this.donors.find(d => d.id === donorId || d.name.toLowerCase().includes(donorId.toLowerCase()));
+    const recDate = donationDate ? new Date(donationDate) : new Date();
+
+    if (donor) {
+      donor.lastDonationDate = recDate.toISOString().split('T')[0];
+      donor.totalDonations = (donor.totalDonations || 0) + units;
+      donor.livesHelped = (donor.livesHelped || 0) + (units * 3);
+    }
+
+    // Auto-update blood stock inventory (+units)
+    this.updateStock(bloodGroup, 'add', units);
+
+    // Save record to local donation history
+    const history = JSON.parse(localStorage.getItem('lifelink_donation_history') || '[]');
+    const newRecord = {
+      id: 'dh_' + Date.now(),
+      donorName: donor ? donor.name : 'Arun Kumar',
+      bloodGroup,
+      unitsDonated: units,
+      donationDate: recDate.toISOString().split('T')[0],
+      location: hospitalName || 'XYZ Government Hospital, Mumbai',
+      donationType,
+      status: 'COMPLETED'
+    };
+    history.unshift(newRecord);
+    localStorage.setItem('lifelink_donation_history', JSON.stringify(history));
+
+    return newRecord;
+  },
+
+  // Logged-in Donor's Notifications
   notifications: [
     {
       id: 'n1',
@@ -37,101 +275,171 @@ const MockData = {
       locationText: '8 km notification radius enabled',
       timeAgo: 'Yesterday',
       isUnread: false
-    },
-    {
-      id: 'n4',
-      title: '👤 Donor Profile Verified',
-      message: 'Mobile verification and blood group details recorded successfully.',
-      locationText: 'Verified Voluntary Donor',
-      timeAgo: '2 days ago',
-      isUnread: false
     }
   ],
 
-  // Registered Donors for Match Engine
-  donors: [
-    {
-      id: 'd1',
-      name: 'Arun Kumar',
-      bloodGroup: 'O+',
-      distanceKm: 1.8,
-      isAvailable: true,
-      isVerified: true,
-      city: 'Mumbai',
-      phone: '+91 98765 43210'
-    },
-    {
-      id: 'd2',
-      name: 'Priya Patel',
-      bloodGroup: 'O+',
-      distanceKm: 3.4,
-      isAvailable: true,
-      isVerified: true,
-      city: 'Mumbai',
-      phone: '+91 98123 45678'
-    }
-  ],
-
-  // Active Emergency Blood Requests
+  // Active Emergency Blood Requests with Adaptive Wave Notification Metrics
   emergencyRequests: [
     {
-      id: 'REQ-8821',
-      patientName: 'Karan Malhotra',
-      bloodGroup: 'O+',
-      unitsNeeded: 2,
-      unitsFulfilled: 0,
-      orgName: 'XYZ Government Hospital',
-      orgType: 'GovtHospital',
-      isVerifiedOrg: true,
-      hospitalLocation: 'XYZ Government Hospital, Worli',
-      distanceKm: 3.4,
-      humanDistance: '3.4 km from hospital',
-      timeRemaining: 'Required within 1h 42m',
-      urgency: 'CRITICAL',
-      searchRadiusKm: 8,
-      status: 'ACTIVE',
-      donorsNotified: 18,
-      additionalNotes: 'ICU Ward 4. Immediate blood transfusion required for emergency procedure.'
-    },
-    {
-      id: 'REQ-8822',
-      patientName: 'Sunita Verma',
+      id: 'REQ-1042',
+      patientName: 'Emergency ICU Patient #42',
       bloodGroup: 'O+',
       unitsNeeded: 3,
-      unitsFulfilled: 1,
-      orgName: 'Apollo City Hospital',
-      orgType: 'CertifiedHospital',
+      unitsFulfilled: 2,
+      orgName: 'Government General Hospital',
+      orgType: 'Government Hospital',
       isVerifiedOrg: true,
-      hospitalLocation: 'Apollo Hospital, Bandra East',
-      distanceKm: 5.1,
-      humanDistance: '5.1 km from hospital',
-      timeRemaining: 'Required within 3h 15m',
-      urgency: 'URGENT',
-      searchRadiusKm: 8,
+      hospitalLocation: 'Hosur, Tamil Nadu',
+      distanceKm: 3.2,
+      humanDistance: 'Hosur (~3.2 km radius)',
+      createdTime: '28 Sep 2026 • 10:42 AM',
+      elapsedTime: '11 mins elapsed',
+      urgency: 'CRITICAL',
+      searchRadiusKm: 5,
+      currentWave: 'Round 2 (3–5 km)',
       status: 'ACTIVE',
-      donorsNotified: 24,
-      additionalNotes: 'Surgical unit preparation.'
+      donorsNotified: 30,
+      responsesCount: 7,
+      confirmedCount: 2,
+      additionalNotes: 'Critical ICU trauma case. Immediate O+ blood units required.',
+      roundsDetail: [
+        { roundName: 'Round 1 (0–3 km)', notified: 12, responded: 3, confirmed: 1, status: 'COMPLETED' },
+        { roundName: 'Round 2 (3–5 km)', notified: 18, responded: 4, confirmed: 1, status: 'ACTIVE' },
+        { roundName: 'Round 3 (5–8 km)', notified: 0, responded: 0, confirmed: 0, status: 'NOT REQUIRED YET' }
+      ],
+      respondedDonors: [
+        { donorId: 'LL-D1024', donorName: 'Arun Kumar', approxDist: '~2.8 km', bloodGroup: 'O+', status: 'Confirmed & En Route' },
+        { donorId: 'LL-D1027', donorName: 'Vikram Singh', approxDist: '~1.9 km', bloodGroup: 'O-', status: 'Confirmed (Arrival ~15 mins)' }
+      ]
     },
     {
-      id: 'REQ-8823',
-      patientName: 'Rajesh Nair',
-      bloodGroup: 'A+',
+      id: 'REQ-1041',
+      patientName: 'Surgical Unit Patient #18',
+      bloodGroup: 'B+',
+      unitsNeeded: 2,
+      unitsFulfilled: 2,
+      orgName: 'City Blood Bank',
+      orgType: 'Private Blood Bank',
+      isVerifiedOrg: true,
+      hospitalLocation: 'Bengaluru, Karnataka',
+      distanceKm: 2.5,
+      humanDistance: 'Bengaluru (~2.5 km radius)',
+      createdTime: '28 Sep 2026 • 10:15 AM',
+      elapsedTime: '38 mins elapsed',
+      urgency: 'HIGH',
+      searchRadiusKm: 3,
+      currentWave: 'Round 1 (0–3 km)',
+      status: 'FULFILLED',
+      donorsNotified: 14,
+      responsesCount: 4,
+      confirmedCount: 2,
+      additionalNotes: 'Elective surgery requirement. Required quantity fulfilled.',
+      roundsDetail: [
+        { roundName: 'Round 1 (0–3 km)', notified: 14, responded: 4, confirmed: 2, status: 'COMPLETED' }
+      ],
+      respondedDonors: [
+        { donorId: 'LL-D1025', donorName: 'Priya Patel', approxDist: '~2.1 km', bloodGroup: 'B+', status: 'Completed' }
+      ]
+    },
+    {
+      id: 'REQ-1039',
+      patientName: 'Pediatric Care Patient #09',
+      bloodGroup: 'AB+',
       unitsNeeded: 1,
       unitsFulfilled: 0,
-      orgName: 'Red Cross Center',
-      orgType: 'CertifiedBloodBank',
-      isVerifiedOrg: true,
-      hospitalLocation: 'Red Cross Center, Andheri West',
-      distanceKm: 4.2,
-      humanDistance: '4.2 km from facility',
-      timeRemaining: 'Required within 5 hours',
-      urgency: 'STANDARD',
+      orgName: 'Emergency Care Centre',
+      orgType: 'Authorized Healthcare Organization',
+      isVerifiedOrg: false,
+      hospitalLocation: 'Chennai, Tamil Nadu',
+      distanceKm: 6.8,
+      humanDistance: 'Chennai (~6.8 km radius)',
+      createdTime: '28 Sep 2026 • 09:30 AM',
+      elapsedTime: '1h 23m elapsed',
+      urgency: 'NORMAL',
       searchRadiusKm: 8,
-      status: 'ACTIVE',
-      donorsNotified: 12,
-      additionalNotes: 'Routine requirement.'
+      currentWave: 'Round 3 (5–8 km)',
+      status: 'ESCALATED',
+      donorsNotified: 38,
+      responsesCount: 1,
+      confirmedCount: 0,
+      additionalNotes: 'Rare blood group request. Wave escalation in progress.',
+      roundsDetail: [
+        { roundName: 'Round 1 (0–3 km)', notified: 10, responded: 0, confirmed: 0, status: 'COMPLETED' },
+        { roundName: 'Round 2 (3–5 km)', notified: 12, responded: 1, confirmed: 0, status: 'COMPLETED' },
+        { roundName: 'Round 3 (5–8 km)', notified: 16, responded: 0, confirmed: 0, status: 'ACTIVE' }
+      ],
+      respondedDonors: []
+    },
+    {
+      id: 'REQ-1031',
+      patientName: 'Maternity Ward #12',
+      bloodGroup: 'B+',
+      unitsNeeded: 2,
+      unitsFulfilled: 2,
+      orgName: 'District Blood Bank',
+      orgType: 'Government Blood Bank',
+      isVerifiedOrg: true,
+      hospitalLocation: 'Krishnagiri, Tamil Nadu',
+      createdTime: '18 Aug 2026',
+      urgency: 'NORMAL',
+      status: 'FULFILLED',
+      donorsNotified: 16,
+      confirmedCount: 2
+    },
+    {
+      id: 'REQ-1028',
+      patientName: 'Cardiac Care #05',
+      bloodGroup: 'O-',
+      unitsNeeded: 4,
+      unitsFulfilled: 4,
+      orgName: 'Government General Hospital',
+      orgType: 'Government Hospital',
+      isVerifiedOrg: true,
+      hospitalLocation: 'Hosur, Tamil Nadu',
+      createdTime: '16 Aug 2026',
+      urgency: 'CRITICAL',
+      status: 'FULFILLED',
+      donorsNotified: 45,
+      confirmedCount: 4
+    },
+    {
+      id: 'REQ-1024',
+      patientName: 'Trauma Unit #02',
+      bloodGroup: 'AB+',
+      unitsNeeded: 2,
+      unitsFulfilled: 0,
+      orgName: 'Salem Regional Blood Bank',
+      orgType: 'Private Blood Bank',
+      isVerifiedOrg: false,
+      hospitalLocation: 'Salem, Tamil Nadu',
+      createdTime: '14 Aug 2026',
+      urgency: 'HIGH',
+      status: 'EXPIRED',
+      donorsNotified: 22,
+      confirmedCount: 0
     }
   ],
+
+  // Radius Wave Escalation Handler
+  escalateWave(requestId) {
+    const req = this.emergencyRequests.find(r => r.id === requestId);
+    if (!req) return false;
+
+    if (req.searchRadiusKm === 3) {
+      req.searchRadiusKm = 5;
+      req.currentWave = 'Round 2 (3–5 km)';
+      req.donorsNotified += 12;
+    } else if (req.searchRadiusKm === 5) {
+      req.searchRadiusKm = 8;
+      req.currentWave = 'Round 3 (5–8 km)';
+      req.donorsNotified += 18;
+    } else if (req.searchRadiusKm === 8) {
+      req.searchRadiusKm = 12;
+      req.currentWave = 'Round 4 (8–12 km Extended)';
+      req.donorsNotified += 25;
+    }
+    return req;
+  },
 
   // Certified Blood Banks Directory
   bloodBanks: [
@@ -142,7 +450,249 @@ const MockData = {
       city: 'Mumbai',
       address: 'Dr. E Moses Rd, Worli',
       contactPhone: '+91 22 2493 0000',
-      verificationStatus: 'VERIFIED'
+      verificationStatus: 'VERIFIED',
+      operatingHours: '24x7 Emergency Operations'
+    },
+    {
+      id: 'bb2',
+      bankName: 'Red Cross Regional Blood Center',
+      licenseNumber: 'LIC-DL-4482',
+      city: 'Delhi',
+      address: '1 Red Cross Rd, Connaught Place',
+      contactPhone: '+91 11 2371 6441',
+      verificationStatus: 'VERIFIED',
+      operatingHours: '24x7 Emergency Operations'
     }
-  ]
+  ],
+
+  // Organization Management Master Store
+  organizations: [
+    {
+      id: 'LL-GH-2026-001',
+      name: 'Government General Hospital',
+      type: 'Government Hospital',
+      location: 'Hosur, Tamil Nadu',
+      address: 'Government Hospital Road, Railway Station Area',
+      city: 'Hosur',
+      state: 'Tamil Nadu',
+      pincode: '635109',
+      phone: '+91 4344 220000',
+      email: 'dispatch@ggh-hosur.tn.gov.in',
+      emergencyContact: '+91 98430 12345',
+      regNumber: 'GOVT-TN-HOSP-9912',
+      issuingAuthority: 'Department of Health & Family Welfare, Govt of Tamil Nadu',
+      validUntil: '2030-12-31',
+      representative: 'Dr. A. Ramanathan (Medical Superintendent)',
+      username: 'govgeneralhosur',
+      password: 'Hospital@123',
+      registeredMobile: '+91 98430 12345',
+      status: 'VERIFIED',
+      portalAccess: 'ACTIVE',
+      verifiedBy: 'State Health Director',
+      verificationDate: '2026-01-10',
+      lastUpdated: '28 Sep 2026 • 10:45 AM',
+      lastLogin: '28 Sep 2026 • 10:45 AM',
+      history: [
+        { date: '28 Sep 2026 — 10:45 AM', event: 'Official phone number updated', author: 'System Admin' },
+        { date: '28 Sep 2026 — 10:40 AM', event: 'Admin approved change request CHG-1024', author: 'System Admin' },
+        { date: '28 Sep 2026 — 10:32 AM', event: 'Organization submitted change request', author: 'Govt General Hospital' },
+        { date: '15 Aug 2026', event: 'Organization verified by State Health Board', author: 'Admin' },
+        { date: '10 Aug 2026', event: 'Organization registered on LIFE LINK', author: 'System' }
+      ]
+    },
+    {
+      id: 'LL-ORG-2026-002',
+      name: 'City Blood Bank',
+      type: 'Private Blood Bank',
+      location: 'Bengaluru, Karnataka',
+      address: '12 Brigade Road, Ashok Nagar',
+      city: 'Bengaluru',
+      state: 'Karnataka',
+      pincode: '560001',
+      phone: '+91 80 2558 9000',
+      email: 'info@citybloodbank.org',
+      emergencyContact: '+91 98800 55443',
+      regNumber: 'BB-KA-2025-441',
+      issuingAuthority: 'Karnataka State Blood Transfusion Council',
+      validUntil: '2028-06-30',
+      representative: 'Dr. Rajesh Vardhan',
+      username: 'citybloodbank',
+      password: 'BloodBank@123',
+      registeredMobile: '+91 98800 55443',
+      status: 'VERIFIED',
+      portalAccess: 'ACTIVE',
+      verifiedBy: 'Karnataka Drug Controller',
+      verificationDate: '2026-02-14',
+      lastUpdated: '25 Sep 2026',
+      lastLogin: '27 Sep 2026 • 09:15 AM',
+      history: [
+        { date: '25 Sep 2026', event: 'Annual verification compliance checked', author: 'Admin' },
+        { date: '14 Feb 2026', event: 'Organization verified', author: 'Admin' }
+      ]
+    },
+    {
+      id: 'LL-ORG-2026-003',
+      name: 'Emergency Care Centre',
+      type: 'Authorized Healthcare Organization',
+      location: 'Chennai, Tamil Nadu',
+      address: '45 Anna Salai, Thousand Lights',
+      city: 'Chennai',
+      state: 'Tamil Nadu',
+      pincode: '600006',
+      phone: '+91 44 2829 1122',
+      email: 'contact@emergencycare.org',
+      emergencyContact: '+91 94440 99887',
+      regNumber: 'CERT-2026-008',
+      issuingAuthority: 'Tamil Nadu Medical Council',
+      validUntil: '2027-11-20',
+      representative: 'Dr. Meena Sundaram',
+      username: 'emergencycare',
+      password: 'Care@123',
+      registeredMobile: '+91 94440 99887',
+      status: 'PENDING VERIFICATION',
+      portalAccess: 'LOCKED',
+      verifiedBy: 'Pending Review',
+      verificationDate: 'Pending',
+      lastUpdated: '28 Sep 2026',
+      lastLogin: 'Never',
+      history: [
+        { date: '28 Sep 2026', event: 'Organization application submitted for verification', author: 'Emergency Care Centre' }
+      ]
+    },
+    {
+      id: 'LL-ORG-2026-004',
+      name: 'District Blood Bank',
+      type: 'Government Blood Bank',
+      location: 'Krishnagiri, Tamil Nadu',
+      address: 'District Headquarters Hospital Campus',
+      city: 'Krishnagiri',
+      state: 'Tamil Nadu',
+      pincode: '635001',
+      phone: '+91 4343 232100',
+      email: 'dbb.krishnagiri@tn.gov.in',
+      emergencyContact: '+91 94432 11000',
+      regNumber: 'GOVT-BB-TN-331',
+      issuingAuthority: 'Directorate of Medical Services, Govt of Tamil Nadu',
+      validUntil: '2029-08-15',
+      representative: 'Dr. K. Periasamy',
+      username: 'districtbloodbank',
+      password: 'District@123',
+      registeredMobile: '+91 94432 11000',
+      status: 'VERIFIED',
+      portalAccess: 'ACTIVE',
+      verifiedBy: 'District Collector Officer',
+      verificationDate: '2026-03-01',
+      lastUpdated: '20 Sep 2026',
+      lastLogin: '26 Sep 2026 • 02:30 PM',
+      history: [
+        { date: '01 Mar 2026', event: 'Organization verified', author: 'Admin' }
+      ]
+    },
+    {
+      id: 'LL-ORG-2026-005',
+      name: 'Salem Regional Blood Bank',
+      type: 'Private Blood Bank',
+      location: 'Salem, Tamil Nadu',
+      address: '88 Omalur Main Road',
+      city: 'Salem',
+      state: 'Tamil Nadu',
+      pincode: '636009',
+      phone: '+91 427 244 5566',
+      email: 'salembloodbank@gmail.com',
+      emergencyContact: '+91 98427 88990',
+      regNumber: 'PBB-SLM-8812',
+      issuingAuthority: 'State Licensing Authority',
+      validUntil: '2026-09-01',
+      representative: 'Dr. S. Thangavel',
+      username: 'salembloodbank',
+      password: 'Salem@123',
+      registeredMobile: '+91 98427 88990',
+      status: 'SUSPENDED',
+      portalAccess: 'LOCKED',
+      suspensionReason: 'Audit non-compliance: Failure to renew mandatory blood storage license.',
+      verifiedBy: 'Admin (Suspended)',
+      verificationDate: '2025-10-10',
+      lastUpdated: '27 Sep 2026',
+      lastLogin: '20 Sep 2026',
+      history: [
+        { date: '27 Sep 2026', event: 'Organization suspended due to license expiry', author: 'Admin' }
+      ]
+    }
+  ],
+
+  // Password Reset Requests Store
+  passwordResetRequests: [
+    {
+      id: 'PRR-1001',
+      orgId: 'LL-GH-2026-001',
+      orgName: 'Government General Hospital',
+      username: 'govgeneralhosur',
+      registeredMobile: '+91 ******2345',
+      reason: 'I have forgotten the organization portal password after IT system migration.',
+      submittedTime: '28 Sep 2026 • 11:05 AM',
+      status: 'PENDING'
+    }
+  ],
+
+  // Change Requests Store
+  changeRequests: [
+    {
+      id: 'CHG-1024',
+      orgId: 'LL-GH-2026-001',
+      orgName: 'Government General Hospital',
+      changeType: 'Official Emergency Phone Number',
+      currentValue: '+91 4344 220000',
+      requestedValue: '+91 4344 229999',
+      fieldToUpdate: 'phone',
+      reason: 'Official emergency contact desk number updated by health department.',
+      submittedDate: '28 Sep 2026 • 10:32 AM',
+      status: 'PENDING'
+    },
+    {
+      id: 'CHG-1025',
+      orgId: 'LL-ORG-2026-002',
+      orgName: 'City Blood Bank',
+      changeType: 'Emergency Representative',
+      currentValue: 'Dr. Rajesh Vardhan',
+      requestedValue: 'Dr. Ananya Rao (Chief Medical Officer)',
+      fieldToUpdate: 'representative',
+      reason: 'Change in senior medical officer leadership.',
+      submittedDate: '27 Sep 2026 • 04:15 PM',
+      status: 'PENDING'
+    }
+  ],
+
+  // Administrative Audit Logs Store
+  auditLogs: [
+    { timestamp: '28 Sep 2026 • 11:05 AM', action: 'Password Reset Requested', orgName: 'Government General Hospital', actionType: 'ORGANIZATION_PASSWORD_RESET_REQUESTED', user: 'govgeneralhosur', details: 'Organization requested portal password reset via security recovery form.' },
+    { timestamp: '28 Sep 2026 • 10:45 AM', action: 'Organization Updated', orgName: 'Government General Hospital', actionType: 'UPDATE', user: 'System Admin', details: 'Phone number changed after approved request CHG-1024' },
+    { timestamp: '28 Sep 2026 • 10:40 AM', action: 'Change Request Approved', orgName: 'Government General Hospital', actionType: 'APPROVAL', user: 'System Admin', details: 'CHG-1024 approved by System Admin' },
+    { timestamp: '27 Sep 2026 • 02:30 PM', action: 'Organization Suspended', orgName: 'Salem Regional Blood Bank', actionType: 'ORGANIZATION_ACCOUNT_SUSPENDED', user: 'System Admin', details: 'Suspended due to license renewal compliance delay' },
+    { timestamp: '15 Aug 2026 • 09:00 AM', action: 'Organization Verified', orgName: 'Government General Hospital', actionType: 'ORGANIZATION_VERIFIED', user: 'State Health Director', details: 'Verification completed by State Health Board' },
+    { timestamp: '10 Aug 2026 • 11:15 AM', action: 'Organization Created', orgName: 'Government General Hospital', actionType: 'ORGANIZATION_CREATED', user: 'System Admin', details: 'Organization record LL-GH-2026-001 created' }
+  ],
+
+  // Admin Audit Log Creator
+  logAudit(action, orgName, actionType, details, user = 'System') {
+    const newLog = {
+      timestamp: new Date().toLocaleString('en-US', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      action,
+      orgName: orgName || 'System',
+      actionType,
+      user,
+      details
+    };
+    this.auditLogs.unshift(newLog);
+    // Save to localStorage
+    try {
+      localStorage.setItem('lifelink_audit_logs', JSON.stringify(this.auditLogs));
+    } catch(e) {}
+    return newLog;
+  }
 };
+
+// Explicitly attach to window object for global availability
+if (typeof window !== 'undefined') {
+  window.MockData = MockData;
+}
+
