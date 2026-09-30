@@ -8,10 +8,10 @@
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
-  padding: 0.75rem 1.35rem;
+  padding: 0.48rem 1.05rem;
   border-radius: var(--radius-sm);
   font-family: var(--font-heading);
-  font-size: 0.88rem;
+  font-size: 0.84rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -43,13 +43,13 @@
   border-color: var(--navy-muted);
 }
 
-.btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
-.btn-lg { padding: 0.85rem 1.6rem; font-size: 0.94rem; border-radius: var(--radius-md); }
+.btn-sm { padding: 0.3rem 0.65rem; font-size: 0.78rem; }
+.btn-lg { padding: 0.62rem 1.25rem; font-size: 0.88rem; border-radius: var(--radius-md); }
 
 /* Horizontal Carousel for Emergency Requests */
 .carousel-wrapper {
   position: relative;
-  margin-top: 1rem;
+  margin-top: 0.75rem;
 }
 
 .carousel-controls {
@@ -59,8 +59,8 @@
 }
 
 .carousel-btn {
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: #ffffff;
   border: 1px solid var(--navy-border);
@@ -69,7 +69,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   box-shadow: var(--shadow-sm);
   transition: all 0.2s ease;
 }
@@ -82,11 +82,11 @@
 
 .carousel-track {
   display: flex;
-  gap: 1.5rem;
+  gap: 1.1rem;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
-  padding: 1rem 0.25rem 1.5rem;
+  padding: 0.75rem 0.25rem 1.1rem;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -100,37 +100,37 @@
 }
 
 .carousel-card {
-  flex: 0 0 340px;
+  flex: 0 0 295px;
   scroll-snap-align: start;
   background: #ffffff;
   border: 1px solid var(--navy-border);
-  border-radius: var(--radius-md);
-  padding: 1.5rem;
+  border-radius: 14px;
+  padding: 1.1rem;
   box-shadow: var(--shadow-sm);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
 }
 
 .carousel-card:hover {
-  transform: translateY(-4px) scale(1.01);
+  transform: translateY(-3px) scale(1.01);
   box-shadow: var(--shadow-md);
   border-color: var(--crimson-red);
 }
 
 /* Prominent Blood Group Badge for Cards */
 .blood-badge-square {
-  width: 52px;
-  height: 52px;
+  width: 42px;
+  height: 42px;
   background: var(--crimson-red);
   color: #ffffff;
-  border-radius: 12px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-heading);
-  font-size: 1.35rem;
+  font-size: 1.15rem;
   font-weight: 800;
-  box-shadow: 0 4px 10px rgba(217, 4, 41, 0.25);
+  box-shadow: 0 3px 8px rgba(217, 4, 41, 0.25);
 }
 
 /* Request Detail Modal */
@@ -143,7 +143,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem;
+  padding: 1.25rem;
   opacity: 0;
   visibility: hidden;
   transition: all 0.25s ease;
@@ -157,8 +157,8 @@
 .modal-card {
   background: #ffffff;
   width: 100%;
-  max-width: 560px;
-  border-radius: var(--radius-lg);
+  max-width: 520px;
+  border-radius: 16px;
   box-shadow: var(--shadow-lg);
   overflow: hidden;
   border: 1px solid var(--navy-border);
@@ -173,24 +173,24 @@
 /* Personal Impact Timeline */
 .impact-journey {
   background: #ffffff;
-  border-radius: var(--radius-lg);
-  padding: 2rem;
+  border-radius: 16px;
+  padding: 1.25rem;
   border: 1px solid var(--navy-border);
   box-shadow: var(--shadow-sm);
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.75rem;
 }
 
 .impact-stats-row {
   display: flex;
-  gap: 3rem;
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
+  gap: 2rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
   border-bottom: 1px solid var(--navy-border);
 }
 
 .impact-val {
   font-family: var(--font-heading);
-  font-size: 3.2rem;
+  font-size: 2.2rem;
   font-weight: 800;
   line-height: 1;
   color: var(--crimson-red);
