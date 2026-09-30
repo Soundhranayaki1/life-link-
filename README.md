@@ -124,3 +124,29 @@ npm run seed
 - **Theme Switcher**: Dark Mode and Light Mode toggle.
 - **Direct Contact**: Instant phone call or WhatsApp share buttons for emergency donors.
 - **Compatibility Guide**: Comprehensive blood group compatibility matrix reference table.
+
+---
+
+## ☁️ Deploying to Render
+
+This application is ready to host on [Render](https://render.com) as a **Web Service**.
+
+### Option A: Automatic Blueprint Deployment (Recommended)
+1. Push your repository to **GitHub**.
+2. Log into **Render** and go to **Blueprints** -> **New Blueprint Instance**.
+3. Connect your GitHub repository. Render will automatically detect [`render.yaml`](file:///c:/Users/sound/OneDrive/Documents/life-link-blood-donor-system/render.yaml).
+4. Add your `MONGODB_URI` environment variable (e.g. from MongoDB Atlas) and click **Deploy**.
+
+### Option B: Manual Web Service Setup
+1. Go to your **Render Dashboard** -> **New +** -> **Web Service**.
+2. Select your GitHub repository.
+3. Configure the following settings:
+   - **Environment**: `Node`
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start`
+4. Add Environment Variables:
+   - `NODE_ENV`: `production`
+   - `JWT_SECRET`: `your_random_secret_key`
+   - `MONGODB_URI`: `your_mongodb_atlas_connection_string` (optional, server will fallback to in-memory mode if omitted)
+5. Click **Create Web Service**.
+

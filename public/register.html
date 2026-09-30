@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Become a Donor – LIFE LINK</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans, Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/components.css">
   <script src="js/mockData.js" defer></script>
@@ -13,94 +20,151 @@
 
   <!-- Header Navigation -->
   <header class="site-header">
-    <div class="nav-wrapper">
-      <a href="index.html" class="brand-logo">
-        <img src="assets/images/lifelink-logo.png" alt="LIFE LINK Logo" style="width: 36px; height: 36px; object-fit: contain; border-radius: 50%; box-shadow: 0 3px 10px rgba(230, 0, 46, 0.2); flex-shrink: 0;">
-        <span>LIFE LINK</span>
+    <div class="nav-wrapper" style="display: flex; align-items: center; justify-content: space-between; max-width: 1140px; margin: 0 auto; padding: 0.85rem 1.5rem;">
+      <a href="index.html" class="brand-logo" style="display: flex; align-items: center; gap: 0.65rem; text-decoration: none;">
+        <img src="assets/images/lifelink-logo.png" alt="LIFE LINK Logo" style="width: 36px; height: 36px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 12px rgba(230, 0, 46, 0.25); flex-shrink: 0;">
+        <div>
+          <span style="font-family: var(--font-heading); font-weight: 800; font-size: 1.25rem; color: var(--navy-dark); letter-spacing: -0.5px;">LIFE <span style="color: var(--crimson-red);">LINK</span></span>
+          <div style="font-size: 0.7rem; color: var(--navy-muted); font-weight: 600; line-height: 1;">Donate Blood. Save Lives.</div>
+        </div>
       </a>
 
-      <div style="font-size: 0.9rem;">
+      <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.88rem;">
         <span style="color: var(--navy-muted);">Already registered?</span>
-        <a href="login.html" style="font-weight: 600; margin-left: 0.35rem;">Sign In</a>
+        <a href="login.html" class="btn btn-secondary btn-sm" style="border-radius: 9999px; font-weight: 700; color: var(--crimson-red); border-color: var(--crimson-red); padding: 0.38rem 0.95rem; text-decoration: none;">
+          <i class="fa-solid fa-right-to-bracket"></i> Sign In
+        </a>
       </div>
     </div>
   </header>
 
-  <main class="container" style="max-width: 680px; padding-top: 2.5rem; padding-bottom: 4rem;">
+  <main class="container" style="max-width: 620px; padding-top: 1.75rem; padding-bottom: 3.5rem;">
 
-    <!-- Wizard Step Nodes Bar -->
-    <div class="wizard-progress" id="wizardProgress">
-      <div class="wizard-step-node active" id="node1">01</div>
-      <div class="wizard-step-node" id="node2">02</div>
-      <div class="wizard-step-node" id="node3">03</div>
-      <div class="wizard-step-node" id="node4">04</div>
-      <div class="wizard-step-node" id="node5">05</div>
+    <!-- Wizard Step Nodes Progress Stepper -->
+    <div class="wizard-progress-wrapper">
+      <div class="wizard-progress" id="wizardProgress">
+        <div class="wizard-step-node-wrapper active" id="nodeWrap1">
+          <div class="wizard-step-node active" id="node1">01</div>
+          <span class="wizard-step-label">Mobile</span>
+        </div>
+        <div class="wizard-connector-line" id="line1"></div>
+        <div class="wizard-step-node-wrapper" id="nodeWrap2">
+          <div class="wizard-step-node" id="node2">02</div>
+          <span class="wizard-step-label">Personal</span>
+        </div>
+        <div class="wizard-connector-line" id="line2"></div>
+        <div class="wizard-step-node-wrapper" id="nodeWrap3">
+          <div class="wizard-step-node" id="node3">03</div>
+          <span class="wizard-step-label">Blood</span>
+        </div>
+        <div class="wizard-connector-line" id="line3"></div>
+        <div class="wizard-step-node-wrapper" id="nodeWrap4">
+          <div class="wizard-step-node" id="node4">04</div>
+          <span class="wizard-step-label">Location</span>
+        </div>
+        <div class="wizard-connector-line" id="line4"></div>
+        <div class="wizard-step-node-wrapper" id="nodeWrap5">
+          <div class="wizard-step-node" id="node5">05</div>
+          <span class="wizard-step-label">Complete</span>
+        </div>
+      </div>
     </div>
 
     <!-- ================= STAGE 0: MOBILE INPUT ================= -->
     <div id="stageMobile" class="card card-body">
-      <div style="text-align: center; margin-bottom: 2rem;">
-        <span class="badge badge-neutral" style="margin-bottom: 0.5rem;">START REGISTRATION</span>
-        <h2 style="font-size: 2rem; margin-bottom: 0.5rem;">Join LIFE LINK</h2>
-        <p style="color: var(--navy-muted);">Register as a blood donor and be there when someone needs you.</p>
+      <div style="text-align: center; margin-bottom: 1.75rem;">
+        <span class="badge badge-neutral" style="margin-bottom: 0.6rem; background: #FFEBEF; color: var(--crimson-red); border: 1px solid rgba(217, 4, 41, 0.2); font-weight: 800; padding: 0.28rem 0.75rem; font-size: 0.72rem;">
+          <i class="fa-solid fa-droplet" style="margin-right: 0.25rem;"></i> START REGISTRATION
+        </span>
+        <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 0.35rem; letter-spacing: -0.5px; color: var(--navy-dark);">Join LIFE LINK</h2>
+        <p style="color: var(--navy-muted); font-size: 0.92rem; max-width: 400px; margin: 0 auto;">Register as a blood donor and be there when someone needs you.</p>
       </div>
 
-      <form onsubmit="handleMobileSubmit(event)" style="max-width: 420px; margin: 0 auto;">
+      <form onsubmit="handleMobileSubmit(event)" style="max-width: 400px; margin: 0 auto;">
         <div class="form-group">
           <label class="form-label">Mobile Number</label>
-          <div style="display: flex; gap: 0.5rem;">
-            <div style="padding: 0.75rem 0.9rem; background: var(--bg-light); border: 1px solid var(--navy-border); border-radius: var(--radius-sm); font-weight: 700;">+91</div>
-            <input type="tel" id="mobileInput" class="form-control" placeholder="98765 43210" required maxlength="10" value="9876543210">
+          <div class="phone-input-wrapper">
+            <div class="phone-prefix">
+              <img src="https://flagcdn.com/w20/in.png" alt="India" style="width: 16px; height: 11px; border-radius: 2px;"> +91
+            </div>
+            <input type="tel" id="mobileInput" class="form-control" placeholder="98765 43210" required maxlength="10" value="9876543210" style="font-weight: 700; font-size: 0.98rem; letter-spacing: 0.5px;">
           </div>
+          <span style="font-size: 0.74rem; color: var(--navy-muted); margin-top: 0.4rem; display: block;">
+            <i class="fa-solid fa-shield-halved" style="color: var(--crimson-red);"></i> We will send a 6-digit OTP code to verify your phone number.
+          </span>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
-          CONTINUE →
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 0.85rem; border-radius: 9999px; font-weight: 800; letter-spacing: 0.02em; box-shadow: 0 8px 20px -4px rgba(217, 4, 41, 0.35);">
+          CONTINUE <i class="fa-solid fa-arrow-right"></i>
         </button>
       </form>
     </div>
 
     <!-- ================= STAGE 0.5: OTP VERIFICATION ================= -->
     <div id="stageOtp" class="card card-body" style="display: none;">
-      <div style="text-align: center; margin-bottom: 2rem;">
-        <span class="badge badge-neutral" style="margin-bottom: 0.5rem;">SECURITY VERIFICATION</span>
-        <h2 style="font-size: 1.85rem; margin-bottom: 0.5rem;">Verify your mobile number</h2>
-        <p style="color: var(--navy-muted); font-size: 0.95rem;">We sent a verification code to <strong id="dispMobile">+91 98765 43210</strong></p>
+      <div style="text-align: center; margin-bottom: 1.75rem;">
+        <span class="badge badge-neutral" style="margin-bottom: 0.6rem; background: #FFEBEF; color: var(--crimson-red); border: 1px solid rgba(217, 4, 41, 0.2); font-weight: 800; padding: 0.28rem 0.75rem; font-size: 0.72rem;">
+          <i class="fa-solid fa-lock" style="margin-right: 0.25rem;"></i> SECURITY VERIFICATION
+        </span>
+        <h2 style="font-size: 1.65rem; font-weight: 800; margin-bottom: 0.35rem; color: var(--navy-dark);">Verify your mobile number</h2>
+        <p style="color: var(--navy-muted); font-size: 0.88rem;">We sent a 6-digit verification code to <strong id="dispMobile" style="color: var(--navy-dark); font-weight: 800;">+91 98765 43210</strong></p>
       </div>
 
-      <form onsubmit="handleOtpSubmit(event)" style="max-width: 380px; margin: 0 auto;">
+      <form onsubmit="handleOtpSubmit(event)" style="max-width: 360px; margin: 0 auto;">
         <div class="form-group">
-          <label class="form-label" style="text-align: center;">Enter 6-Digit OTP Code</label>
-          <input type="text" id="otpInput" class="form-control" placeholder="123456" maxlength="6" style="letter-spacing: 6px; font-weight: 800; font-size: 1.4rem; text-align: center;" value="123456" required>
+          <label class="form-label" style="text-align: center; display: block;">Enter 6-Digit OTP Code</label>
+          <div class="otp-input-group" style="display: flex; gap: 0.4rem; justify-content: center; margin: 0.85rem 0;">
+            <input type="text" class="otp-box" maxlength="1" value="1" onkeyup="moveOtpFocus(this, 0)" style="width: 42px; height: 46px; text-align: center; font-size: 1.2rem; font-weight: 800; border: 1.5px solid var(--navy-border); border-radius: 10px; background: #F8FAFC; outline: none;">
+            <input type="text" class="otp-box" maxlength="1" value="2" onkeyup="moveOtpFocus(this, 1)" style="width: 42px; height: 46px; text-align: center; font-size: 1.2rem; font-weight: 800; border: 1.5px solid var(--navy-border); border-radius: 10px; background: #F8FAFC; outline: none;">
+            <input type="text" class="otp-box" maxlength="1" value="3" onkeyup="moveOtpFocus(this, 2)" style="width: 42px; height: 46px; text-align: center; font-size: 1.2rem; font-weight: 800; border: 1.5px solid var(--navy-border); border-radius: 10px; background: #F8FAFC; outline: none;">
+            <input type="text" class="otp-box" maxlength="1" value="4" onkeyup="moveOtpFocus(this, 3)" style="width: 42px; height: 46px; text-align: center; font-size: 1.2rem; font-weight: 800; border: 1.5px solid var(--navy-border); border-radius: 10px; background: #F8FAFC; outline: none;">
+            <input type="text" class="otp-box" maxlength="1" value="5" onkeyup="moveOtpFocus(this, 4)" style="width: 42px; height: 46px; text-align: center; font-size: 1.2rem; font-weight: 800; border: 1.5px solid var(--navy-border); border-radius: 10px; background: #F8FAFC; outline: none;">
+            <input type="text" class="otp-box" maxlength="1" value="6" onkeyup="moveOtpFocus(this, 5)" style="width: 42px; height: 46px; text-align: center; font-size: 1.2rem; font-weight: 800; border: 1.5px solid var(--navy-border); border-radius: 10px; background: #F8FAFC; outline: none;">
+          </div>
+          <input type="hidden" id="otpInput" value="123456">
         </div>
 
-        <div style="text-align: center; font-size: 0.78rem; color: var(--navy-muted); margin-bottom: 1.5rem;">
-          Demo mode — any OTP is accepted.
+        <div style="text-align: center; font-size: 0.78rem; color: var(--navy-muted); margin-bottom: 1.25rem; background: #F8FAFC; padding: 0.5rem; border-radius: 8px; border: 1px dashed var(--navy-border);">
+          <i class="fa-solid fa-circle-info" style="color: var(--crimson-red);"></i> Demo mode — any 6-digit OTP is accepted.
         </div>
 
-        <button type="submit" class="btn btn-primary" style="width: 100%;">
-          VERIFY & CONTINUE
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; border-radius: 9999px; font-weight: 800; box-shadow: 0 8px 20px -4px rgba(217, 4, 41, 0.35);">
+          VERIFY & CONTINUE <i class="fa-solid fa-check"></i>
         </button>
+
+        <div style="text-align: center; margin-top: 0.85rem;">
+          <a href="javascript:void(0)" onclick="goBackToMobile()" style="color: var(--crimson-red); font-size: 0.8rem; font-weight: 700; text-decoration: none;">
+            <i class="fa-solid fa-arrow-left"></i> Change mobile number
+          </a>
+        </div>
       </form>
     </div>
 
     <!-- ================= STAGE 1: PERSONAL DETAILS ================= -->
     <div id="stagePersonal" class="card card-body" style="display: none;">
-      <h3 style="margin-bottom: 1.5rem; font-size: 1.35rem;">01. Personal Information</h3>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.35rem; padding-bottom: 0.85rem; border-bottom: 1px solid var(--navy-border);">
+        <div>
+          <span style="font-size: 0.72rem; font-weight: 800; color: var(--crimson-red); text-transform: uppercase; letter-spacing: 0.05em;">Step 01 of 04</span>
+          <h3 style="font-size: 1.35rem; font-weight: 800; margin-top: 0.15rem; color: var(--navy-dark);">Personal Information</h3>
+        </div>
+        <div style="width: 38px; height: 38px; border-radius: 50%; background: #FFEBEF; color: var(--crimson-red); display: flex; align-items: center; justify-content: center; font-size: 1rem;">
+          <i class="fa-solid fa-user"></i>
+        </div>
+      </div>
 
       <form onsubmit="handlePersonalSubmit(event)">
         <div class="form-group">
-          <label class="form-label">Full Name</label>
-          <input type="text" id="regName" class="form-control" placeholder="Rahul Sharma" required value="Arun Kumar">
+          <label class="form-label"><i class="fa-solid fa-user-tag" style="margin-right: 0.25rem; color: var(--navy-muted);"></i> Full Name</label>
+          <input type="text" id="regName" class="form-control" placeholder="Arun Kumar" required value="Arun Kumar">
         </div>
 
         <div class="grid-2">
           <div class="form-group">
-            <label class="form-label">Date of Birth</label>
+            <label class="form-label"><i class="fa-solid fa-calendar-day" style="margin-right: 0.25rem; color: var(--navy-muted);"></i> Date of Birth</label>
             <input type="date" id="regDob" class="form-control" required value="1998-05-14">
           </div>
           <div class="form-group">
-            <label class="form-label">Gender</label>
+            <label class="form-label"><i class="fa-solid fa-venus-mars" style="margin-right: 0.25rem; color: var(--navy-muted);"></i> Gender</label>
             <select id="regGender" class="form-select">
               <option value="Male">Male</option>
               <option value="Female">Female</option>
@@ -110,24 +174,66 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">Email Address</label>
+          <label class="form-label"><i class="fa-solid fa-envelope" style="margin-right: 0.25rem; color: var(--navy-muted);"></i> Email Address</label>
           <input type="email" id="regEmail" class="form-control" placeholder="arun.kumar@example.com" required value="arun.kumar@example.com">
         </div>
 
-        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
-          NEXT: BLOOD GROUP →
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 0.6rem; border-radius: 9999px; font-weight: 800; box-shadow: 0 8px 20px -4px rgba(217, 4, 41, 0.35);">
+          NEXT: BLOOD GROUP <i class="fa-solid fa-arrow-right"></i>
         </button>
       </form>
     </div>
 
     <!-- ================= STAGE 2: BLOOD DETAILS ================= -->
     <div id="stageBlood" class="card card-body" style="display: none;">
-      <h3 style="margin-bottom: 1.5rem; font-size: 1.35rem;">02. Blood Details</h3>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.35rem; padding-bottom: 0.85rem; border-bottom: 1px solid var(--navy-border);">
+        <div>
+          <span style="font-size: 0.72rem; font-weight: 800; color: var(--crimson-red); text-transform: uppercase; letter-spacing: 0.05em;">Step 02 of 04</span>
+          <h3 style="font-size: 1.35rem; font-weight: 800; margin-top: 0.15rem; color: var(--navy-dark);">Blood Details</h3>
+        </div>
+        <div style="width: 38px; height: 38px; border-radius: 50%; background: #FFEBEF; color: var(--crimson-red); display: flex; align-items: center; justify-content: center; font-size: 1rem;">
+          <i class="fa-solid fa-droplet"></i>
+        </div>
+      </div>
 
       <form onsubmit="handleBloodSubmit(event)">
         <div class="form-group">
           <label class="form-label">Select Blood Group</label>
-          <select id="regBloodGroup" class="form-select" style="font-size: 1.1rem; font-weight: 700; color: var(--crimson-red);">
+          <div class="blood-group-selector-grid">
+            <div class="blood-group-option active" onclick="selectBloodGroup(this, 'O+')">
+              <div class="bg-label">O+</div>
+              <div class="bg-sub">Positive</div>
+            </div>
+            <div class="blood-group-option" onclick="selectBloodGroup(this, 'O-')">
+              <div class="bg-label">O-</div>
+              <div class="bg-sub">Universal</div>
+            </div>
+            <div class="blood-group-option" onclick="selectBloodGroup(this, 'A+')">
+              <div class="bg-label">A+</div>
+              <div class="bg-sub">Positive</div>
+            </div>
+            <div class="blood-group-option" onclick="selectBloodGroup(this, 'A-')">
+              <div class="bg-label">A-</div>
+              <div class="bg-sub">Negative</div>
+            </div>
+            <div class="blood-group-option" onclick="selectBloodGroup(this, 'B+')">
+              <div class="bg-label">B+</div>
+              <div class="bg-sub">Positive</div>
+            </div>
+            <div class="blood-group-option" onclick="selectBloodGroup(this, 'B-')">
+              <div class="bg-label">B-</div>
+              <div class="bg-sub">Negative</div>
+            </div>
+            <div class="blood-group-option" onclick="selectBloodGroup(this, 'AB+')">
+              <div class="bg-label">AB+</div>
+              <div class="bg-sub">Positive</div>
+            </div>
+            <div class="blood-group-option" onclick="selectBloodGroup(this, 'AB-')">
+              <div class="bg-label">AB-</div>
+              <div class="bg-sub">Negative</div>
+            </div>
+          </div>
+          <select id="regBloodGroup" class="form-select" style="display: none;">
             <option value="O+">O+</option>
             <option value="O-">O- (Universal Donor)</option>
             <option value="A+">A+</option>
@@ -140,100 +246,124 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">Last Blood Donation Date (Optional)</label>
+          <label class="form-label"><i class="fa-solid fa-clock-rotate-left" style="margin-right: 0.25rem; color: var(--navy-muted);"></i> Last Blood Donation Date (Optional)</label>
           <input type="date" id="regLastDonation" class="form-control" value="2025-11-10">
+          <span style="font-size: 0.74rem; color: var(--navy-muted); margin-top: 0.3rem; display: block;">Leave as is or select date if you have donated previously.</span>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
-          NEXT: LOCATION →
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 0.6rem; border-radius: 9999px; font-weight: 800; box-shadow: 0 8px 20px -4px rgba(217, 4, 41, 0.35);">
+          NEXT: LOCATION <i class="fa-solid fa-arrow-right"></i>
         </button>
       </form>
     </div>
 
     <!-- ================= STAGE 3: LOCATION DETAILS ================= -->
     <div id="stageLocation" class="card card-body" style="display: none;">
-      <h3 style="margin-bottom: 1.5rem; font-size: 1.35rem;">03. Location Details</h3>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.35rem; padding-bottom: 0.85rem; border-bottom: 1px solid var(--navy-border);">
+        <div>
+          <span style="font-size: 0.72rem; font-weight: 800; color: var(--crimson-red); text-transform: uppercase; letter-spacing: 0.05em;">Step 03 of 04</span>
+          <h3 style="font-size: 1.35rem; font-weight: 800; margin-top: 0.15rem; color: var(--navy-dark);">Location Details</h3>
+        </div>
+        <div style="width: 38px; height: 38px; border-radius: 50%; background: #FFEBEF; color: var(--crimson-red); display: flex; align-items: center; justify-content: center; font-size: 1rem;">
+          <i class="fa-solid fa-location-dot"></i>
+        </div>
+      </div>
 
       <form onsubmit="handleLocationSubmit(event)">
         <div class="grid-2">
           <div class="form-group">
-            <label class="form-label">City</label>
+            <label class="form-label"><i class="fa-solid fa-city" style="margin-right: 0.25rem; color: var(--navy-muted);"></i> City</label>
             <input type="text" id="regCity" class="form-control" placeholder="Mumbai" required value="Mumbai">
           </div>
           <div class="form-group">
-            <label class="form-label">Area / Sector</label>
+            <label class="form-label"><i class="fa-solid fa-map-pin" style="margin-right: 0.25rem; color: var(--navy-muted);"></i> Area / Sector</label>
             <input type="text" id="regArea" class="form-control" placeholder="Andheri East" required value="Andheri East">
           </div>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Preferred Search Radius</label>
+          <label class="form-label"><i class="fa-solid fa-compass" style="margin-right: 0.25rem; color: var(--navy-muted);"></i> Preferred Search Radius</label>
           <select id="regSearchRadius" class="form-select">
             <option value="5">Within 5 km</option>
-            <option value="8" selected>Within 8 km</option>
+            <option value="8" selected>Within 8 km (Recommended)</option>
             <option value="10">Within 10 km</option>
           </select>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
-          NEXT: AVAILABILITY →
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 0.6rem; border-radius: 9999px; font-weight: 800; box-shadow: 0 8px 20px -4px rgba(217, 4, 41, 0.35);">
+          NEXT: AVAILABILITY <i class="fa-solid fa-arrow-right"></i>
         </button>
       </form>
     </div>
 
     <!-- ================= STAGE 4: AVAILABILITY SETTINGS ================= -->
     <div id="stageAvailability" class="card card-body" style="display: none;">
-      <h3 style="margin-bottom: 1.5rem; font-size: 1.35rem;">04. Availability & Notification Preferences</h3>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.35rem; padding-bottom: 0.85rem; border-bottom: 1px solid var(--navy-border);">
+        <div>
+          <span style="font-size: 0.72rem; font-weight: 800; color: var(--crimson-red); text-transform: uppercase; letter-spacing: 0.05em;">Step 04 of 04</span>
+          <h3 style="font-size: 1.35rem; font-weight: 800; margin-top: 0.15rem; color: var(--navy-dark);">Availability & Preferences</h3>
+        </div>
+        <div style="width: 38px; height: 38px; border-radius: 50%; background: #FFEBEF; color: var(--crimson-red); display: flex; align-items: center; justify-content: center; font-size: 1rem;">
+          <i class="fa-solid fa-sliders"></i>
+        </div>
+      </div>
 
       <form onsubmit="handleAvailabilitySubmit(event)">
-        <div style="background: var(--bg-light); padding: 1.25rem; border-radius: var(--radius-sm); border: 1px solid var(--navy-border); margin-bottom: 1.25rem;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div style="background: #F8FAFC; padding: 1.15rem; border-radius: var(--radius-md); border: 1.5px solid var(--navy-border); margin-bottom: 1.25rem;">
+          
+          <label class="custom-switch-label" style="margin-bottom: 1rem; padding-bottom: 0.85rem; border-bottom: 1px solid var(--navy-border);">
             <div>
-              <strong style="display: block;">Willing to donate blood</strong>
-              <span style="font-size: 0.85rem; color: var(--navy-muted);">Toggles whether your profile is eligible for emergency matching</span>
+              <strong style="display: block; font-size: 0.9rem; color: var(--navy-dark);">Willing to donate blood</strong>
+              <span style="font-size: 0.76rem; color: var(--navy-muted);">Toggles whether your profile is eligible for emergency matching</span>
             </div>
-            <input type="checkbox" id="toggleWilling" checked style="width: 20px; height: 20px; accent-color: var(--crimson-red);">
-          </div>
+            <input type="checkbox" id="toggleWilling" class="switch-toggle-input" checked>
+            <span class="switch-slider"></span>
+          </label>
 
-          <div style="display: flex; justify-content: space-between; align-items: center;">
+          <label class="custom-switch-label">
             <div>
-              <strong style="display: block;">Receive nearby emergency blood requests</strong>
-              <span style="font-size: 0.85rem; color: var(--navy-muted);">Receive alerts from verified hospitals nearby</span>
+              <strong style="display: block; font-size: 0.9rem; color: var(--navy-dark);">Receive emergency blood requests</strong>
+              <span style="font-size: 0.76rem; color: var(--navy-muted);">Receive alerts from verified hospitals nearby</span>
             </div>
-            <input type="checkbox" id="toggleAlerts" checked style="width: 20px; height: 20px; accent-color: var(--crimson-red);">
-          </div>
+            <input type="checkbox" id="toggleAlerts" class="switch-toggle-input" checked>
+            <span class="switch-slider"></span>
+          </label>
+
         </div>
 
         <div class="grid-2">
           <div class="form-group">
-            <label class="form-label">Emergency Contact Name</label>
+            <label class="form-label"><i class="fa-solid fa-address-book" style="margin-right: 0.25rem; color: var(--navy-muted);"></i> Emergency Contact Name</label>
             <input type="text" id="emContactName" class="form-control" placeholder="Contact Person" value="Sunita Kumar">
           </div>
           <div class="form-group">
-            <label class="form-label">Emergency Contact Mobile</label>
+            <label class="form-label"><i class="fa-solid fa-phone" style="margin-right: 0.25rem; color: var(--navy-muted);"></i> Emergency Contact Mobile</label>
             <input type="tel" id="emContactPhone" class="form-control" placeholder="+91 98000 11122" value="+91 98000 11122">
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
-          CREATE DONOR PROFILE
+        <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 0.6rem; border-radius: 9999px; font-weight: 800; background: linear-gradient(135deg, var(--crimson-red), var(--crimson-hover)); box-shadow: 0 8px 20px -4px rgba(217, 4, 41, 0.35);">
+          CREATE DONOR PROFILE <i class="fa-solid fa-circle-check"></i>
         </button>
       </form>
     </div>
 
     <!-- ================= STAGE 5: SUCCESS STATE ================= -->
-    <div id="stageComplete" class="card card-body" style="display: none; text-align: center; padding: 3.5rem 2rem;">
-      <div style="width: 64px; height: 64px; background: var(--status-success-bg); color: var(--status-success); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1.5rem;">✓</div>
+    <div id="stageComplete" class="card card-body" style="display: none; text-align: center; padding: 3.25rem 1.75rem;">
+      <div style="width: 64px; height: 64px; background: #DCFCE7; color: #16A34A; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1.25rem; box-shadow: 0 8px 20px rgba(22, 163, 74, 0.2);">
+        <i class="fa-solid fa-check"></i>
+      </div>
 
-      <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem;">Donor Profile Created</h2>
-      <h4 style="color: var(--crimson-red); font-size: 1.15rem; margin-bottom: 1rem;">Welcome to LIFE LINK.</h4>
+      <span class="badge badge-success" style="margin-bottom: 0.6rem; font-size: 0.76rem; padding: 0.28rem 0.75rem;">VERIFIED DONOR</span>
+      <h2 style="font-size: 1.85rem; font-weight: 800; margin-bottom: 0.35rem; color: var(--navy-dark);">Donor Profile Created</h2>
+      <h4 style="color: var(--crimson-red); font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem;">Welcome to LIFE LINK.</h4>
 
-      <p style="color: var(--navy-muted); max-width: 480px; margin: 0 auto 2.5rem; font-size: 1rem;">
+      <p style="color: var(--navy-muted); max-width: 440px; margin: 0 auto 2rem; font-size: 0.92rem; line-height: 1.55;">
         "You're ready to make a difference. Your willingness to donate can help someone nearby when every minute matters."
       </p>
 
-      <button onclick="goToDashboard()" class="btn btn-primary btn-lg">
-        GO TO DASHBOARD →
+      <button onclick="goToDashboard()" class="btn btn-primary btn-lg" style="border-radius: 9999px; padding: 0.85rem 2rem; font-weight: 800; font-size: 0.96rem; box-shadow: 0 8px 20px -4px rgba(217, 4, 41, 0.4);">
+        GO TO DASHBOARD <i class="fa-solid fa-arrow-right"></i>
       </button>
     </div>
 
@@ -245,17 +375,53 @@
     function updateNodes(activeNum) {
       for (let i = 1; i <= 5; i++) {
         const node = document.getElementById('node' + i);
+        const nodeWrap = document.getElementById('nodeWrap' + i);
+        const line = document.getElementById('line' + (i - 1));
+
+        if (!node) continue;
+
         if (i < activeNum) {
           node.className = 'wizard-step-node completed';
-          node.textContent = '✓';
+          node.innerHTML = '<i class="fa-solid fa-check"></i>';
+          if (nodeWrap) nodeWrap.className = 'wizard-step-node-wrapper completed';
+          if (line) line.className = 'wizard-connector-line active';
         } else if (i === activeNum) {
           node.className = 'wizard-step-node active';
           node.textContent = '0' + i;
+          if (nodeWrap) nodeWrap.className = 'wizard-step-node-wrapper active';
+          if (line) line.className = 'wizard-connector-line active';
         } else {
           node.className = 'wizard-step-node';
           node.textContent = '0' + i;
+          if (nodeWrap) nodeWrap.className = 'wizard-step-node-wrapper';
+          if (line) line.className = 'wizard-connector-line';
         }
       }
+    }
+
+    function moveOtpFocus(el, index) {
+      if (el.value.length === 1) {
+        const boxes = document.querySelectorAll('.otp-box');
+        if (boxes[index + 1]) {
+          boxes[index + 1].focus();
+        }
+      }
+      const boxes = document.querySelectorAll('.otp-box');
+      let combined = '';
+      boxes.forEach(b => combined += b.value);
+      document.getElementById('otpInput').value = combined;
+    }
+
+    function selectBloodGroup(el, val) {
+      document.querySelectorAll('.blood-group-option').forEach(opt => opt.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('regBloodGroup').value = val;
+    }
+
+    function goBackToMobile() {
+      document.getElementById('stageOtp').style.display = 'none';
+      document.getElementById('stageMobile').style.display = 'block';
+      updateNodes(1);
     }
 
     function handleMobileSubmit(e) {
