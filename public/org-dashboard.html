@@ -2274,6 +2274,8 @@
       renderActiveRequestsTable();
       renderDonorResponsesGrid();
       renderFulfillmentTimeline();
+      loadOrgProfileUI();
+      renderOrgSupportTable();
     });
 
     function switchView(viewId) {
@@ -2357,13 +2359,6 @@
       document.getElementById('successRequestModal').style.display = 'none';
       switchView('fulfillment-tracking');
     }
-
-      renderActiveRequestsTable();
-      renderDonorResponsesGrid();
-      renderFulfillmentTimeline();
-      loadOrgProfileUI();
-      renderOrgSupportTable();
-    });
 
     // ----------------------------------------------------
     // 1. ORGANIZATION PROFILE & FACILITY IMAGE HANDLERS
