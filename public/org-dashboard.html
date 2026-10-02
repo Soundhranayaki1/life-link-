@@ -142,7 +142,7 @@
       justify-content: flex-start;
       min-width: 0;
       margin-left: 0.5rem;
-      overflow: hidden;
+      overflow: visible;
     }
 
     .top-nav-links {
@@ -152,6 +152,7 @@
       gap: 0.25rem;
       margin: 0;
       padding: 0;
+      overflow: visible;
     }
 
     .top-nav-btn {
@@ -185,6 +186,7 @@
 
     .top-dropdown-item {
       position: relative;
+      overflow: visible;
     }
 
     .top-dropdown-toggle .nav-chevron {
@@ -1328,7 +1330,7 @@
 
           <!-- More Dropdown -->
           <li class="top-dropdown-item" id="moreDropdownGroup">
-            <button class="top-nav-btn top-dropdown-toggle" id="moreDropdownToggle">
+            <button class="top-nav-btn top-dropdown-toggle" id="moreDropdownToggle" onclick="toggleDropdownMenu(event, 'moreDropdownToggle')">
               <i class="fa-solid fa-ellipsis"></i> More <i class="fa-solid fa-chevron-down nav-chevron"></i>
             </button>
             <div class="top-dropdown-menu align-right">
@@ -2732,6 +2734,27 @@
       if (mobileDrawer) mobileDrawer.classList.remove('open');
     }
 
+    function toggleDropdownMenu(e, itemId) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      const item = document.getElementById(itemId)?.closest('.top-dropdown-item');
+      if (!item) return;
+
+      const isOpen = item.classList.contains('open');
+
+      document.querySelectorAll('.top-dropdown-item.open').forEach(el => {
+        if (el !== item) el.classList.remove('open');
+      });
+
+      if (isOpen) {
+        item.classList.remove('open');
+      } else {
+        item.classList.add('open');
+      }
+    }
+
     function toggleUserMenuDropdown(e) {
       if (e) e.stopPropagation();
       const card = document.getElementById('userMenuDropdownCard');
@@ -2744,13 +2767,20 @@
     }
 
     function closeAllNavDropdowns() {
+      document.querySelectorAll('.top-dropdown-item.open').forEach(el => el.classList.remove('open'));
       const card = document.getElementById('userMenuDropdownCard');
       if (card) card.classList.remove('show');
     }
 
     document.addEventListener('click', (e) => {
-      if (e && e.target && !e.target.closest('.user-menu-dropdown') && !e.target.closest('.mobile-nav-toggle')) {
-        closeAllNavDropdowns();
+      if (e && e.target) {
+        if (!e.target.closest('.top-dropdown-item')) {
+          document.querySelectorAll('.top-dropdown-item.open').forEach(el => el.classList.remove('open'));
+        }
+        if (!e.target.closest('.user-menu-dropdown') && !e.target.closest('.mobile-nav-toggle')) {
+          const card = document.getElementById('userMenuDropdownCard');
+          if (card) card.classList.remove('show');
+        }
       }
     });
 

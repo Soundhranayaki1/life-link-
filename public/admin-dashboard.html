@@ -143,7 +143,7 @@
       justify-content: flex-start;
       min-width: 0;
       margin-left: 0.5rem;
-      overflow: hidden;
+      overflow: visible;
     }
 
     .top-nav-links {
@@ -153,6 +153,7 @@
       gap: 0.25rem;
       margin: 0;
       padding: 0;
+      overflow: visible;
     }
 
     .top-nav-btn {
@@ -186,6 +187,7 @@
 
     .top-dropdown-item {
       position: relative;
+      overflow: visible;
     }
 
     .top-dropdown-toggle .nav-chevron {
@@ -913,7 +915,7 @@
 
           <!-- 2. OPERATIONS DROPDOWN -->
           <li class="top-dropdown-item">
-            <button class="top-nav-btn top-dropdown-toggle" id="nav-parent-operations">
+            <button class="top-nav-btn top-dropdown-toggle" id="nav-parent-operations" onclick="toggleDropdownMenu(event, 'nav-parent-operations')">
               <i class="fa-solid fa-tower-broadcast"></i> 
               <span class="nav-text-long">Emergency Management</span>
               <span class="nav-text-short">Emergency</span>
@@ -938,7 +940,7 @@
 
           <!-- 3. ORGANIZATIONS DROPDOWN -->
           <li class="top-dropdown-item">
-            <button class="top-nav-btn top-dropdown-toggle" id="nav-parent-organizations">
+            <button class="top-nav-btn top-dropdown-toggle" id="nav-parent-organizations" onclick="toggleDropdownMenu(event, 'nav-parent-organizations')">
               <i class="fa-solid fa-building-shield"></i> 
               <span class="nav-text-long">Organization Management</span>
               <span class="nav-text-short">Organizations</span>
@@ -973,7 +975,7 @@
 
           <!-- 5. ANALYTICS & NOTIFICATIONS DROPDOWN -->
           <li class="top-dropdown-item">
-            <button class="top-nav-btn top-dropdown-toggle" id="nav-parent-analytics">
+            <button class="top-nav-btn top-dropdown-toggle" id="nav-parent-analytics" onclick="toggleDropdownMenu(event, 'nav-parent-analytics')">
               <i class="fa-solid fa-chart-pie"></i> Analytics <i class="fa-solid fa-chevron-down nav-chevron"></i>
             </button>
             <div class="top-dropdown-menu">
@@ -988,7 +990,7 @@
 
           <!-- 6. GOVERNANCE DROPDOWN -->
           <li class="top-dropdown-item nav-item-low-priority">
-            <button class="top-nav-btn top-dropdown-toggle" id="nav-parent-governance">
+            <button class="top-nav-btn top-dropdown-toggle" id="nav-parent-governance" onclick="toggleDropdownMenu(event, 'nav-parent-governance')">
               <i class="fa-solid fa-shield-halved"></i> 
               <span class="nav-text-long">Security & Governance</span>
               <span class="nav-text-short">Governance</span>
@@ -1014,7 +1016,7 @@
 
           <!-- 8. MORE DROPDOWN (Shown when low priority items hide on medium width) -->
           <li class="top-dropdown-item nav-item-more" style="display: none;">
-            <button class="top-nav-btn top-dropdown-toggle" id="moreAdminDropdownToggle">
+            <button class="top-nav-btn top-dropdown-toggle" id="moreAdminDropdownToggle" onclick="toggleDropdownMenu(event, 'moreAdminDropdownToggle')">
               <i class="fa-solid fa-ellipsis"></i> More <i class="fa-solid fa-chevron-down nav-chevron"></i>
             </button>
             <div class="top-dropdown-menu align-right">
@@ -2894,6 +2896,27 @@
       window.location.hash = viewId;
     }
 
+    function toggleDropdownMenu(e, itemId) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      const item = document.getElementById(itemId)?.closest('.top-dropdown-item');
+      if (!item) return;
+
+      const isOpen = item.classList.contains('open');
+
+      document.querySelectorAll('.top-dropdown-item.open').forEach(el => {
+        if (el !== item) el.classList.remove('open');
+      });
+
+      if (isOpen) {
+        item.classList.remove('open');
+      } else {
+        item.classList.add('open');
+      }
+    }
+
     function toggleUserMenuDropdown(e) {
       if (e) e.stopPropagation();
       const card = document.getElementById('adminUserMenuCard');
@@ -2906,6 +2929,7 @@
     }
 
     function closeAllNavDropdowns() {
+      document.querySelectorAll('.top-dropdown-item.open').forEach(el => el.classList.remove('open'));
       const card = document.getElementById('adminUserMenuCard');
       if (card) card.classList.remove('show');
       const drawer = document.getElementById('mobileNavDrawer');
@@ -2913,8 +2937,14 @@
     }
 
     document.addEventListener('click', (e) => {
-      if (e && e.target && !e.target.closest('.top-user-menu-item') && !e.target.closest('.mobile-nav-toggle')) {
-        closeAllNavDropdowns();
+      if (e && e.target) {
+        if (!e.target.closest('.top-dropdown-item')) {
+          document.querySelectorAll('.top-dropdown-item.open').forEach(el => el.classList.remove('open'));
+        }
+        if (!e.target.closest('.top-user-menu-item') && !e.target.closest('.mobile-nav-toggle')) {
+          const card = document.getElementById('adminUserMenuCard');
+          if (card) card.classList.remove('show');
+        }
       }
     });
 
