@@ -893,6 +893,230 @@ const MockData = {
       donatedCount,
       successRate
     };
+  },
+
+  // ----------------------------------------------------
+  // ORGANIZATION MODULE & ADAPTIVE DISPATCH HELPERS
+  // ----------------------------------------------------
+
+  // 1. Organization Profile Management
+  getOrgProfile() {
+    try {
+      const data = localStorage.getItem('lifelink_org_profile');
+      if (data) return JSON.parse(data);
+    } catch(e) {}
+
+    return {
+      id: 'LL-GH-2026-001',
+      name: 'Government General Hospital',
+      type: 'Government Hospital',
+      certificationNo: 'LL-GH-2026-001',
+      address: 'Government Hospital Road, Railway Station Area, Hosur, Tamil Nadu 635109',
+      email: 'dispatch@ggh-hosur.tn.gov.in',
+      deskPhone: '+91 4344 220000',
+      emergencyHotline: '+91 98430 12345',
+      contactPerson: 'Dr. Rajesh Vardhan (Chief Medical Officer)',
+      verificationStatus: 'VERIFIED',
+      imageUrl: 'assets/images/lifelink-logo.png'
+    };
+  },
+
+  saveOrgProfile(data) {
+    const current = this.getOrgProfile();
+    const updated = { ...current, ...data };
+    localStorage.setItem('lifelink_org_profile', JSON.stringify(updated));
+    this.logAudit('Organization Profile Updated', updated.name, 'ORGANIZATION_PROFILE_UPDATE', `Updated organization contact & profile details by ${updated.contactPerson || 'Authorized User'}`);
+    return updated;
+  },
+
+  // 2. Adaptive Dispatch Settings Management
+  getAdaptiveDispatchSettings() {
+    try {
+      const data = localStorage.getItem('lifelink_adaptive_settings');
+      if (data) return JSON.parse(data);
+    } catch(e) {}
+
+    return {
+      initialRadius: 3,
+      expansionStep: 2,
+      maxRadius: 8,
+      requiredConfirmations: 3,
+      evaluationWindow: 10,
+      renotificationCooldown: 24,
+      deprioritizeRecent: true,
+      maxNotificationsPerEmergency: 1,
+      exactAddressHidden: true,
+      approximateDistanceDisplay: true,
+      rbacEnforced: true,
+      orgVerificationRequired: true,
+      auditLoggingEnabled: true
+    };
+  },
+
+  saveAdaptiveDispatchSettings(settings) {
+    const current = this.getAdaptiveDispatchSettings();
+    const updated = { ...current, ...settings };
+    localStorage.setItem('lifelink_adaptive_settings', JSON.stringify(updated));
+    this.logAudit('System Settings Updated', 'System Admin', 'SYSTEM_SETTINGS_UPDATE', `Adaptive dispatch settings updated: ${updated.initialRadius}km initial, ${updated.expansionStep}km step, ${updated.maxRadius}km max`);
+    return updated;
+  },
+
+  calculateDispatchRounds(initialRadius = 3, expansionStep = 2, maxRadius = 8) {
+    const init = parseInt(initialRadius, 10) || 3;
+    const step = parseInt(expansionStep, 10) || 2;
+    const max = parseInt(maxRadius, 10) || 8;
+
+    const rounds = [];
+    let currentStart = 0;
+    let currentEnd = init;
+    let roundNum = 1;
+
+    while (currentStart < max) {
+      if (currentEnd > max) currentEnd = max;
+      rounds.push({
+        round: roundNum,
+        label: `Round ${roundNum} (${currentStart}–${currentEnd} km)`,
+        startKm: currentStart,
+        endKm: currentEnd
+      });
+
+      if (currentEnd >= max) break;
+      currentStart = currentEnd;
+      currentEnd = currentStart + step;
+      roundNum++;
+    }
+
+    return rounds;
+  },
+
+  // 3. Responder Pool & Fulfillment Workflow Store
+  getRespondersForRequest(requestId = 'REQ-1042') {
+    try {
+      const data = localStorage.getItem('lifelink_responders_' + requestId);
+      if (data) return JSON.parse(data);
+    } catch(e) {}
+
+    // Pre-seeded responder pool for demonstration (e.g. 8 responded, 3 required)
+    const defaultResponders = [
+      { id: 'LL-D-1024', name: 'Arun Kumar', bloodGroup: 'O+', distanceKm: 1.8, responseTime: '8 mins ago', status: 'CONFIRMED', phone: '+91 98765 43210', maskedPhone: '+91 ******4321', arrived: false },
+      { id: 'LL-D-1028', name: 'Priya Patel', bloodGroup: 'O+', distanceKm: 2.7, responseTime: '12 mins ago', status: 'CONFIRMED', phone: '+91 98800 12345', maskedPhone: '+91 ******2345', arrived: false },
+      { id: 'LL-D-1031', name: 'Rahul Sharma', bloodGroup: 'O+', distanceKm: 3.2, responseTime: '15 mins ago', status: 'CONFIRMED', phone: '+91 97654 32109', maskedPhone: '+91 ******2109', arrived: false },
+      { id: 'LL-D-1035', name: 'Vikram Singh', bloodGroup: 'O+', distanceKm: 3.8, responseTime: '18 mins ago', status: 'STANDBY', phone: '+91 96543 21098', maskedPhone: '+91 ******1098', arrived: false },
+      { id: 'LL-D-1038', name: 'Ananya Rao', bloodGroup: 'O+', distanceKm: 4.5, responseTime: '22 mins ago', status: 'STANDBY', phone: '+91 95432 10987', maskedPhone: '+91 ******0987', arrived: false },
+      { id: 'LL-D-1042', name: 'Karthik Raja', bloodGroup: 'O+', distanceKm: 5.1, responseTime: '25 mins ago', status: 'STANDBY', phone: '+91 94321 09876', maskedPhone: '+91 ******9876', arrived: false },
+      { id: 'LL-D-1045', name: 'Meera Nair', bloodGroup: 'O+', distanceKm: 5.8, responseTime: '28 mins ago', status: 'NO_LONGER_REQUIRED', phone: '+91 93210 98765', maskedPhone: '+91 ******8765', arrived: false },
+      { id: 'LL-D-1050', name: 'Siddharth V', bloodGroup: 'O+', distanceKm: 6.4, responseTime: '30 mins ago', status: 'NO_LONGER_REQUIRED', phone: '+91 92109 87654', maskedPhone: '+91 ******7654', arrived: false }
+    ];
+
+    localStorage.setItem('lifelink_responders_' + requestId, JSON.stringify(defaultResponders));
+    return defaultResponders;
+  },
+
+  updateResponderStatus(requestId, donorId, newStatus) {
+    const responders = this.getRespondersForRequest(requestId);
+    const donor = responders.find(r => r.id === donorId);
+    if (donor) {
+      donor.status = newStatus;
+      localStorage.setItem('lifelink_responders_' + requestId, JSON.stringify(responders));
+      this.logAudit(`Donor Status Changed to ${newStatus}`, donor.name, 'DONOR_STATUS_UPDATE', `Donor ${donor.id} (${donor.name}) status updated to ${newStatus} for request ${requestId}`);
+    }
+    return responders;
+  },
+
+  markDonorArrived(requestId, donorId) {
+    const responders = this.getRespondersForRequest(requestId);
+    const donor = responders.find(r => r.id === donorId);
+    if (donor) {
+      donor.arrived = true;
+      donor.status = 'ARRIVED';
+      localStorage.setItem('lifelink_responders_' + requestId, JSON.stringify(responders));
+      this.logAudit('Donor Marked Arrived', donor.name, 'DONOR_ARRIVED', `Organization verified physical arrival of donor ${donor.name} (${donor.id}) for request ${requestId}`);
+    }
+    return responders;
+  },
+
+  markRequestFulfilled(requestId = 'REQ-1042') {
+    const responders = this.getRespondersForRequest(requestId);
+    // Mark remaining non-confirmed responders as NO_LONGER_REQUIRED
+    responders.forEach(r => {
+      if (r.status === 'STANDBY' || r.status === 'RESPONDED') {
+        r.status = 'NO_LONGER_REQUIRED';
+      }
+    });
+    localStorage.setItem('lifelink_responders_' + requestId, JSON.stringify(responders));
+
+    this.logAudit('Fulfillment Confirmed', 'Government General Hospital', 'REQUEST_FULFILLED', `Emergency request ${requestId} marked FULFILLED. Stopped further donor dispatch.`);
+    return true;
+  },
+
+  // 4. Organization-to-Organization Support Store
+  getOrgSupportRequests() {
+    try {
+      const data = localStorage.getItem('lifelink_org_support_requests');
+      if (data) return JSON.parse(data);
+    } catch(e) {}
+
+    const defaultSupport = [
+      {
+        id: 'SUP-2026-001',
+        requestingOrg: 'Government General Hospital',
+        receivingOrg: 'City Blood Bank',
+        bloodGroup: 'O+',
+        component: 'Packed Red Cells',
+        unitsRequired: 3,
+        urgency: 'CRITICAL',
+        requiredBy: '2 hours',
+        status: 'Support Requested',
+        timestamp: '2026-10-02 11:30 AM'
+      },
+      {
+        id: 'SUP-2026-002',
+        requestingOrg: 'District Blood Bank',
+        receivingOrg: 'Government General Hospital',
+        bloodGroup: 'AB-',
+        component: 'Platelets',
+        unitsRequired: 2,
+        urgency: 'HIGH',
+        requiredBy: '4 hours',
+        status: 'Accepted',
+        timestamp: '2026-10-02 09:15 AM'
+      }
+    ];
+
+    localStorage.setItem('lifelink_org_support_requests', JSON.stringify(defaultSupport));
+    return defaultSupport;
+  },
+
+  createOrgSupportRequest(data) {
+    const requests = this.getOrgSupportRequests();
+    const newSupport = {
+      id: 'SUP-2026-' + Math.floor(100 + Math.random() * 900),
+      requestingOrg: data.requestingOrg || 'Government General Hospital',
+      receivingOrg: data.receivingOrg || 'City Blood Bank',
+      bloodGroup: data.bloodGroup || 'O+',
+      component: data.component || 'Whole Blood',
+      unitsRequired: parseInt(data.unitsRequired, 10) || 3,
+      urgency: data.urgency || 'CRITICAL',
+      requiredBy: data.requiredBy || '3 hours',
+      status: 'Support Requested',
+      timestamp: new Date().toLocaleString()
+    };
+
+    requests.unshift(newSupport);
+    localStorage.setItem('lifelink_org_support_requests', JSON.stringify(requests));
+    this.logAudit('Organization Support Requested', newSupport.requestingOrg, 'ORG_SUPPORT_REQUESTED', `Requested ${newSupport.unitsRequired} units ${newSupport.bloodGroup} support from ${newSupport.receivingOrg}`);
+    return newSupport;
+  },
+
+  updateOrgSupportStatus(supportId, newStatus) {
+    let requests = this.getOrgSupportRequests();
+    const target = requests.find(s => s.id === supportId);
+    if (target) {
+      target.status = newStatus;
+      localStorage.setItem('lifelink_org_support_requests', JSON.stringify(requests));
+      this.logAudit(`Organization Support Status: ${newStatus}`, target.receivingOrg, 'ORG_SUPPORT_STATUS_UPDATE', `Inter-organization support ${supportId} updated to ${newStatus}`);
+    }
+    return requests;
   }
 };
 

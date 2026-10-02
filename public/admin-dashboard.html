@@ -2178,42 +2178,129 @@
       <!-- ================================================================= -->
       <!-- 21. SYSTEM SETTINGS VIEW -->
       <!-- ================================================================= -->
+      <!-- 21. SYSTEM SETTINGS VIEW -->
+      <!-- ================================================================= -->
       <div id="view-settings" class="view-pane">
-        <div class="card-white" style="max-width: 740px;">
-          <h2 style="font-family: var(--font-main); font-size: 1.25rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 1.15rem;">System Settings</h2>
-
-          <h4 style="font-family: var(--font-main); font-size: 0.88rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.65rem;">1. Dispatch Radius Configuration</h4>
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.15rem;">
-            <div class="form-group-item">
-              <label class="form-label-txt">Round 1 Radius</label>
-              <input type="text" class="form-control-input" value="0–3 km" readonly>
-            </div>
-            <div class="form-group-item">
-              <label class="form-label-txt">Round 2 Radius</label>
-              <input type="text" class="form-control-input" value="3–5 km" readonly>
-            </div>
-            <div class="form-group-item">
-              <label class="form-label-txt">Round 3 Radius</label>
-              <input type="text" class="form-control-input" value="5–8 km" readonly>
-            </div>
+        <div class="card-white" style="max-width: 840px;">
+          <div style="border-bottom: 1px solid var(--slate-border); padding-bottom: 0.85rem; margin-bottom: 1.25rem;">
+            <h2 style="font-family: var(--font-main); font-size: 1.35rem; font-weight: 800; color: var(--navy-dark); margin-bottom: 0.25rem;">
+              System Settings – Adaptive Dispatch & Governance
+            </h2>
+            <p style="font-size: 0.85rem; color: var(--slate-muted);">
+              Configure automated radius expansion rounds, dispatch stop conditions, notification protection, and privacy governance.
+            </p>
           </div>
 
-          <h4 style="font-family: var(--font-main); font-size: 0.88rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.65rem;">2. Privacy & Governance Settings</h4>
-          <div style="display: flex; flex-direction: column; gap: 0.55rem; margin-bottom: 1.15rem;">
-            <label style="display: flex; align-items: center; gap: 0.45rem; font-size: 0.82rem; font-weight: 500;">
-              <input type="checkbox" checked disabled> Exact donor address hidden (Enabled)
-            </label>
-            <label style="display: flex; align-items: center; gap: 0.45rem; font-size: 0.82rem; font-weight: 500;">
-              <input type="checkbox" checked disabled> Approximate distance display (Enabled)
-            </label>
-            <label style="display: flex; align-items: center; gap: 0.45rem; font-size: 0.82rem; font-weight: 500;">
-              <input type="checkbox" checked disabled> Role-Based Access Control (RBAC Enforced)
-            </label>
-          </div>
+          <form id="systemSettingsForm" onsubmit="handleSaveSystemSettings(event)">
+            <!-- 1. ADAPTIVE DISPATCH CONFIGURATION -->
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.5rem;">
+              <h4 style="font-family: var(--font-main); font-size: 0.95rem; font-weight: 800; color: var(--navy-dark); margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-sliders" style="color: var(--red-primary);"></i> 1. Adaptive Dispatch Configuration
+              </h4>
 
-          <button onclick="alert('System settings updated.')" class="btn-create-org-cta">
-            SAVE SYSTEM SETTINGS
-          </button>
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem;">
+                <div class="form-group-item" style="margin-bottom: 0;">
+                  <label class="form-label-txt" for="settingInitialRadius">Initial Radius (km)</label>
+                  <input type="number" id="settingInitialRadius" class="form-control-input" value="3" min="1" max="20" oninput="updateDispatchPreviewLive()" required>
+                </div>
+
+                <div class="form-group-item" style="margin-bottom: 0;">
+                  <label class="form-label-txt" for="settingExpansionStep">Radius Expansion Step (km)</label>
+                  <input type="number" id="settingExpansionStep" class="form-control-input" value="2" min="1" max="10" oninput="updateDispatchPreviewLive()" required>
+                </div>
+
+                <div class="form-group-item" style="margin-bottom: 0;">
+                  <label class="form-label-txt" for="settingMaxRadius">Maximum Search Radius (km)</label>
+                  <input type="number" id="settingMaxRadius" class="form-control-input" value="8" min="3" max="50" oninput="updateDispatchPreviewLive()" required>
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1rem;">
+                <div class="form-group-item" style="margin-bottom: 0;">
+                  <label class="form-label-txt" for="settingReqConfirmations">Required Donor Confirmations</label>
+                  <input type="number" id="settingReqConfirmations" class="form-control-input" value="3" min="1" max="20" required>
+                </div>
+
+                <div class="form-group-item" style="margin-bottom: 0;">
+                  <label class="form-label-txt" for="settingEvalWindow">Evaluation Window (minutes)</label>
+                  <input type="number" id="settingEvalWindow" class="form-control-input" value="10" min="1" max="60" required>
+                </div>
+              </div>
+
+              <!-- LIVE DISPATCH PREVIEW -->
+              <div style="background: #FFFFFF; border: 1.5px dashed var(--slate-border); border-radius: 12px; padding: 1rem; margin-top: 0.85rem;">
+                <div style="font-family: var(--font-main); font-size: 0.78rem; font-weight: 800; color: var(--blue-accent); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.35rem;">
+                  <i class="fa-solid fa-route"></i> Calculated Dispatch Preview Sequence
+                </div>
+                <div id="dispatchSequencePreviewDisplay" style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; font-family: var(--font-main); font-weight: 800; font-size: 0.88rem; color: var(--navy-dark);">
+                  <span style="background: #FFF0F3; border: 1px solid #FFE0E6; color: var(--red-primary); padding: 0.3rem 0.75rem; border-radius: 9999px;">0–3 km</span>
+                  <i class="fa-solid fa-chevron-right" style="font-size: 0.75rem; color: var(--slate-muted);"></i>
+                  <span style="background: #EFF6FF; border: 1px solid #BFDBFE; color: var(--blue-accent); padding: 0.3rem 0.75rem; border-radius: 9999px;">3–5 km</span>
+                  <i class="fa-solid fa-chevron-right" style="font-size: 0.75rem; color: var(--slate-muted);"></i>
+                  <span style="background: #F1F5F9; border: 1px solid var(--slate-border); color: var(--slate-body); padding: 0.3rem 0.75rem; border-radius: 9999px;">5–8 km</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. DISPATCH STOP CONDITIONS -->
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.5rem;">
+              <h4 style="font-family: var(--font-main); font-size: 0.95rem; font-weight: 800; color: var(--navy-dark); margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-circle-stop" style="color: var(--amber-warn);"></i> 2. Dispatch Stop Conditions
+              </h4>
+
+              <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 600; color: var(--navy-dark);">
+                  <input type="checkbox" id="stopOnRequiredConfirmed" checked style="accent-color: var(--red-primary);">
+                  Stop dispatch immediately when required number of donor confirmations is reached
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 600; color: var(--navy-dark);">
+                  <input type="checkbox" id="stopOnCancelFulfill" checked style="accent-color: var(--red-primary);">
+                  Stop dispatch immediately when organization cancels, expires, or fulfills request
+                </label>
+              </div>
+            </div>
+
+            <!-- 3. NOTIFICATION PROTECTION -->
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.5rem;">
+              <h4 style="font-family: var(--font-main); font-size: 0.95rem; font-weight: 800; color: var(--navy-dark); margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-bell-slash" style="color: var(--blue-accent);"></i> 3. Notification Protection & Fatigue Rules
+              </h4>
+
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+                <div class="form-group-item" style="margin-bottom: 0;">
+                  <label class="form-label-txt" for="settingCooldown">Donor Re-notification Cooldown</label>
+                  <input type="text" id="settingCooldown" class="form-control-input" value="24 hours" readonly style="background: #FFFFFF;">
+                </div>
+                <div class="form-group-item" style="margin-bottom: 0;">
+                  <label class="form-label-txt" for="settingDeprioritize">Recently Notified Donors</label>
+                  <input type="text" id="settingDeprioritize" class="form-control-input" value="Deprioritize" readonly style="background: #FFFFFF;">
+                </div>
+                <div class="form-group-item" style="margin-bottom: 0;">
+                  <label class="form-label-txt" for="settingMaxNotifs">Max Notifications / Emergency</label>
+                  <input type="text" id="settingMaxNotifs" class="form-control-input" value="1 notification" readonly style="background: #FFFFFF;">
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. PRIVACY & GOVERNANCE -->
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); border-radius: 14px; padding: 1.25rem; margin-bottom: 1.5rem;">
+              <h4 style="font-family: var(--font-main); font-size: 0.95rem; font-weight: 800; color: var(--navy-dark); margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-shield-halved" style="color: var(--green-success);"></i> 4. Privacy & Governance Rules
+              </h4>
+
+              <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.65rem; font-size: 0.84rem; font-weight: 600; color: #166534;">
+                <div style="background: #F0FDF4; border: 1px solid #BBF7D0; padding: 0.6rem 0.85rem; border-radius: 8px;">✓ Exact donor address hidden</div>
+                <div style="background: #F0FDF4; border: 1px solid #BBF7D0; padding: 0.6rem 0.85rem; border-radius: 8px;">✓ Approximate distance display</div>
+                <div style="background: #F0FDF4; border: 1px solid #BBF7D0; padding: 0.6rem 0.85rem; border-radius: 8px;">✓ Role-Based Access Control enforced</div>
+                <div style="background: #F0FDF4; border: 1px solid #BBF7D0; padding: 0.6rem 0.85rem; border-radius: 8px;">✓ Organization verification required</div>
+                <div style="background: #F0FDF4; border: 1px solid #BBF7D0; padding: 0.6rem 0.85rem; border-radius: 8px; grid-column: span 2;">✓ Audit logging enabled for all dispatch & fulfillment actions</div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-create-org-cta" style="padding: 0.8rem 1.75rem; font-size: 0.92rem; border-radius: 9999px;">
+              <i class="fa-solid fa-floppy-disk"></i> SAVE SYSTEM SETTINGS
+            </button>
+          </form>
         </div>
       </div>
 
@@ -2541,7 +2628,67 @@
       renderAuditLogs();
       renderAdminNotificationList();
       updateStatCounts();
+      loadSystemSettingsUI();
     });
+
+    // ADAPTIVE DISPATCH SYSTEM SETTINGS HANDLERS
+    function loadSystemSettingsUI() {
+      if (typeof MockData === 'undefined' || typeof MockData.getAdaptiveDispatchSettings !== 'function') return;
+      const settings = MockData.getAdaptiveDispatchSettings();
+
+      const initInput = document.getElementById('settingInitialRadius');
+      const stepInput = document.getElementById('settingExpansionStep');
+      const maxInput = document.getElementById('settingMaxRadius');
+      const reqInput = document.getElementById('settingReqConfirmations');
+      const evalInput = document.getElementById('settingEvalWindow');
+
+      if (initInput) initInput.value = settings.initialRadius || 3;
+      if (stepInput) stepInput.value = settings.expansionStep || 2;
+      if (maxInput) maxInput.value = settings.maxRadius || 8;
+      if (reqInput) reqInput.value = settings.requiredConfirmations || 3;
+      if (evalInput) evalInput.value = settings.evaluationWindow || 10;
+
+      updateDispatchPreviewLive();
+    }
+
+    function updateDispatchPreviewLive() {
+      const initVal = parseInt(document.getElementById('settingInitialRadius')?.value, 10) || 3;
+      const stepVal = parseInt(document.getElementById('settingExpansionStep')?.value, 10) || 2;
+      const maxVal = parseInt(document.getElementById('settingMaxRadius')?.value, 10) || 8;
+
+      const previewContainer = document.getElementById('dispatchSequencePreviewDisplay');
+      if (!previewContainer) return;
+
+      const rounds = MockData.calculateDispatchRounds(initVal, stepVal, maxVal);
+      const colors = ['#FFF0F3', '#EFF6FF', '#F0FDF4', '#FEF3C7', '#F1F5F9'];
+      const textColors = ['var(--red-primary)', 'var(--blue-accent)', '#166534', '#B45309', 'var(--navy-dark)'];
+
+      previewContainer.innerHTML = rounds.map((r, idx) => `
+        <span style="background: ${colors[idx % colors.length]}; border: 1px solid var(--slate-border); color: ${textColors[idx % textColors.length]}; padding: 0.3rem 0.75rem; border-radius: 9999px;">
+          ${r.startKm}–${r.endKm} km
+        </span>
+        ${idx < rounds.length - 1 ? '<i class="fa-solid fa-chevron-right" style="font-size: 0.75rem; color: var(--slate-muted);"></i>' : ''}
+      `).join('');
+    }
+
+    function handleSaveSystemSettings(e) {
+      e.preventDefault();
+      const initialRadius = parseInt(document.getElementById('settingInitialRadius').value, 10) || 3;
+      const expansionStep = parseInt(document.getElementById('settingExpansionStep').value, 10) || 2;
+      const maxRadius = parseInt(document.getElementById('settingMaxRadius').value, 10) || 8;
+      const requiredConfirmations = parseInt(document.getElementById('settingReqConfirmations').value, 10) || 3;
+      const evaluationWindow = parseInt(document.getElementById('settingEvalWindow').value, 10) || 10;
+
+      MockData.saveAdaptiveDispatchSettings({
+        initialRadius,
+        expansionStep,
+        maxRadius,
+        requiredConfirmations,
+        evaluationWindow
+      });
+
+      alert(`✓ System Settings Saved Successfully!\n\nCalculated Sequence: ${initialRadius} km → Step: +${expansionStep} km → Max: ${maxRadius} km.`);
+    }
 
     // Collapsible Sidebar Group Mapping
     const navGroupMapping = {

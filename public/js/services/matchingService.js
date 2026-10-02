@@ -60,6 +60,21 @@ const MatchingService = {
     scored.sort((a, b) => b.score - a.score);
 
     return scored;
+  },
+
+  /**
+   * Get calculated adaptive dispatch sequence rounds
+   */
+  getAdaptiveDispatchSequence() {
+    if (typeof MockData !== 'undefined' && typeof MockData.getAdaptiveDispatchSettings === 'function') {
+      const settings = MockData.getAdaptiveDispatchSettings();
+      return MockData.calculateDispatchRounds(settings.initialRadius, settings.expansionStep, settings.maxRadius);
+    }
+    return [
+      { round: 1, label: 'Round 1 (0–3 km)', startKm: 0, endKm: 3 },
+      { round: 2, label: 'Round 2 (3–5 km)', startKm: 3, endKm: 5 },
+      { round: 3, label: 'Round 3 (5–8 km)', startKm: 5, endKm: 8 }
+    ];
   }
 };
 

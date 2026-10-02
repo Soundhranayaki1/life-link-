@@ -1199,6 +1199,13 @@
       </li>
 
       <li>
+        <button onclick="switchView('org-support')" class="nav-item-btn" id="nav-org-support">
+          <span><i class="fa-solid fa-hand-holding-hand nav-icon" style="color: var(--blue-accent);"></i> Org-to-Org Support</span>
+          <span class="nav-badge-pill blue" id="orgSupportBadge">2</span>
+        </button>
+      </li>
+
+      <li>
         <button onclick="switchView('help-support')" class="nav-item-btn" id="nav-help-support">
           <span><i class="fa-solid fa-circle-question nav-icon"></i> Help & Support</span>
         </button>
@@ -1797,8 +1804,14 @@
               <h2 style="font-family: var(--font-main); font-size: 1.6rem; font-weight: 800;">Fulfillment Lifecycle Tracking</h2>
             </div>
 
-            <div style="display: flex; gap: 0.5rem;">
-              <button onclick="simulateDonorConfirmation()" class="btn-primary-red" style="font-size: 0.82rem; padding: 0.5rem 1rem;">
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button onclick="markRequestFulfilledAction('REQ-1042')" class="btn-primary-red" style="font-size: 0.82rem; padding: 0.5rem 1rem; background: #16A34A;">
+                <i class="fa-solid fa-circle-check"></i> Mark Request Fulfilled
+              </button>
+              <button onclick="switchView('org-support')" class="btn-secondary-outline" style="font-size: 0.82rem; padding: 0.5rem 1rem;">
+                <i class="fa-solid fa-building-flag"></i> Request Org Support
+              </button>
+              <button onclick="simulateDonorConfirmation()" class="btn-secondary-outline" style="font-size: 0.82rem; padding: 0.5rem 1rem;">
                 <i class="fa-solid fa-plus-circle"></i> Simulate Confirmation (+1)
               </button>
             </div>
@@ -1969,64 +1982,159 @@
       <!-- ================================================================= -->
       <div id="view-org-profile" class="view-pane">
         <div class="card-white" style="max-width: 840px;">
-          <div style="display: flex; align-items: center; gap: 1.25rem; border-bottom: 1px solid var(--slate-border); padding-bottom: 1.5rem; margin-bottom: 1.75rem;">
-            <div style="width: 64px; height: 64px; border-radius: 18px; background: linear-gradient(135deg, var(--red-primary), var(--red-dark)); color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem; box-shadow: 0 6px 18px rgba(230,0,46,0.3);">
-              <i class="fa-solid fa-hospital"></i>
+          <div style="border-bottom: 1px solid var(--slate-border); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <div>
+                <h1 style="font-family: var(--font-main); font-size: 1.6rem; font-weight: 800; color: var(--navy-dark); margin-bottom: 0.25rem;" id="orgProfileDisplayTitle">
+                  Government General Hospital
+                </h1>
+                <p style="font-size: 0.88rem; color: var(--slate-muted);">
+                  Facility credentials, authorized contact details, and platform verification status.
+                </p>
+              </div>
+
+              <!-- SEPARATE VERIFICATION BADGE -->
+              <div style="background: #F0FDF4; border: 1.5px solid #BBF7D0; color: #166534; font-family: var(--font-main); font-size: 0.8rem; font-weight: 800; padding: 0.4rem 0.85rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.4rem;">
+                <i class="fa-solid fa-circle-check"></i> VERIFIED HEALTHCARE FACILITY
+              </div>
+            </div>
+          </div>
+
+          <form id="orgProfileForm" onsubmit="handleSaveOrgProfile(event)">
+            <!-- HOSPITAL / BLOOD BANK PROFILE IMAGE UPLOAD -->
+            <div style="background: #F8FAFC; border: 1px solid var(--slate-border); border-radius: 16px; padding: 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1.5rem;">
+              <div style="position: relative;">
+                <img id="orgFacilityImagePreview" src="assets/images/lifelink-logo.png" alt="Facility Image Preview" style="width: 90px; height: 90px; object-fit: cover; border-radius: 16px; border: 2px solid var(--slate-border); box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);">
+              </div>
+
+              <div style="flex: 1;">
+                <label class="form-label-txt" style="margin-bottom: 0.2rem;">Hospital / Blood Bank Facility Image</label>
+                <p style="font-size: 0.8rem; color: var(--slate-muted); margin-bottom: 0.75rem;">
+                  Upload an official logo or photo representing the hospital or blood bank building.
+                </p>
+                <div style="display: flex; gap: 0.65rem; align-items: center;">
+                  <label for="orgImgFileInput" class="btn-secondary-outline" style="font-size: 0.8rem; padding: 0.45rem 0.95rem; cursor: pointer; margin: 0;">
+                    <i class="fa-solid fa-upload"></i> Upload / Change Image
+                  </label>
+                  <input type="file" id="orgImgFileInput" accept="image/*" style="display: none;" onchange="previewFacilityImage(event)">
+                  
+                  <button type="button" onclick="removeFacilityImage()" class="btn-secondary-outline" style="font-size: 0.8rem; padding: 0.45rem 0.95rem; color: var(--red-primary); border-color: #FCA5A5;">
+                    <i class="fa-solid fa-trash"></i> Remove Image
+                  </button>
+                </div>
+              </div>
             </div>
 
+            <!-- PROFILE FIELDS GRID -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+              <div class="form-group-item">
+                <label class="form-label-txt" for="profOrgName">Organization Name *</label>
+                <input type="text" id="profOrgName" class="form-control-input" value="Government General Hospital" required>
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-txt" for="profOrgType">Organization Type *</label>
+                <select id="profOrgType" class="form-control-select" required>
+                  <option value="Government Hospital" selected>Government Hospital</option>
+                  <option value="Private Blood Bank">Private Blood Bank</option>
+                  <option value="Government Blood Bank">Government Blood Bank</option>
+                  <option value="Authorized Healthcare Organization">Authorized Healthcare Organization</option>
+                </select>
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-txt" for="profCertNo">Certification / Registration ID</label>
+                <input type="text" id="profCertNo" class="form-control-input" value="LL-GH-2026-001" readonly style="background: #F1F5F9;">
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-txt" for="profContactPerson">Authorized Contact Person *</label>
+                <input type="text" id="profContactPerson" class="form-control-input" value="Dr. Rajesh Vardhan (Chief Medical Officer)" required>
+              </div>
+
+              <div class="form-group-item" style="grid-column: span 2;">
+                <label class="form-label-txt" for="profAddress">Official Facility Address *</label>
+                <input type="text" id="profAddress" class="form-control-input" value="Government Hospital Road, Railway Station Area, Hosur, Tamil Nadu 635109" required>
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-txt" for="profEmail">Contact Email *</label>
+                <input type="email" id="profEmail" class="form-control-input" value="dispatch@ggh-hosur.tn.gov.in" required>
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-txt" for="profDeskPhone">Main Desk Phone *</label>
+                <input type="text" id="profDeskPhone" class="form-control-input" value="+91 4344 220000" required>
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-txt" for="profEmergencyHotline">Emergency 24/7 Hotline *</label>
+                <input type="text" id="profEmergencyHotline" class="form-control-input" value="+91 98430 12345" required>
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-txt">Verification Status</label>
+                <input type="text" class="form-control-input" value="VERIFIED & ACTIVE (2026)" readonly style="background: #F0FDF4; color: #166534; font-weight: 700;">
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary-red" style="margin-top: 1rem; padding: 0.75rem 1.5rem; font-size: 0.92rem;">
+              <i class="fa-solid fa-floppy-disk"></i> SAVE PROFILE DETAILS
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 8B. ORGANIZATION-TO-ORGANIZATION SUPPORT VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-org-support" class="view-pane">
+        <div class="card-white">
+          <div class="card-header-flex">
             <div>
-              <div style="display: flex; align-items: center; gap: 0.65rem;">
-                <h1 style="font-family: var(--font-main); font-size: 1.6rem; font-weight: 800; color: var(--navy-dark);">Government General Hospital</h1>
-                <span class="verified-org-chip">
-                  <i class="fa-solid fa-circle-check"></i> VERIFIED ORGANIZATION
-                </span>
-              </div>
-              <div style="font-size: 0.9rem; color: var(--slate-muted); margin-top: 0.2rem;">
-                Organization ID: <strong>LL-GH-2026-001</strong> • Government Healthcare & Regional Trauma Facility
-              </div>
+              <span class="verified-org-chip" style="background: #EFF6FF; border-color: #BFDBFE; color: #1D4ED8; margin-bottom: 0.35rem;">
+                <i class="fa-solid fa-hand-holding-hand"></i> INTER-ORGANIZATION DISPATCH & SUPPORT
+              </span>
+              <h1 style="font-family: var(--font-main); font-size: 1.6rem; font-weight: 800; color: var(--navy-dark);">
+                Organization-to-Organization Support
+              </h1>
+              <p style="font-size: 0.88rem; color: var(--slate-muted); margin-top: 0.2rem;">
+                Request and coordinate blood inventory or operational support directly between verified healthcare organizations.
+              </p>
+            </div>
+
+            <button onclick="openCreateSupportModal()" class="btn-primary-red" style="font-size: 0.85rem;">
+              <i class="fa-solid fa-plus"></i> Request Support
+            </button>
+          </div>
+
+          <div style="background: #F8FAFC; border: 1px solid var(--slate-border); border-radius: 14px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: var(--slate-body); display: flex; align-items: center; gap: 0.65rem;">
+            <i class="fa-solid fa-circle-info" style="color: var(--blue-accent); font-size: 1.1rem;"></i>
+            <div>
+              <strong>Authorized Coordination:</strong> Organization support handles blood component transfers or operational assistance between verified facilities. It is kept completely separate from individual voluntary donor dispatch.
             </div>
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-            <div class="form-group-item">
-              <label class="form-label-txt">Organization Type</label>
-              <input type="text" class="form-control-input" value="Government Hospital" readonly>
-            </div>
-
-            <div class="form-group-item">
-              <label class="form-label-txt">Certification / Registration ID</label>
-              <input type="text" class="form-control-input" value="LL-GH-2026-001" readonly>
-            </div>
-
-            <div class="form-group-item" style="grid-column: span 2;">
-              <label class="form-label-txt">Hospital Address</label>
-              <input type="text" class="form-control-input" value="Government Hospital Road, Railway Station Area, Hosur, Tamil Nadu 635109" readonly>
-            </div>
-
-            <div class="form-group-item">
-              <label class="form-label-txt">Contact Email</label>
-              <input type="email" class="form-control-input" value="dispatch@ggh-hosur.tn.gov.in">
-            </div>
-
-            <div class="form-group-item">
-              <label class="form-label-txt">Main Desk Phone</label>
-              <input type="text" class="form-control-input" value="+91 4344 220000">
-            </div>
-
-            <div class="form-group-item">
-              <label class="form-label-txt">Emergency 24/7 Hotline</label>
-              <input type="text" class="form-control-input" value="+91 98430 12345">
-            </div>
-
-            <div class="form-group-item">
-              <label class="form-label-txt">Operating Hours</label>
-              <input type="text" class="form-control-input" value="24 Hours / 7 Days a week" readonly>
-            </div>
+          <!-- SUPPORT REQUESTS TABLE -->
+          <div class="table-container">
+            <table class="custom-org-table">
+              <thead>
+                <tr>
+                  <th>Support ID</th>
+                  <th>Requesting Organization</th>
+                  <th>Receiving Facility</th>
+                  <th>Blood Component</th>
+                  <th>Units</th>
+                  <th>Urgency</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="orgSupportTableBody">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
           </div>
-
-          <button onclick="alert('Organization profile settings saved.')" class="btn-primary-red" style="margin-top: 1rem;">
-            <i class="fa-solid fa-floppy-disk"></i> Save Profile Details
-          </button>
         </div>
       </div>
 
@@ -2191,6 +2299,7 @@
         'request-history': 'Request Audit History',
         'notifications': 'Notification Center',
         'org-profile': 'Facility Profile & Verification',
+        'org-support': 'Organization-to-Organization Support',
         'help-support': 'Help & Support'
       };
       const titleEl = document.getElementById('topPageTitle');
@@ -2249,113 +2358,271 @@
       switchView('fulfillment-tracking');
     }
 
-    // RENDER ACTIVE REQUESTS TABLE
+      renderActiveRequestsTable();
+      renderDonorResponsesGrid();
+      renderFulfillmentTimeline();
+      loadOrgProfileUI();
+      renderOrgSupportTable();
+    });
+
+    // ----------------------------------------------------
+    // 1. ORGANIZATION PROFILE & FACILITY IMAGE HANDLERS
+    // ----------------------------------------------------
+    function loadOrgProfileUI() {
+      if (typeof MockData === 'undefined' || typeof MockData.getOrgProfile !== 'function') return;
+      const profile = MockData.getOrgProfile();
+
+      const nameEl = document.getElementById('profOrgName');
+      const typeEl = document.getElementById('profOrgType');
+      const certEl = document.getElementById('profCertNo');
+      const personEl = document.getElementById('profContactPerson');
+      const addrEl = document.getElementById('profAddress');
+      const emailEl = document.getElementById('profEmail');
+      const deskEl = document.getElementById('profDeskPhone');
+      const hotEl = document.getElementById('profEmergencyHotline');
+      const imgPreview = document.getElementById('orgFacilityImagePreview');
+      const titleEl = document.getElementById('orgProfileDisplayTitle');
+      const sidebarName = document.getElementById('sidebarOrgName');
+
+      if (nameEl) nameEl.value = profile.name;
+      if (typeEl) typeEl.value = profile.type;
+      if (certEl) certEl.value = profile.certificationNo;
+      if (personEl) personEl.value = profile.contactPerson;
+      if (addrEl) addrEl.value = profile.address;
+      if (emailEl) emailEl.value = profile.email;
+      if (deskEl) deskEl.value = profile.deskPhone;
+      if (hotEl) hotEl.value = profile.emergencyHotline;
+      if (imgPreview && profile.imageUrl) imgPreview.src = profile.imageUrl;
+      if (titleEl) titleEl.textContent = profile.name;
+      if (sidebarName) sidebarName.textContent = profile.name;
+    }
+
+    function previewFacilityImage(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const imgPreview = document.getElementById('orgFacilityImagePreview');
+          if (imgPreview) imgPreview.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removeFacilityImage() {
+      const imgPreview = document.getElementById('orgFacilityImagePreview');
+      if (imgPreview) imgPreview.src = 'assets/images/lifelink-logo.png';
+      const fileInput = document.getElementById('orgImgFileInput');
+      if (fileInput) fileInput.value = '';
+    }
+
+    function handleSaveOrgProfile(e) {
+      e.preventDefault();
+      const imgPreview = document.getElementById('orgFacilityImagePreview');
+
+      const updated = MockData.saveOrgProfile({
+        name: document.getElementById('profOrgName').value,
+        type: document.getElementById('profOrgType').value,
+        contactPerson: document.getElementById('profContactPerson').value,
+        address: document.getElementById('profAddress').value,
+        email: document.getElementById('profEmail').value,
+        deskPhone: document.getElementById('profDeskPhone').value,
+        emergencyHotline: document.getElementById('profEmergencyHotline').value,
+        imageUrl: imgPreview ? imgPreview.src : 'assets/images/lifelink-logo.png'
+      });
+
+      loadOrgProfileUI();
+      alert('✓ Organization Profile Updated Successfully!');
+    }
+
+    // ----------------------------------------------------
+    // 2. DONOR RESPONSE & CALL WORKFLOW
+    // ----------------------------------------------------
+    let currentContactDonorId = null;
+
+    function renderDonorResponsesGrid() {
+      const container = document.getElementById('donorResponsesListGrid');
+      if (!container) return;
+
+      const responders = MockData.getRespondersForRequest('REQ-1042');
+
+      container.innerHTML = responders.map(d => {
+        let statusBadgeClass = 'status-active';
+        if (d.status === 'CONFIRMED' || d.status === 'ARRIVED') statusBadgeClass = 'status-fulfilled';
+        else if (d.status === 'NO_LONGER_REQUIRED' || d.status === 'UNABLE') statusBadgeClass = 'status-expired';
+        else if (d.status === 'STANDBY') statusBadgeClass = 'status-active';
+
+        return `
+          <div style="background: #FFFFFF; border: 1px solid var(--slate-border); border-radius: 18px; padding: 1.25rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+              <div>
+                <div style="font-family: var(--font-main); font-weight: 800; font-size: 1.05rem; color: var(--navy-dark);">${d.name} (${d.id})</div>
+                <div style="font-size: 0.8rem; color: var(--slate-muted);">Blood Group: <strong style="color: var(--red-primary);">${d.bloodGroup}</strong> • Dist: <strong>~${d.distanceKm} km</strong></div>
+              </div>
+              <span class="badge-status ${statusBadgeClass}">${d.status}</span>
+            </div>
+
+            <div style="font-size: 0.82rem; color: var(--slate-muted); background: #F8FAFC; padding: 0.6rem 0.85rem; border-radius: 12px; margin-bottom: 1rem; display: flex; justify-content: space-between;">
+              <span>📱 Phone: <strong>${d.maskedPhone}</strong></span>
+              <span>Time: <strong>${d.responseTime}</strong></span>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button onclick="openCallDonorModal('${d.id}')" class="btn-secondary-outline" style="flex: 1; padding: 0.4rem; font-size: 0.78rem;">
+                <i class="fa-solid fa-phone"></i> Call Donor
+              </button>
+              ${d.status === 'CONFIRMED' ? `
+                <button onclick="markDonorArrivedAction('${d.id}')" class="btn-primary-red" style="padding: 0.4rem 0.75rem; font-size: 0.78rem; background: #16A34A;">
+                  <i class="fa-solid fa-person-walking-arrow-right"></i> Mark Arrived
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openCallDonorModal(donorId) {
+      currentContactDonorId = donorId;
+      const responders = MockData.getRespondersForRequest('REQ-1042');
+      const donor = responders.find(r => r.id === donorId);
+      if (!donor) return;
+
+      alert(`CALLING DONOR PROTOCOL:\n\nDonor: ${donor.name}\nMasked Line: ${donor.phone}\nDistance: ~${donor.distanceKm} km\n\nPlease dial the proxy hotline and select donor availability outcome.`);
+
+      const result = confirm(`Did donor ${donor.name} confirm they will arrive at the hospital?\n\n[OK] = Confirmed - Will Arrive\n[Cancel] = Unable to Arrive / Could Not Reach`);
+      if (result) {
+        MockData.updateResponderStatus('REQ-1042', donorId, 'CONFIRMED');
+      } else {
+        MockData.updateResponderStatus('REQ-1042', donorId, 'UNABLE');
+      }
+      renderDonorResponsesGrid();
+    }
+
+    function markDonorArrivedAction(donorId) {
+      MockData.markDonorArrived('REQ-1042', donorId);
+      alert(`✓ Donor ${donorId} marked as ARRIVED at hospital!`);
+      renderDonorResponsesGrid();
+    }
+
+    // ----------------------------------------------------
+    // 3. ORGANIZATION-TO-ORGANIZATION SUPPORT HANDLERS
+    // ----------------------------------------------------
+    function renderOrgSupportTable() {
+      const tbody = document.getElementById('orgSupportTableBody');
+      if (!tbody) return;
+
+      const requests = MockData.getOrgSupportRequests();
+
+      tbody.innerHTML = requests.map(s => {
+        let badgeClass = 'status-active';
+        if (s.status === 'Accepted') badgeClass = 'status-fulfilled';
+        else if (s.status === 'Declined') badgeClass = 'status-critical';
+
+        return `
+          <tr>
+            <td><strong>${s.id}</strong></td>
+            <td>${s.requestingOrg}</td>
+            <td><strong>${s.receivingOrg}</strong></td>
+            <td><span class="badge-status status-critical">${s.bloodGroup} (${s.component})</span></td>
+            <td><strong>${s.unitsRequired} Units</strong></td>
+            <td><span class="badge-status status-critical">${s.urgency}</span></td>
+            <td><span class="badge-status ${badgeClass}">${s.status}</span></td>
+            <td>
+              ${s.status === 'Support Requested' ? `
+                <div style="display: flex; gap: 0.35rem;">
+                  <button onclick="respondOrgSupport('${s.id}', 'Accepted')" class="btn-primary-red" style="padding: 0.25rem 0.55rem; font-size: 0.72rem; background: #16A34A;">Accept</button>
+                  <button onclick="respondOrgSupport('${s.id}', 'Declined')" class="btn-secondary-outline" style="padding: 0.25rem 0.55rem; font-size: 0.72rem; color: var(--red-primary);">Decline</button>
+                </div>
+              ` : `<span style="font-size: 0.78rem; color: var(--slate-muted); font-weight: 600;">Completed</span>`}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openCreateSupportModal() {
+      const targetOrg = prompt('Enter recipient hospital/blood bank for support request:', 'City Blood Bank');
+      if (!targetOrg) return;
+
+      const units = prompt('Enter required units:', '3');
+      if (!units) return;
+
+      MockData.createOrgSupportRequest({
+        requestingOrg: 'Government General Hospital',
+        receivingOrg: targetOrg,
+        bloodGroup: 'O+',
+        component: 'Packed Red Cells',
+        unitsRequired: units,
+        urgency: 'CRITICAL',
+        requiredBy: '2 hours'
+      });
+
+      alert(`✓ Support Request submitted to ${targetOrg}. Inter-organization dispatch initiated.`);
+      renderOrgSupportTable();
+    }
+
+    function respondOrgSupport(supportId, action) {
+      MockData.updateOrgSupportStatus(supportId, action);
+      alert(`Inter-organization support ${supportId} marked as ${action}.`);
+      renderOrgSupportTable();
+    }
+
     function renderActiveRequestsTable() {
       const tbody = document.getElementById('activeRequestsTableBody');
       if (!tbody) return;
 
-      const requests = [
-        { id: 'REQ-1042', group: 'O+', units: 3, urgency: 'CRITICAL', round: 'Round 2 (3–5 km)', notified: 30, confirmed: '2 / 3', status: 'ACTIVE', time: '10:42 AM' },
-        { id: 'REQ-1041', group: 'B+', units: 2, urgency: 'HIGH', round: 'Round 1 (0–3 km)', notified: 18, confirmed: '2 / 2', status: 'FULFILLED', time: '09:15 AM' },
-        { id: 'REQ-1039', group: 'AB+', units: 1, urgency: 'NORMAL', round: 'Round 1 (0–3 km)', notified: 12, confirmed: '1 / 1', status: 'FULFILLED', time: 'Yesterday' }
-      ];
+      const requests = MockData.emergencyRequests ? MockData.emergencyRequests.filter(r => r.status !== 'CLOSED') : [];
 
       tbody.innerHTML = requests.map(r => `
         <tr>
           <td><strong>${r.id}</strong></td>
-          <td><span class="badge-status status-critical">${r.group}</span></td>
-          <td>${r.units} Units</td>
-          <td><span class="badge-status ${r.urgency === 'CRITICAL' ? 'status-critical' : 'status-active'}">${r.urgency}</span></td>
-          <td><strong style="color: var(--blue-accent);">${r.round}</strong></td>
-          <td>${r.notified} Donors</td>
-          <td><strong>${r.confirmed}</strong></td>
-          <td><span class="badge-status ${r.status === 'ACTIVE' ? 'status-active' : 'status-fulfilled'}">${r.status}</span></td>
-          <td>${r.time}</td>
+          <td><span class="badge-status status-critical">${r.bloodGroup}</span></td>
+          <td><strong>${r.unitsNeeded} Units</strong></td>
+          <td><span class="badge-status status-critical">${r.urgency || 'CRITICAL'}</span></td>
+          <td>${r.currentWave || 'Round 1 (0–3 km)'}</td>
+          <td>${r.donorsNotified || 30} donors</td>
+          <td><strong>${r.confirmedCount || 2} / ${r.unitsNeeded}</strong></td>
+          <td><span class="badge-status ${r.status === 'FULFILLED' ? 'status-fulfilled' : 'status-active'}">${r.status}</span></td>
+          <td>${r.createdTime || 'Today'}</td>
           <td>
-            <button onclick="switchView('fulfillment-tracking')" class="btn-primary-red" style="padding: 0.25rem 0.65rem; font-size: 0.75rem;">
-              VIEW
-            </button>
+            <div style="display: flex; gap: 0.35rem;">
+              <button onclick="switchView('fulfillment-tracking')" class="btn-primary-red" style="padding: 0.25rem 0.55rem; font-size: 0.72rem;">Track</button>
+              <button onclick="switchView('org-support')" class="btn-secondary-outline" style="padding: 0.25rem 0.55rem; font-size: 0.72rem;">Support</button>
+            </div>
           </td>
         </tr>
       `).join('');
     }
 
-    // RENDER DONOR RESPONSES GRID
-    function renderDonorResponsesGrid() {
-      const container = document.getElementById('donorResponsesListGrid');
+    function renderFulfillmentTimeline() {
+      const container = document.getElementById('fulfillmentTimelineBox');
       if (!container) return;
 
-      const donors = [
-        { id: 'LL-D-1024', group: 'O+', distance: '~1.8 km', status: 'CONFIRMED', mobile: '+91 ******4321', time: '10:46 AM' },
-        { id: 'LL-D-1028', group: 'O+', distance: '~2.7 km', status: 'CONFIRMED', mobile: '+91 ******8890', time: '10:52 AM' },
-        { id: 'LL-D-1031', group: 'O+', distance: '~3.4 km', status: 'RESPONDED — EN ROUTE', mobile: '+91 ******1123', time: '10:55 AM' },
-        { id: 'LL-D-1035', group: 'O+', distance: '~4.2 km', status: 'DECLINED (Cooldown)', mobile: '+91 ******9012', time: '10:48 AM' }
-      ];
+      const logs = MockData.getAuditTrail ? MockData.getAuditTrail() : [];
+      const relevant = logs.slice(-5).reverse();
 
-      container.innerHTML = donors.map(d => `
-        <div style="background: #FFFFFF; border: 1px solid var(--slate-border); border-radius: 18px; padding: 1.25rem;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
-            <div>
-              <div style="font-family: var(--font-main); font-weight: 800; font-size: 1.05rem; color: var(--navy-dark);">${d.id}</div>
-              <div style="font-size: 0.8rem; color: var(--slate-muted);">Blood Group: <strong style="color: var(--red-primary);">${d.group}</strong> • Dist: <strong>${d.distance}</strong></div>
-            </div>
-            <span class="badge-status ${d.status.includes('CONFIRMED') ? 'status-fulfilled' : d.status.includes('RESPONDED') ? 'status-active' : 'status-expired'}">${d.status}</span>
-          </div>
-
-          <div style="font-size: 0.82rem; color: var(--slate-muted); background: #F8FAFC; padding: 0.6rem 0.85rem; border-radius: 12px; margin-bottom: 1rem;">
-            📱 Mobile: <strong>${d.mobile}</strong> (Masked for privacy)
-          </div>
-
-          <div style="display: flex; gap: 0.5rem;">
-            <button onclick="alert('Contacting donor through proxy call line...')" class="btn-secondary-outline" style="flex: 1; padding: 0.4rem; font-size: 0.78rem;">
-              <i class="fa-solid fa-phone"></i> Contact Proxy
-            </button>
-            <button onclick="alert('Donor response marked as confirmed.')" class="btn-primary-red" style="flex: 1; padding: 0.4rem; font-size: 0.78rem;">
-              <i class="fa-solid fa-check"></i> Confirm Visit
-            </button>
-          </div>
+      container.innerHTML = relevant.map(l => `
+        <div style="margin-bottom: 1rem; position: relative;">
+          <div style="font-family: var(--font-main); font-weight: 800; font-size: 0.9rem; color: var(--navy-dark);">${l.action || l.event}</div>
+          <div style="font-size: 0.8rem; color: var(--slate-muted); margin-top: 0.15rem;">${l.details || l.description}</div>
+          <div style="font-size: 0.72rem; color: var(--slate-muted); font-weight: 600; margin-top: 0.25rem;">${l.timestamp || 'Just now'} • User: ${l.user || 'Organization Admin'}</div>
         </div>
-      `).join('');
+      `).join('') || `
+        <div style="margin-bottom: 1rem; position: relative;">
+          <div style="font-family: var(--font-main); font-weight: 800; font-size: 0.9rem; color: var(--navy-dark);">Donor Responded</div>
+          <div style="font-size: 0.8rem; color: var(--slate-muted); margin-top: 0.15rem;">Donor LL-D-1024 accepted dispatch for REQ-1042</div>
+          <div style="font-size: 0.72rem; color: var(--slate-muted); font-weight: 600; margin-top: 0.25rem;">10 mins ago • User: Arun Kumar</div>
+        </div>
+      `;
     }
 
-    // RENDER FULFILLMENT TIMELINE
-    function renderFulfillmentTimeline() {
-      const box = document.getElementById('fulfillmentTimelineBox');
-      if (!box) return;
-
-      const items = [
-        { time: '10:53 AM', text: '2 donors confirmed commitment for REQ-1042', tag: 'CONFIRMED' },
-        { time: '10:49 AM', text: 'Round 2 (3–5 km) activated automatically (Round 1 target unmet)', tag: 'ROUND 2' },
-        { time: '10:48 AM', text: 'Round 1 evaluated: 12 notified, 2 responses, 1 confirmed', tag: 'EVALUATED' },
-        { time: '10:44 AM', text: 'Round 1 (0–3 km) notification wave dispatched', tag: 'ROUND 1' },
-        { time: '10:43 AM', text: 'Smart Matching Engine identified 30 compatible donors in Hosur', tag: 'MATCHED' },
-        { time: '10:42 AM', text: 'Emergency request REQ-1042 created by Government General Hospital', tag: 'CREATED' }
-      ];
-
-      box.innerHTML = items.map(i => `
-        <div style="position: relative; padding-bottom: 1.25rem;">
-          <div style="position: absolute; left: -2.3rem; top: 2px; width: 12px; height: 12px; border-radius: 50%; background: var(--red-primary); border: 3px solid #FFEBEF;"></div>
-          <div style="font-family: var(--font-main); font-size: 0.78rem; font-weight: 800; color: var(--slate-muted);">${i.time}</div>
-          <div style="font-family: var(--font-main); font-weight: 700; font-size: 0.92rem; color: var(--navy-dark); margin-top: 0.15rem;">${i.text}</div>
-        </div>
-      `).join('');
-    }
-
-    function simulateDonorConfirmation() {
-      if (confirmedCountState < requiredCountState) {
-        confirmedCountState++;
-        document.getElementById('trackConfirmedCount').textContent = confirmedCountState;
-        document.getElementById('trackFulfilledRatio').textContent = `${confirmedCountState} / ${requiredCountState}`;
-        document.getElementById('statConfirmedDonors').textContent = 8 + (confirmedCountState - 2);
-
-        alert(`✓ Additional donor confirmation received!\n\nStatus updated to ${confirmedCountState} / ${requiredCountState} Fulfilled.`);
-
-        if (confirmedCountState === requiredCountState) {
-          alert('🎉 REQUEST FULFILLED! Target confirmation count reached. Dispatch notification wave stopped.');
-        }
-      } else {
-        alert('Request REQ-1042 is already 100% fulfilled!');
-      }
+    function markRequestFulfilledAction(requestId = 'REQ-1042') {
+      MockData.markRequestFulfilled(requestId);
+      alert(`✓ Request ${requestId} Marked as FULFILLED!\n\nDonor dispatch has been stopped.\n\nNotification dispatched to remaining responders:\n"Thank you for responding. The organization has received enough donor confirmations for this emergency request, so your response is no longer required."`);
+      renderDonorResponsesGrid();
+      renderFulfillmentTimeline();
+      renderActiveRequestsTable();
     }
   </script>
 </body>
