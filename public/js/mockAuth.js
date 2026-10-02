@@ -360,6 +360,21 @@ const MockAuth = {
     if (role === 'Organization') return this.loginOrganization('govgeneralhosur', 'Hospital@123');
     if (role === 'Admin') return this.loginAdmin('admin', 'admin123');
     return this.loginDonor('9876543210', '123456');
+  },
+
+  // Role Navigation Renderer & Helper
+  renderRoleNavigation(activePage = 'home') {
+    // Safely sync navigation state if elements are present on page
+    const pathname = window.location.pathname.toLowerCase();
+    const navLinks = document.querySelectorAll('.nav-links-row .nav-link-item');
+    if (navLinks && navLinks.length > 0) {
+      navLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && href !== 'javascript:void(0)' && pathname.includes(href.toLowerCase())) {
+          link.classList.add('active');
+        }
+      });
+    }
   }
 };
 

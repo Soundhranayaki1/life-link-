@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LIFE LINK – Secure Emergency Blood Referral</title>
+
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script src="js/mockData.js" defer></script>
+  <script src="js/mockAuth.js" defer></script>
+
+  <style>
+    :root {
+      --red-primary: #E6002E;
+      --red-dark: #B90022;
+      --red-soft: #FFF0F3;
+      --navy-dark: #0F172A;
+      --slate-body: #334155;
+      --slate-muted: #64748B;
+      --slate-border: #E2E8F0;
+      --font-main: 'Plus Jakarta Sans', 'Inter', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-main);
+      background-color: #FAFCFF;
+      color: var(--navy-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1rem;
+    }
+
+    .referral-card {
+      background: #FFFFFF;
+      border: 1px solid var(--slate-border);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+      max-width: 560px;
+      width: 100%;
+      padding: 2.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .top-brand-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--slate-border);
+    }
+
+    .brand-logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--red-primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--navy-dark);
+      line-height: 1.1;
+    }
+
+    .brand-sub {
+      font-size: 0.78rem;
+      color: var(--slate-muted);
+      font-weight: 600;
+    }
+
+    .badge-referral-entry {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: var(--red-soft);
+      color: var(--red-primary);
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      margin-bottom: 1rem;
+    }
+
+    .heading-title {
+      font-size: 1.45rem;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 0.6rem;
+    }
+
+    .privacy-notice-box {
+      background: #F8FAFC;
+      border: 1px solid var(--slate-border);
+      border-radius: 12px;
+      padding: 0.85rem 1rem;
+      font-size: 0.82rem;
+      color: var(--slate-body);
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 0.6rem;
+      align-items: flex-start;
+    }
+
+    .step-box {
+      background: #FFFFFF;
+      border: 1.5px solid var(--slate-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--navy-dark);
+      margin-bottom: 0.45rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--red-primary);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 0.85rem;
+      background: var(--red-primary);
+      color: white;
+      border: none;
+      border-radius: 9999px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: background 0.2s;
+    }
+
+    .btn-submit:hover {
+      background: var(--red-dark);
+    }
+
+    .compat-box {
+      border-radius: 14px;
+      padding: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .compat-success {
+      background: #F0FDF4;
+      border: 1.5px solid #BBF7D0;
+      color: #166534;
+    }
+
+    .compat-incompatible {
+      background: #FFF1F2;
+      border: 1.5px solid #FECDD3;
+      color: #9F1239;
+    }
+
+    .footer-text {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.78rem;
+      color: var(--slate-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="referral-card">
+    <div class="top-brand-bar">
+      <div class="brand-logo-icon">
+        <i class="fa-solid fa-droplet"></i>
+      </div>
+      <div>
+        <div class="brand-title">LIFE LINK</div>
+        <div class="brand-sub">Emergency Blood Referral Entry Point</div>
+      </div>
+    </div>
+
+    <div class="badge-referral-entry">
+      <i class="fa-solid fa-shield-halved"></i> SECURE INVITE ENTRY POINT
+    </div>
+
+    <h1 class="heading-title">Emergency Blood Request Referral</h1>
+    <p style="font-size: 0.88rem; color: var(--slate-muted); margin-bottom: 1.25rem;">
+      A friend has referred you for a nearby emergency blood requirement. Verify your mobile number to check compatibility securely.
+    </p>
+
+    <div class="privacy-notice-box">
+      <i class="fa-solid fa-lock" style="color: var(--red-primary); margin-top: 2px;"></i>
+      <div>
+        <strong>Privacy Assurance:</strong> Your friend did NOT enter your blood group or medical details. You retain full control to verify your identity and enter your own information.
+      </div>
+    </div>
+
+    <!-- STEP 1: MOBILE OTP VERIFICATION -->
+    <div id="step1OtpSection" class="step-box">
+      <div style="font-weight: 800; font-size: 1.05rem; margin-bottom: 1rem; color: var(--navy-dark); display: flex; align-items: center; gap: 0.5rem;">
+        <span style="background: var(--red-primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;">1</span>
+        Verify Mobile Number
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Your Mobile Number</label>
+        <input type="tel" id="friendPhoneInput" class="form-control" value="+91 98765 43210" placeholder="Enter 10-digit mobile number">
+      </div>
+
+      <div class="form-group" id="otpInputGroup" style="display: block;">
+        <label class="form-label">Enter 6-Digit Verification OTP Code</label>
+        <input type="text" id="friendOtpInput" class="form-control" value="123456" placeholder="Enter 123456">
+        <div style="font-size: 0.78rem; color: var(--slate-muted); margin-top: 0.35rem;">* Standard dev code <strong>123456</strong> pre-filled for instant verification</div>
+      </div>
+
+      <button onclick="verifyFriendOtp()" class="btn-submit">
+        <i class="fa-solid fa-key"></i> Verify & Proceed
+      </button>
+    </div>
+
+    <!-- STEP 2: BLOOD GROUP & AVAILABILITY ENTRY -->
+    <div id="step2DetailsSection" class="step-box" style="display: none;">
+      <div style="font-weight: 800; font-size: 1.05rem; margin-bottom: 1rem; color: var(--navy-dark); display: flex; align-items: center; gap: 0.5rem;">
+        <span style="background: var(--red-primary); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem;">2</span>
+        Select Blood Group & Location
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Select Your Blood Group</label>
+        <select id="friendBloodGroup" class="form-control" style="font-weight: 700;">
+          <option value="O+" selected>O Positive (O+)</option>
+          <option value="A+">A Positive (A+)</option>
+          <option value="B+">B Positive (B+)</option>
+          <option value="AB+">AB Positive (AB+)</option>
+          <option value="O-">O Negative (O-)</option>
+          <option value="A-">A Negative (A-)</option>
+          <option value="B-">B Negative (B-)</option>
+          <option value="AB-">AB Negative (AB-)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Your Current City / District</label>
+        <input type="text" id="friendCityInput" class="form-control" value="Hosur, Tamil Nadu">
+      </div>
+
+      <button onclick="checkCompatibilityMatching()" class="btn-submit">
+        <i class="fa-solid fa-sliders"></i> Check Request Compatibility
+      </button>
+    </div>
+
+    <!-- STEP 3: COMPATIBILITY MATCH RESULT -->
+    <div id="step3ResultSection" style="display: none;"></div>
+
+    <div class="footer-text">
+      © 2026 LIFE LINK Healthcare System &nbsp;|&nbsp; Voluntary Donor Network
+    </div>
+  </div>
+
+  <script>
+    let currentReferral = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('ref') || 'LL-REF-8921-TOKEN';
+
+      const referrals = MockData.getReferrals();
+      currentReferral = referrals.find(r => r.refToken === token || r.id === token) || referrals[0];
+
+      if (currentReferral && currentReferral.rawPhone) {
+        document.getElementById('friendPhoneInput').value = '+91 ' + currentReferral.rawPhone;
+      }
+    });
+
+    function verifyFriendOtp() {
+      const otp = document.getElementById('friendOtpInput').value.trim();
+      if (!otp) {
+        alert('Please enter verification OTP code.');
+        return;
+      }
+
+      if (currentReferral) {
+        currentReferral.isVerified = true;
+        currentReferral.status = 'OTP Verified';
+        saveReferralState();
+      }
+
+      document.getElementById('step1OtpSection').style.opacity = '0.7';
+      document.getElementById('step1OtpSection').style.pointerEvents = 'none';
+      document.getElementById('step2DetailsSection').style.display = 'block';
+      document.getElementById('step2DetailsSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function checkCompatibilityMatching() {
+      const bg = document.getElementById('friendBloodGroup').value;
+      const reqBloodGroup = 'O+'; // Emergency request requirement
+      const isCompatible = MockData.isCompatible(bg, reqBloodGroup);
+
+      const resultBox = document.getElementById('step3ResultSection');
+      resultBox.style.display = 'block';
+
+      if (currentReferral) {
+        currentReferral.friendBloodGroup = bg;
+        currentReferral.isMatched = isCompatible;
+        currentReferral.status = isCompatible ? 'Matched' : 'Not Compatible';
+        saveReferralState();
+      }
+
+      if (!isCompatible) {
+        resultBox.innerHTML = `
+          <div class="compat-box compat-incompatible">
+            <div style="font-weight: 800; font-size: 1.15rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fa-solid fa-circle-xmark"></i> Blood Group Incompatible
+            </div>
+            <p style="font-size: 0.88rem; line-height: 1.4; margin-bottom: 1rem;">
+              Your blood group (<strong>${bg}</strong>) is not compatible with the current emergency requirement (<strong>${reqBloodGroup}</strong>).
+            </p>
+
+            <div style="background: #FFFFFF; border: 1px solid #FECDD3; border-radius: 10px; padding: 1rem; color: #334155; margin-bottom: 1.25rem;">
+              <p style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.35rem; color: #9F1239;">🔒 Action Restricted:</p>
+              <p style="font-size: 0.82rem;">You cannot respond to or accept this specific emergency request as medical compatibility requirements are not satisfied.</p>
+            </div>
+
+            <div style="background: #FFFFFF; border-radius: 12px; padding: 1.1rem; text-align: center;">
+              <h4 style="font-size: 0.98rem; font-weight: 800; color: var(--navy-dark); margin-bottom: 0.4rem;">
+                Help Save Lives in the Future!
+              </h4>
+              <p style="font-size: 0.82rem; color: var(--slate-muted); margin-bottom: 1rem;">
+                Create a LIFE LINK donor account today to be notified when compatible emergency blood requests occur near you.
+              </p>
+              <a href="register.html?bg=${bg}" class="btn-submit" style="text-decoration: none;">
+                <i class="fa-solid fa-user-plus"></i> Create LIFE LINK Donor Account
+              </a>
+            </div>
+          </div>
+        `;
+      } else {
+        resultBox.innerHTML = `
+          <div class="compat-box compat-success">
+            <div style="font-weight: 800; font-size: 1.15rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fa-solid fa-circle-check"></i> LIFE LINK Compatibility Matched!
+            </div>
+            <p style="font-size: 0.88rem; line-height: 1.4; margin-bottom: 1rem;">
+              Your blood group (<strong>${bg}</strong>) is compatible with this emergency requirement (<strong>${reqBloodGroup}</strong>)!
+            </p>
+
+            <div style="background: #FFFFFF; border: 1px solid #BBF7D0; border-radius: 12px; padding: 1.25rem; color: var(--navy-dark); margin-bottom: 1.25rem;">
+              <span style="background: #DCFCE7; color: #166534; font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 9999px;">
+                ✓ VERIFIED EMERGENCY REQUEST
+              </span>
+              <h3 style="font-size: 1.15rem; font-weight: 800; margin-top: 0.5rem; margin-bottom: 0.25rem;">
+                XYZ Government Hospital
+              </h3>
+              <p style="font-size: 0.85rem; color: var(--slate-muted); margin-bottom: 0.75rem;">
+                📍 Hosur Healthcare Center (~3.4 km away) &nbsp;|&nbsp; 2 Units Required
+              </p>
+              <div style="font-size: 0.82rem; background: var(--red-soft); color: var(--red-primary); padding: 0.5rem 0.75rem; border-radius: 8px; font-weight: 700;">
+                ⏱ Required within: 1 hour 40 mins
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <button onclick="acceptReferredRequest()" class="btn-submit" style="background: #16A34A;">
+                <i class="fa-solid fa-heart"></i> I CAN DONATE (Accept Request)
+              </button>
+              
+              <div id="acceptedMessage" style="display: none; background: #DCFCE7; color: #15803D; padding: 1rem; border-radius: 10px; text-align: center; font-weight: 700; font-size: 0.9rem;">
+                ✓ Response Confirmed! Thank you for standing up to save a life. Complete your donor registration below to view hospital dispatch details.
+                <div style="margin-top: 0.85rem;">
+                  <a href="register.html?bg=${bg}&accepted=true" class="btn-submit" style="background: var(--navy-dark); text-decoration: none;">
+                    Complete Donor Profile Registration →
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      resultBox.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function acceptReferredRequest() {
+      if (currentReferral) {
+        currentReferral.hasResponded = true;
+        currentReferral.hasDonated = true;
+        currentReferral.status = 'Donation Completed';
+        saveReferralState();
+      }
+
+      const msg = document.getElementById('acceptedMessage');
+      if (msg) msg.style.display = 'block';
+    }
+
+    function saveReferralState() {
+      if (!currentReferral) return;
+      let referrals = MockData.getReferrals();
+      referrals = referrals.map(r => r.id === currentReferral.id ? currentReferral : r);
+      localStorage.setItem('lifelink_referrals', JSON.stringify(referrals));
+    }
+  </script>
+</body>
+</html>

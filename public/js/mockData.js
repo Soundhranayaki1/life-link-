@@ -688,8 +688,218 @@ const MockData = {
       localStorage.setItem('lifelink_audit_logs', JSON.stringify(this.auditLogs));
     } catch(e) {}
     return newLog;
+  },
+
+  // ----------------------------------------------------
+  // DONOR MODULE IMPROVEMENTS & STATE HELPERS
+  // ----------------------------------------------------
+
+  // 1. Availability Management
+  getDonorAvailability() {
+    try {
+      const data = localStorage.getItem('lifelink_donor_availability');
+      if (data) return JSON.parse(data);
+    } catch(e) {}
+    return { status: 'AVAILABLE', pausedUntil: null, pausedAt: null };
+  },
+
+  setDonorAvailability(status, duration = 'Until I Resume') {
+    let pausedAt = null;
+    let pausedUntil = null;
+    if (status === 'PAUSED') {
+      pausedAt = new Date().toISOString();
+      const now = new Date();
+      if (duration === '1 Day') {
+        now.setDate(now.getDate() + 1);
+        pausedUntil = now.toISOString();
+      } else if (duration === '3 Days') {
+        now.setDate(now.getDate() + 3);
+        pausedUntil = now.toISOString();
+      } else {
+        pausedUntil = 'RESUME_MANUAL';
+      }
+    }
+
+    const stateObj = { status, duration, pausedAt, pausedUntil };
+    localStorage.setItem('lifelink_donor_availability', JSON.stringify(stateObj));
+
+    // Update current donor in MockData donors list
+    const donor = this.donors.find(d => d.id === 'LL-D1024');
+    if (donor) {
+      donor.isAvailable = (status === 'AVAILABLE');
+    }
+
+    return stateObj;
+  },
+
+  isDonorAvailable() {
+    const avail = this.getDonorAvailability();
+    return avail.status === 'AVAILABLE';
+  },
+
+  // 2. Donation Radius Management (default 5 km)
+  getDonationRadius() {
+    try {
+      const radius = localStorage.getItem('lifelink_donation_radius');
+      if (radius) return parseInt(radius, 10);
+    } catch(e) {}
+    return 5;
+  },
+
+  setDonationRadius(radiusKm) {
+    const num = parseInt(radiusKm, 10) || 5;
+    localStorage.setItem('lifelink_donation_radius', num.toString());
+    return num;
+  },
+
+  // 3. Website 24-Hour Pause Reminder Handler
+  checkPauseReminder() {
+    const avail = this.getDonorAvailability();
+    if (avail.status !== 'PAUSED' || !avail.pausedAt) return false;
+
+    const pausedTime = new Date(avail.pausedAt).getTime();
+    const nowTime = new Date().getTime();
+    const diffHours = (nowTime - pausedTime) / (1000 * 60 * 60);
+
+    // Check if 24 hours passed or if simulated pause active
+    const reminderSent = localStorage.getItem('lifelink_pause_reminder_sent');
+    if ((diffHours >= 24 || avail.simulated24h) && !reminderSent) {
+      const newNotif = {
+        id: 'notif_pause_reminder_' + Date.now(),
+        title: 'Your donor availability is still paused',
+        message: "You have been unavailable for more than 24 hours. If you're ready to help again, resume your availability to receive compatible emergency requests.",
+        timeAgo: '24h Reminder',
+        isUnread: true,
+        type: 'PAUSE_REMINDER',
+        locationText: 'Availability Status: Paused'
+      };
+
+      if (Array.isArray(this.notifications)) {
+        // Prevent duplicate
+        const exists = this.notifications.some(n => n.type === 'PAUSE_REMINDER');
+        if (!exists) {
+          this.notifications.unshift(newNotif);
+        }
+      }
+      localStorage.setItem('lifelink_pause_reminder_sent', 'true');
+      return true;
+    }
+    return false;
+  },
+
+  // 4. Referrals & Recognition Store
+  getReferrals() {
+    try {
+      const data = localStorage.getItem('lifelink_referrals');
+      if (data) return JSON.parse(data);
+    } catch(e) {}
+
+    // Initial default pre-seeded referral data for demonstration
+    const defaultReferrals = [
+      {
+        id: 'REF-8921',
+        refToken: 'LL-REF-8921-TOKEN',
+        anonymizedPhone: '+91 98*** **321',
+        rawPhone: '9876543321',
+        friendBloodGroup: 'O+',
+        referralDate: '2026-10-01',
+        status: 'Donation Completed',
+        requestId: 'REQ-8821',
+        isVerified: true,
+        isMatched: true,
+        hasResponded: true,
+        hasDonated: true
+      },
+      {
+        id: 'REF-8922',
+        refToken: 'LL-REF-8922-TOKEN',
+        anonymizedPhone: '+91 94*** **567',
+        rawPhone: '9456712345',
+        friendBloodGroup: 'O+',
+        referralDate: '2026-10-02',
+        status: 'OTP Verified',
+        requestId: 'REQ-8822',
+        isVerified: true,
+        isMatched: true,
+        hasResponded: false,
+        hasDonated: false
+      },
+      {
+        id: 'REF-8923',
+        refToken: 'LL-REF-8923-TOKEN',
+        anonymizedPhone: '+91 97*** **890',
+        rawPhone: '9789012345',
+        friendBloodGroup: 'B+',
+        referralDate: '2026-09-28',
+        status: 'Not Compatible',
+        requestId: 'REQ-8821',
+        isVerified: true,
+        isMatched: false,
+        hasResponded: false,
+        hasDonated: false
+      }
+    ];
+
+    localStorage.setItem('lifelink_referrals', JSON.stringify(defaultReferrals));
+    return defaultReferrals;
+  },
+
+  addReferral(mobileNumber, requestId = 'REQ-8821') {
+    const referrals = this.getReferrals();
+    const cleanMobile = mobileNumber.replace(/\D/g, '');
+    const anonymized = cleanMobile.length >= 10 
+      ? `+91 ${cleanMobile.substring(0,2)}*** **${cleanMobile.substring(7)}` 
+      : `+91 ${cleanMobile} (Anonymized)`;
+
+    const randomId = 'REF-' + Math.floor(8000 + Math.random() * 1000);
+    const token = 'LL-REF-TOKEN-' + Date.now();
+
+    const newRef = {
+      id: randomId,
+      refToken: token,
+      anonymizedPhone: anonymized,
+      rawPhone: cleanMobile,
+      referralDate: new Date().toISOString().split('T')[0],
+      status: 'Invitation Sent',
+      requestId: requestId,
+      isVerified: false,
+      isMatched: false,
+      hasResponded: false,
+      hasDonated: false
+    };
+
+    referrals.unshift(newRef);
+    localStorage.setItem('lifelink_referrals', JSON.stringify(referrals));
+    return newRef;
+  },
+
+  calculateReferralStats() {
+    const referrals = this.getReferrals();
+    const totalReferred = referrals.length;
+    const verifiedCount = referrals.filter(r => r.isVerified || r.status !== 'Invitation Sent').length;
+    const matchedCount = referrals.filter(r => r.isMatched || r.status === 'Matched' || r.status === 'Emergency Response' || r.status === 'Donation Completed').length;
+    const respondedCount = referrals.filter(r => r.hasResponded || r.status === 'Emergency Response' || r.status === 'Donation Completed').length;
+    const donatedCount = referrals.filter(r => r.hasDonated || r.status === 'Donation Completed').length;
+
+    const successRate = totalReferred > 0 
+      ? ((donatedCount / totalReferred) * 100).toFixed(1)
+      : '0.0';
+
+    return {
+      totalReferred,
+      verifiedCount,
+      matchedCount,
+      respondedCount,
+      donatedCount,
+      successRate
+    };
   }
 };
+
+// Check pause reminder initialization
+if (typeof MockData !== 'undefined' && typeof MockData.checkPauseReminder === 'function') {
+  MockData.checkPauseReminder();
+}
 
 // Explicitly attach to window object for global availability
 if (typeof window !== 'undefined') {

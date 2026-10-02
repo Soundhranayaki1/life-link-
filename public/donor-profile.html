@@ -144,17 +144,17 @@
     }
 
     .page-header-box h1 {
-      font-size: 1.75rem;
-      font-weight: 800;
+      font-size: 1.45rem;
+      font-weight: 700;
       color: var(--navy-dark);
-      letter-spacing: -0.02em;
-      margin-bottom: 0.35rem;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.3rem;
     }
 
     .page-header-box p {
-      font-size: 0.9rem;
+      font-size: 0.82rem;
       color: var(--slate-muted);
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.15rem;
     }
 
     /* PROFILE HERO CARD */
@@ -163,11 +163,11 @@
       border-radius: 14px;
       border: 1px solid var(--slate-border);
       box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
-      padding: 1.75rem;
+      padding: 1.35rem 1.5rem;
       display: flex;
       align-items: center;
-      gap: 1.75rem;
-      margin-bottom: 1.25rem;
+      gap: 1.5rem;
+      margin-bottom: 1.15rem;
       position: relative;
     }
 
@@ -180,14 +180,14 @@
 
     .avatar-wrapper {
       position: relative;
-      width: 104px;
-      height: 104px;
+      width: 88px;
+      height: 88px;
       flex-shrink: 0;
     }
 
     .avatar-circle {
-      width: 104px;
-      height: 104px;
+      width: 88px;
+      height: 88px;
       border-radius: 50%;
       border: 3px solid var(--red-primary);
       box-shadow: 0 4px 14px rgba(230, 0, 46, 0.2);
@@ -196,7 +196,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.2rem;
+      font-size: 1.85rem;
       font-weight: 800;
       color: var(--navy-dark);
       overflow: hidden;
@@ -207,11 +207,11 @@
     }
 
     .hero-name {
-      font-size: 1.4rem;
-      font-weight: 800;
+      font-size: 1.25rem;
+      font-weight: 700;
       color: var(--navy-dark);
       line-height: 1.2;
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.3rem;
     }
 
     .hero-meta-row {
@@ -616,16 +616,47 @@
 <body>
 
   <!-- SITE HEADER -->
-  <header class="site-header">
-    <div class="nav-wrapper">
-      <a href="donor-dashboard.html" class="brand-logo">
-        <img src="assets/images/lifelink-logo.png" alt="LIFE LINK Logo" style="width: 36px; height: 36px; object-fit: contain; border-radius: 50%; box-shadow: 0 3px 10px rgba(230, 0, 46, 0.2); flex-shrink: 0;">
-        <span>LIFE LINK</span>
-      </a>
-
-      <div style="font-size: 0.85rem; color: var(--slate-muted); font-weight: 600;">
-        <i class="fa-solid fa-user-check" style="color: var(--green-success);"></i> Verified Donor Access
+  <header class="site-header" style="height: 58px; display: flex; align-items: center; justify-content: space-between; padding: 0 2rem;">
+    <a href="donor-dashboard.html" class="brand-logo" style="display: flex; align-items: center; gap: 0.6rem; text-decoration: none;">
+      <img src="assets/images/lifelink-logo.png" alt="LIFE LINK Logo" style="width: 38px; height: 38px; object-fit: contain; border-radius: 50%; box-shadow: 0 3px 10px rgba(230, 0, 46, 0.2); flex-shrink: 0;">
+      <div>
+        <div style="font-weight: 800; font-size: 1.1rem; color: var(--navy-dark); line-height: 1.1;">LIFE LINK</div>
+        <div style="font-size: 0.68rem; color: var(--slate-muted); font-weight: 600;">Donate Blood. Save Lives.</div>
       </div>
+    </a>
+
+    <ul class="nav-links-row" style="display: flex; align-items: center; gap: 0.4rem; list-style: none;">
+      <li>
+        <a href="donor-dashboard.html" class="nav-link-item" style="display: flex; align-items: center; gap: 0.35rem; padding: 0.4rem 0.85rem; border-radius: 9999px; color: var(--slate-body); text-decoration: none; font-weight: 600; font-size: 0.82rem;">
+          <i class="fa-solid fa-house"></i> Home
+        </a>
+      </li>
+      <li>
+        <a href="emergency-requests.html" class="nav-link-item" style="display: flex; align-items: center; gap: 0.35rem; padding: 0.4rem 0.85rem; border-radius: 9999px; color: var(--slate-body); text-decoration: none; font-weight: 600; font-size: 0.82rem;">
+          <i class="fa-solid fa-file-lines"></i> My Requests
+        </a>
+      </li>
+      <li>
+        <a href="my-donations.html" class="nav-link-item" style="display: flex; align-items: center; gap: 0.35rem; padding: 0.4rem 0.85rem; border-radius: 9999px; color: var(--slate-body); text-decoration: none; font-weight: 600; font-size: 0.82rem;">
+          <i class="fa-solid fa-droplet"></i> My Donations
+        </a>
+      </li>
+      <li>
+        <a href="referrals-recognition.html" class="nav-link-item" style="display: flex; align-items: center; gap: 0.35rem; padding: 0.4rem 0.85rem; border-radius: 9999px; color: var(--slate-body); text-decoration: none; font-weight: 600; font-size: 0.82rem;">
+          <i class="fa-solid fa-award"></i> Referrals & Recognition
+        </a>
+      </li>
+      <li>
+        <a href="donor-profile.html" class="nav-link-item active" style="display: flex; align-items: center; gap: 0.35rem; padding: 0.4rem 0.85rem; border-radius: 9999px; background: #FFEBEF; color: var(--red-primary); text-decoration: none; font-weight: 800; font-size: 0.82rem;">
+          <i class="fa-solid fa-user"></i> Profile
+        </a>
+      </li>
+    </ul>
+
+    <div style="display: flex; align-items: center; gap: 0.85rem;">
+      <button onclick="MockAuth.logout()" class="btn-cancel" style="border: 1.5px solid var(--red-primary); color: var(--red-primary); border-radius: 9999px; padding: 0.35rem 0.95rem; font-weight: 700; font-size: 0.78rem;">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+      </button>
     </div>
   </header>
 

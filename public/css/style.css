@@ -35,8 +35,42 @@
   --radius-lg: 20px;
   --radius-full: 9999px;
 
-  --font-heading: 'Outfit', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  /* Global Standardized Typography Tokens */
+  --font-family-base: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family-cursive: 'Caveat', cursive;
+
+  --font-heading: var(--font-family-base);
+  --font-body: var(--font-family-base);
+  --font-main: var(--font-family-base);
+
+  --font-hero-title: 34px;
+  --font-page-title: 30px;
+  --font-metric-value: 26px;
+  --font-section-title: 20px;
+  --font-modal-title: 18px;
+  --font-card-title: 16px;
+  --font-body: 14px;
+  --font-navigation: 14px;
+  --font-button: 14px;
+  --font-input: 14px;
+  --font-secondary: 13px;
+  --font-form-label: 13px;
+  --font-button-sm: 13px;
+  --font-table-body: 13px;
+  --font-caption: 12px;
+  --font-table-header: 12px;
+  --font-badge: 11px;
+  --font-admin-section-label: 11px;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  --lh-heading: 1.25;
+  --lh-body: 1.5;
+  --lh-label: 1.4;
+  --lh-button: 1.2;
 
   --glass-bg: rgba(19, 27, 46, 0.65);
   --glass-border: rgba(255, 255, 255, 0.1);
@@ -71,11 +105,12 @@
 }
 
 body {
-  font-family: var(--font-body);
+  font-family: var(--font-family-base);
   background-color: var(--bg-color);
   color: var(--text-main);
-  font-size: 0.88rem;
-  line-height: 1.55;
+  font-size: var(--font-body);
+  line-height: var(--lh-body);
+  font-weight: var(--weight-regular);
   overflow-x: hidden;
   min-height: 100vh;
   display: flex;
@@ -83,18 +118,18 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
+  font-family: var(--font-family-base);
   color: var(--text-main);
-  font-weight: 700;
-  line-height: 1.2;
+  font-weight: var(--weight-bold);
+  line-height: var(--lh-heading);
 }
 
-h1 { font-size: 1.85rem; }
-h2 { font-size: 1.45rem; }
-h3 { font-size: 1.2rem; }
-h4 { font-size: 1.05rem; }
-h5 { font-size: 0.92rem; }
-h6 { font-size: 0.82rem; }
+h1, .page-title { font-size: var(--font-page-title); font-weight: var(--weight-bold); line-height: var(--lh-heading); }
+h2, .section-title { font-size: var(--font-section-title); font-weight: var(--weight-bold); line-height: 1.3; }
+h3, .card-title { font-size: var(--font-card-title); font-weight: var(--weight-semibold); line-height: var(--lh-label); }
+h4 { font-size: var(--font-body); font-weight: var(--weight-semibold); }
+h5 { font-size: var(--font-secondary); font-weight: var(--weight-semibold); }
+h6 { font-size: var(--font-caption); font-weight: var(--weight-semibold); }
 
 a {
   color: var(--primary-red);

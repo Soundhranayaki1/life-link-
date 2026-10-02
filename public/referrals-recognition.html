@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Referrals & Recognition – LIFE LINK</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans, Inter, Caveat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script src="js/mockData.js" defer></script>
+  <script src="js/mockAuth.js" defer></script>
+  <script src="js/app.js" defer></script>
+
+  <style>
+    :root {
+      --red-primary: #E6002E;
+      --red-dark: #B90022;
+      --red-soft: #FFF0F3;
+      --navy-dark: #0F172A;
+      --slate-body: #334155;
+      --slate-muted: #64748B;
+      --slate-border: #E2E8F0;
+      --font-main: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      --font-body: 'Inter', -apple-system, sans-serif;
+      --font-cursive: 'Caveat', cursive;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #FAFCFF;
+      color: var(--navy-dark);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow-x: hidden;
+    }
+
+    /* TOP NAVBAR */
+    .header-bar {
+      height: 58px;
+      padding: 0 2rem;
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--slate-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+    }
+
+    .brand-logo-left {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+    }
+
+    .brand-text-title {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+      color: var(--navy-dark);
+      line-height: 1.1;
+    }
+
+    .brand-text-sub {
+      font-size: 0.68rem;
+      color: var(--slate-muted);
+      font-weight: 600;
+    }
+
+    .nav-links-row {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      list-style: none;
+    }
+
+    .nav-link-item {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.4rem 0.85rem;
+      border-radius: 9999px;
+      color: var(--slate-body);
+      text-decoration: none;
+      font-family: var(--font-main);
+      font-weight: 600;
+      font-size: 0.82rem;
+      transition: all 0.2s ease;
+    }
+
+    .nav-link-item:hover {
+      color: var(--red-primary);
+      background: var(--red-soft);
+    }
+
+    .nav-link-item.active {
+      background: #FFEBEF;
+      color: var(--red-primary);
+      font-weight: 800;
+    }
+
+    .header-user-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .user-profile-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      text-decoration: none;
+      color: var(--navy-dark);
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.84rem;
+    }
+
+    .user-avatar-circle {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #E2E8F0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--navy-dark);
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    .btn-signout {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.95rem;
+      border: 1.5px solid var(--red-primary);
+      color: var(--red-primary);
+      background: transparent;
+      border-radius: 9999px;
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+
+    /* MAIN CONTAINER */
+    .dashboard-container {
+      width: 90%;
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 1.35rem 0 3rem 0;
+      flex: 1;
+    }
+
+    /* HERO BANNER */
+    .hero-banner-card {
+      background: linear-gradient(135deg, #FFF0F3 0%, #FFF5F7 50%, #FFFFFF 100%);
+      border-radius: 16px;
+      padding: 1.5rem 1.8rem;
+      border: 1px solid #FFE0E6;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .hero-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--navy-dark);
+      margin-bottom: 0.4rem;
+    }
+
+    .hero-subtitle {
+      font-size: 0.9rem;
+      color: var(--slate-muted);
+    }
+
+    .btn-primary-red {
+      padding: 0.65rem 1.35rem;
+      background: var(--red-primary);
+      color: white;
+      border: none;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      text-decoration: none;
+    }
+
+    /* STATS GRID */
+    .stats-4col-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .stat-card-white {
+      background: #FFFFFF;
+      border-radius: 14px;
+      border: 1px solid var(--slate-border);
+      padding: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.02);
+    }
+
+    .stat-icon-square {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+
+    .stat-number {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--navy-dark);
+      line-height: 1.1;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--slate-muted);
+      font-weight: 600;
+    }
+
+    /* CARD CONTAINER */
+    .section-card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      border: 1px solid var(--slate-border);
+      padding: 1.5rem;
+      margin-bottom: 1.75rem;
+      box-shadow: 0 2px 12px rgba(15, 23, 42, 0.02);
+    }
+
+    .section-header-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--navy-dark);
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-header-sub {
+      font-size: 0.84rem;
+      color: var(--slate-muted);
+      margin-bottom: 1.25rem;
+    }
+
+    /* PIPELINE JOURNEY */
+    .pipeline-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      background: #F8FAFC;
+      border: 1px solid var(--slate-border);
+      border-radius: 14px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .pipeline-step {
+      text-align: center;
+      flex: 1;
+    }
+
+    .pipeline-step-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #E2E8F0;
+      color: var(--navy-dark);
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 0.4rem auto;
+      font-size: 0.88rem;
+    }
+
+    .pipeline-step.active .pipeline-step-badge {
+      background: var(--red-primary);
+      color: white;
+    }
+
+    .pipeline-step-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--navy-dark);
+    }
+
+    .pipeline-arrow {
+      color: var(--slate-muted);
+      font-size: 0.9rem;
+    }
+
+    /* FORMULA DISPLAY */
+    .formula-banner {
+      background: var(--red-soft);
+      border: 1px solid #FFE0E6;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .formula-math-box {
+      font-family: monospace;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--navy-dark);
+      background: #FFFFFF;
+      padding: 0.4rem 0.85rem;
+      border-radius: 8px;
+      border: 1px solid #FFC2CE;
+    }
+
+    /* TABLE */
+    .referral-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .referral-table th {
+      background: #F8FAFC;
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-weight: 700;
+      color: var(--slate-muted);
+      border-bottom: 1px solid var(--slate-border);
+    }
+
+    .referral-table td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--slate-border);
+      color: var(--navy-dark);
+    }
+
+    .badge-status {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+    }
+
+    .badge-completed { background: #DCFCE7; color: #15803D; }
+    .badge-verified { background: #E0F2FE; color: #0369A1; }
+    .badge-incompatible { background: #FFE4E6; color: #BE123C; }
+    .badge-sent { background: #FEF3C7; color: #B45309; }
+
+    /* RECOGNITION TIERS */
+    .tiers-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .tier-card {
+      border: 1.5px solid var(--slate-border);
+      border-radius: 14px;
+      padding: 1.1rem;
+      text-align: center;
+      background: #FFFFFF;
+      position: relative;
+    }
+
+    .tier-card.active-tier {
+      border-color: var(--red-primary);
+      background: linear-gradient(180deg, #FFF0F3 0%, #FFFFFF 100%);
+      box-shadow: 0 4px 16px rgba(230, 0, 46, 0.08);
+    }
+
+    .tier-badge-icon {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .tier-name {
+      font-weight: 800;
+      font-size: 0.92rem;
+      color: var(--navy-dark);
+      margin-bottom: 0.25rem;
+    }
+
+    .tier-criteria {
+      font-size: 0.75rem;
+      color: var(--slate-muted);
+    }
+
+    /* EXTERNAL OPPORTUNITIES */
+    .opportunities-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .opp-card {
+      background: #F8FAFC;
+      border: 1px solid var(--slate-border);
+      border-radius: 12px;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* FOOTER */
+    .footer-bar {
+      height: 48px;
+      padding: 0 4rem;
+      border-top: 1px solid var(--slate-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.76rem;
+      color: var(--slate-muted);
+      background: #FFFFFF;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP NAVBAR -->
+  <header class="header-bar">
+    <a href="donor-dashboard.html" class="brand-logo-left">
+      <img src="assets/images/lifelink-logo.png" alt="LIFE LINK Logo" style="width: 38px; height: 38px; object-fit: contain; border-radius: 50%; flex-shrink: 0;">
+      <div>
+        <div class="brand-text-title">LIFE LINK</div>
+        <div class="brand-text-sub">Donate Blood. Save Lives.</div>
+      </div>
+    </a>
+
+    <ul class="nav-links-row">
+      <li>
+        <a href="donor-dashboard.html" class="nav-link-item">
+          <i class="fa-solid fa-house"></i> Home
+        </a>
+      </li>
+      <li>
+        <a href="emergency-requests.html" class="nav-link-item">
+          <i class="fa-solid fa-file-lines"></i> My Requests
+        </a>
+      </li>
+      <li>
+        <a href="my-donations.html" class="nav-link-item">
+          <i class="fa-solid fa-droplet"></i> My Donations
+        </a>
+      </li>
+      <li>
+        <a href="referrals-recognition.html" class="nav-link-item active">
+          <i class="fa-solid fa-award"></i> Referrals & Recognition
+        </a>
+      </li>
+      <li style="position: relative;">
+        <a href="javascript:void(0)" id="notifBellBtn" onclick="toggleNotifPopup(event)" class="nav-link-item">
+          <i class="fa-solid fa-bell"></i> Notifications
+          <span class="nav-badge-count" id="notifBadgeCount">2</span>
+        </a>
+      </li>
+      <li>
+        <a href="donor-profile.html" class="nav-link-item">
+          <i class="fa-solid fa-user"></i> Profile
+        </a>
+      </li>
+    </ul>
+
+    <div class="header-user-actions">
+      <a href="donor-profile.html" class="user-profile-btn">
+        <div class="user-avatar-circle">A</div>
+        <span>Arun</span> <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; color: var(--slate-muted);"></i>
+      </a>
+
+      <button onclick="MockAuth.logout()" class="btn-signout" title="Sign Out">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN DASHBOARD CONTAINER -->
+  <main class="dashboard-container">
+
+    <!-- HERO BANNER -->
+    <div class="hero-banner-card">
+      <div>
+        <div style="color: var(--red-primary); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.35rem;">
+          DONOR IMPACT & HONORS
+        </div>
+        <h1 class="hero-title">Referrals & Recognition</h1>
+        <p class="hero-subtitle">
+          Expand the lifesaving network by inviting friends and earn verified community recognition.
+        </p>
+      </div>
+
+      <button onclick="openReferralModal()" class="btn-primary-red">
+        <i class="fa-solid fa-user-plus"></i> Refer a Donor
+      </button>
+    </div>
+
+    <!-- STATS 4-COLUMN GRID -->
+    <div class="stats-4col-grid">
+      <div class="stat-card-white">
+        <div class="stat-icon-square" style="background: #FFF0F3; color: var(--red-primary);">
+          <i class="fa-solid fa-droplet"></i>
+        </div>
+        <div>
+          <div class="stat-number" id="statDonationsCount">04</div>
+          <div class="stat-label">Donations Completed</div>
+        </div>
+      </div>
+
+      <div class="stat-card-white">
+        <div class="stat-icon-square" style="background: #EFF6FF; color: #2563EB;">
+          <i class="fa-solid fa-users"></i>
+        </div>
+        <div>
+          <div class="stat-number" id="statPeopleReferred">03</div>
+          <div class="stat-label">People Referred</div>
+        </div>
+      </div>
+
+      <div class="stat-card-white">
+        <div class="stat-icon-square" style="background: #F0FDF4; color: #16A34A;">
+          <i class="fa-solid fa-truck-medical"></i>
+        </div>
+        <div>
+          <div class="stat-number" id="statEmergencyResponses">05</div>
+          <div class="stat-label">Emergency Responses</div>
+        </div>
+      </div>
+
+      <div class="stat-card-white">
+        <div class="stat-icon-square" style="background: #FEF3C7; color: #D97706;">
+          <i class="fa-solid fa-award"></i>
+        </div>
+        <div>
+          <div class="stat-number" id="statSuccessfulReferralDonations">01</div>
+          <div class="stat-label">Successful Referral Donations</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 1: YOUR REFERRAL IMPACT -->
+    <div class="section-card">
+      <div class="section-header-title">
+        <i class="fa-solid fa-chart-line" style="color: var(--red-primary);"></i>
+        Your Referral Impact
+      </div>
+      <div class="section-header-sub">
+        Track the lifecycle of donors you have invited to LIFE LINK.
+      </div>
+
+      <div class="pipeline-row">
+        <div class="pipeline-step active">
+          <div class="pipeline-step-badge" id="pipeReferred">3</div>
+          <div class="pipeline-step-title">Referred</div>
+        </div>
+        <div class="pipeline-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+        <div class="pipeline-step active">
+          <div class="pipeline-step-badge" id="pipeVerified">3</div>
+          <div class="pipeline-step-title">Verified</div>
+        </div>
+        <div class="pipeline-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+        <div class="pipeline-step active">
+          <div class="pipeline-step-badge" id="pipeMatched">2</div>
+          <div class="pipeline-step-title">Matched</div>
+        </div>
+        <div class="pipeline-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+        <div class="pipeline-step active">
+          <div class="pipeline-step-badge" id="pipeResponded">2</div>
+          <div class="pipeline-step-title">Responded</div>
+        </div>
+        <div class="pipeline-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+        <div class="pipeline-step active">
+          <div class="pipeline-step-badge" style="background: #16A34A; color: white;" id="pipeDonated">1</div>
+          <div class="pipeline-step-title">Donated</div>
+        </div>
+      </div>
+
+      <!-- FORMULA DISPLAY -->
+      <div class="formula-banner">
+        <div>
+          <div style="font-weight: 800; font-size: 0.92rem; color: var(--navy-dark);">Referral Success Rate Metric</div>
+          <div style="font-size: 0.8rem; color: var(--slate-muted);">Defined as: Successful Referral Donations ÷ Total People Referred × 100</div>
+        </div>
+        <div class="formula-math-box">
+          Success Rate = <span id="formulaSuccessRateDisplay" style="color: var(--red-primary);">33.3%</span>
+        </div>
+      </div>
+
+      <!-- REFERRAL HISTORY TABLE -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; margin-bottom: 0.75rem;">
+        <h4 style="font-size: 0.95rem; font-weight: 800; color: var(--navy-dark);">Referral History (Privacy Anonymized)</h4>
+        <button onclick="openReferralModal()" class="btn-primary-red" style="font-size: 0.78rem; padding: 0.4rem 0.9rem;">
+          + Invite Friend
+        </button>
+      </div>
+
+      <table class="referral-table">
+        <thead>
+          <tr>
+            <th>Referral ID</th>
+            <th>Anonymized Identifier</th>
+            <th>Date Sent</th>
+            <th>Compatibility & Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="referralHistoryTableBody">
+          <!-- Dynamically filled -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SECTION 2: YOUR LIFE LINK RECOGNITION -->
+    <div class="section-card">
+      <div class="section-header-title">
+        <i class="fa-solid fa-medal" style="color: var(--red-primary);"></i>
+        Your LIFE LINK Recognition
+      </div>
+      <div class="section-header-sub">
+        Achievement-based recognition levels earned through verified lifesaving contributions. (No point systems or ranking competitive pressure).
+      </div>
+
+      <div class="tiers-grid">
+        <div class="tier-card">
+          <div class="tier-badge-icon">🎖️</div>
+          <div class="tier-name">Community Supporter</div>
+          <div class="tier-criteria">1+ Donation or Referral</div>
+          <div style="margin-top: 0.5rem; font-size: 0.72rem; color: #16A34A; font-weight: 800;">✓ UNLOCKED</div>
+        </div>
+
+        <div class="tier-card">
+          <div class="tier-badge-icon">🎗️</div>
+          <div class="tier-name">Community Lifeline</div>
+          <div class="tier-criteria">3+ Donations & Responses</div>
+          <div style="margin-top: 0.5rem; font-size: 0.72rem; color: #16A34A; font-weight: 800;">✓ UNLOCKED</div>
+        </div>
+
+        <div class="tier-card active-tier">
+          <div class="tier-badge-icon">🏅</div>
+          <div class="tier-name">Emergency Response Champion</div>
+          <div class="tier-criteria">5+ Verified Emergency Actions</div>
+          <div style="margin-top: 0.5rem; font-size: 0.72rem; background: var(--red-primary); color: white; padding: 0.15rem 0.5rem; border-radius: 9999px; font-weight: 800; display: inline-block;">
+            CURRENT TIER
+          </div>
+        </div>
+
+        <div class="tier-card">
+          <div class="tier-badge-icon">⭐</div>
+          <div class="tier-name">LIFE LINK Humanitarian</div>
+          <div class="tier-criteria">10+ Lifesaving Contributions</div>
+          <div style="margin-top: 0.5rem; font-size: 0.72rem; color: var(--slate-muted); font-weight: 700;">NEXT MILESTONE</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: RECOGNITION OPPORTUNITIES -->
+    <div class="section-card">
+      <div class="section-header-title">
+        <i class="fa-solid fa-graduation-cap" style="color: #2563EB;"></i>
+        Recognition Opportunities
+      </div>
+      <div class="section-header-sub">
+        Explore potential external civic, NGO, and community awards where your verified LIFE LINK contributions may qualify you for recognition.
+      </div>
+
+      <div class="opportunities-grid" style="margin-bottom: 1.5rem;">
+        <div class="opp-card">
+          <div>
+            <div style="font-weight: 800; font-size: 0.92rem;">Blood Donation Recognition</div>
+            <div style="font-size: 0.78rem; color: var(--slate-muted);">State & District Health Board Voluntary Honors</div>
+          </div>
+          <button onclick="alert('Explore Eligibility: You can submit your LIFE LINK verified contribution certificate for State Voluntary Blood Donor commendation awards.')" style="padding: 0.4rem 0.85rem; background: #FFFFFF; border: 1px solid var(--slate-border); border-radius: 8px; font-size: 0.78rem; font-weight: 700; color: var(--navy-dark); cursor: pointer;">
+            Explore Eligibility
+          </button>
+        </div>
+
+        <div class="opp-card">
+          <div>
+            <div style="font-weight: 800; font-size: 0.92rem;">Community Service Recognition</div>
+            <div style="font-size: 0.78rem; color: var(--slate-muted);">Red Cross & Civic NGO Commendations</div>
+          </div>
+          <button onclick="alert('Potential Recognition: Explore NGO community service certificate opportunities based on verified emergency responses.')" style="padding: 0.4rem 0.85rem; background: #FFFFFF; border: 1px solid var(--slate-border); border-radius: 8px; font-size: 0.78rem; font-weight: 700; color: var(--navy-dark); cursor: pointer;">
+            Explore Eligibility
+          </button>
+        </div>
+
+        <div class="opp-card">
+          <div>
+            <div style="font-weight: 800; font-size: 0.92rem;">Civic/NGO Recognition</div>
+            <div style="font-size: 0.78rem; color: var(--slate-muted);">District Healthcare Excellence Certificate</div>
+          </div>
+          <button onclick="alert('Learn More: Verified certificates can be attached for corporate CSR or civic recognition.')" style="padding: 0.4rem 0.85rem; background: #FFFFFF; border: 1px solid var(--slate-border); border-radius: 8px; font-size: 0.78rem; font-weight: 700; color: var(--navy-dark); cursor: pointer;">
+            Learn More
+          </button>
+        </div>
+
+        <div class="opp-card">
+          <div>
+            <div style="font-weight: 800; font-size: 0.92rem;">Youth Social Impact Recognition</div>
+            <div style="font-size: 0.78rem; color: var(--slate-muted);">University & Youth Service Credits</div>
+          </div>
+          <button onclick="alert('Explore Eligibility: Students and youth volunteers can present verified blood donation history for social credits.')" style="padding: 0.4rem 0.85rem; background: #FFFFFF; border: 1px solid var(--slate-border); border-radius: 8px; font-size: 0.78rem; font-weight: 700; color: var(--navy-dark); cursor: pointer;">
+            Explore Eligibility
+          </button>
+        </div>
+      </div>
+
+      <!-- VERIFIED CONTRIBUTION CERTIFICATE DOWNLOAD -->
+      <div style="background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); border-radius: 14px; padding: 1.5rem; color: white; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-size: 0.75rem; color: #94A3B8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem;">VERIFIED CONTRIBUTION</div>
+          <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 0.35rem;">LIFE LINK Milestone Certificate</h3>
+          <p style="font-size: 0.82rem; color: #CBD5E1;">Official record of 4 completed donations, 5 emergency responses, and 1 successful referral donation.</p>
+        </div>
+
+        <button onclick="openCertificateModal()" style="padding: 0.65rem 1.25rem; background: var(--red-primary); color: white; border: none; border-radius: 9999px; font-weight: 700; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">
+          <i class="fa-solid fa-certificate"></i> View Certificate
+        </button>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- CERTIFICATE MODAL -->
+  <div id="certificateModal" class="modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(6px); z-index: 2000; align-items: center; justify-content: center; padding: 1rem;">
+    <div style="background: #FFFFFF; border-radius: 16px; width: 100%; max-width: 640px; padding: 2rem; border: 4px double #E2E8F0; text-align: center; position: relative;">
+      <button onclick="closeCertificateModal()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.6rem; color: #64748B; cursor: pointer;">&times;</button>
+      
+      <div style="font-size: 0.8rem; letter-spacing: 0.1em; color: var(--red-primary); font-weight: 800; text-transform: uppercase; margin-bottom: 0.5rem;">
+        LIFE LINK HEALTHCARE SYSTEM
+      </div>
+      <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--navy-dark); margin-bottom: 0.5rem;">
+        Certificate of Voluntary Contribution
+      </h2>
+      <p style="font-size: 0.85rem; color: var(--slate-muted); margin-bottom: 1.5rem;">
+        This certificate officially verifies the lifesaving actions performed by
+      </p>
+
+      <div style="font-size: 1.8rem; font-weight: 800; color: var(--navy-dark); font-family: var(--font-cursive); margin-bottom: 1rem; border-bottom: 2px solid #E6002E; display: inline-block; padding: 0 2rem;">
+        Arun Kumar
+      </div>
+
+      <p style="font-size: 0.88rem; color: var(--slate-body); line-height: 1.5; margin-bottom: 1.5rem;">
+        In recognition of <strong>4 Verified Blood Donations</strong>, <strong>5 Emergency Responses</strong>, and <strong>1 Successful Donor Referral</strong>. Your voluntary commitment directly saved human lives.
+      </p>
+
+      <div style="display: flex; justify-content: space-around; margin-top: 2rem; border-top: 1px solid var(--slate-border); padding-top: 1.25rem;">
+        <div>
+          <div style="font-weight: 800; font-size: 0.85rem;">LIFE LINK Administration</div>
+          <div style="font-size: 0.75rem; color: var(--slate-muted);">Verified Health Authority</div>
+        </div>
+        <div>
+          <div style="font-weight: 800; font-size: 0.85rem;">Date Issued</div>
+          <div style="font-size: 0.75rem; color: var(--slate-muted);">02 October 2026</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 1.5rem;">
+        <button onclick="window.print()" style="padding: 0.55rem 1.25rem; background: var(--navy-dark); color: white; border: none; border-radius: 9999px; font-weight: 700; font-size: 0.82rem; cursor: pointer;">
+          <i class="fa-solid fa-print"></i> Print / Save Certificate
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer-bar">
+    <div>
+      © 2026 LIFE LINK Healthcare System &nbsp;|&nbsp; Every Drop. Every Connection. Every Life.
+    </div>
+    <div>
+      <a href="#" style="color: var(--slate-muted); text-decoration: none;">Privacy Policy</a> &nbsp;|&nbsp;
+      <a href="#" style="color: var(--slate-muted); text-decoration: none;">Terms of Service</a>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadReferralData();
+    });
+
+    function loadReferralData() {
+      const stats = MockData.calculateReferralStats();
+      const referrals = MockData.getReferrals();
+
+      document.getElementById('statPeopleReferred').textContent = stats.totalReferred.toString().padStart(2, '0');
+      document.getElementById('statSuccessfulReferralDonations').textContent = stats.donatedCount.toString().padStart(2, '0');
+
+      document.getElementById('pipeReferred').textContent = stats.totalReferred;
+      document.getElementById('pipeVerified').textContent = stats.verifiedCount;
+      document.getElementById('pipeMatched').textContent = stats.matchedCount;
+      document.getElementById('pipeResponded').textContent = stats.respondedCount;
+      document.getElementById('pipeDonated').textContent = stats.donatedCount;
+
+      document.getElementById('formulaSuccessRateDisplay').textContent = stats.successRate + '%';
+
+      const tbody = document.getElementById('referralHistoryTableBody');
+      if (tbody) {
+        tbody.innerHTML = referrals.map(r => {
+          let badgeClass = 'badge-sent';
+          if (r.status === 'Donation Completed') badgeClass = 'badge-completed';
+          else if (r.status === 'OTP Verified' || r.status === 'Matched') badgeClass = 'badge-verified';
+          else if (r.status === 'Not Compatible') badgeClass = 'badge-incompatible';
+
+          return `
+            <tr>
+              <td><strong>${r.id}</strong></td>
+              <td>${r.anonymizedPhone}</td>
+              <td>${r.referralDate}</td>
+              <td><span class="badge-status ${badgeClass}">${r.status}</span></td>
+              <td>
+                <a href="referral.html?ref=${r.refToken}" target="_blank" style="color: #2563EB; font-weight: 700; text-decoration: underline; font-size: 0.8rem;">
+                  Open Referral Link →
+                </a>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+    }
+
+    function openCertificateModal() {
+      document.getElementById('certificateModal').style.display = 'flex';
+    }
+
+    function closeCertificateModal() {
+      document.getElementById('certificateModal').style.display = 'none';
+    }
+
+    function toggleNotifPopup(e) {
+      if (e) e.stopPropagation();
+      const popup = document.getElementById('notifDropdownPopup');
+      if (popup) {
+        popup.style.display = (popup.style.display === 'none' || popup.style.display === '') ? 'block' : 'none';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -8,11 +8,12 @@
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
-  padding: 0.48rem 1.05rem;
+  padding: 0.5rem 1.1rem;
   border-radius: var(--radius-sm);
-  font-family: var(--font-heading);
-  font-size: 0.84rem;
-  font-weight: 700;
+  font-family: var(--font-family-base);
+  font-size: var(--font-button);
+  font-weight: var(--weight-semibold);
+  line-height: var(--lh-button);
   cursor: pointer;
   transition: all 0.2s ease;
   border: 1px solid transparent;
@@ -22,6 +23,7 @@
 .btn-primary {
   background-color: var(--crimson-red);
   color: #ffffff;
+  font-weight: var(--weight-semibold);
   box-shadow: 0 4px 12px rgba(217, 4, 41, 0.25);
 }
 
@@ -35,6 +37,7 @@
   background-color: #ffffff;
   color: var(--navy-dark);
   border-color: var(--navy-border);
+  font-weight: var(--weight-medium);
   box-shadow: var(--shadow-sm);
 }
 
@@ -43,8 +46,8 @@
   border-color: var(--navy-muted);
 }
 
-.btn-sm { padding: 0.3rem 0.65rem; font-size: 0.78rem; }
-.btn-lg { padding: 0.62rem 1.25rem; font-size: 0.88rem; border-radius: var(--radius-md); }
+.btn-sm { padding: 0.35rem 0.75rem; font-size: var(--font-button-sm); font-weight: var(--weight-semibold); }
+.btn-lg { padding: 0.65rem 1.35rem; font-size: var(--font-button); font-weight: var(--weight-semibold); border-radius: var(--radius-md); }
 
 /* Horizontal Carousel for Emergency Requests */
 .carousel-wrapper {
