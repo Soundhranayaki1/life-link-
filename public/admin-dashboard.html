@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/top-header.css">
 
   <script src="js/mockData.js" defer></script>
   <script src="js/mockAuth.js" defer></script>
@@ -974,7 +975,7 @@
           </li>
 
           <!-- 5. ANALYTICS & NOTIFICATIONS DROPDOWN -->
-          <li class="top-dropdown-item">
+          <li class="top-dropdown-item nav-item-secondary">
             <button class="top-nav-btn top-dropdown-toggle" id="nav-parent-analytics" onclick="toggleDropdownMenu(event, 'nav-parent-analytics')">
               <i class="fa-solid fa-chart-pie"></i> Analytics <i class="fa-solid fa-chevron-down nav-chevron"></i>
             </button>
@@ -989,7 +990,7 @@
           </li>
 
           <!-- 6. GOVERNANCE DROPDOWN -->
-          <li class="top-dropdown-item nav-item-low-priority">
+          <li class="top-dropdown-item nav-item-secondary">
             <button class="top-nav-btn top-dropdown-toggle" id="nav-parent-governance" onclick="toggleDropdownMenu(event, 'nav-parent-governance')">
               <i class="fa-solid fa-shield-halved"></i> 
               <span class="nav-text-long">Security & Governance</span>
@@ -1008,19 +1009,26 @@
           </li>
 
           <!-- 7. SUPPORT -->
-          <li class="nav-item-low-priority">
+          <li class="nav-item-secondary">
             <button onclick="switchView('help-support')" class="top-nav-btn" id="nav-help-support">
               <i class="fa-solid fa-headset"></i> Support
             </button>
           </li>
 
           <!-- 8. MORE DROPDOWN (Shown when low priority items hide on medium width) -->
-          <li class="top-dropdown-item nav-item-more" style="display: none;">
+          <li class="top-dropdown-item nav-item-more">
             <button class="top-nav-btn top-dropdown-toggle" id="moreAdminDropdownToggle" onclick="toggleDropdownMenu(event, 'moreAdminDropdownToggle')">
               <i class="fa-solid fa-ellipsis"></i> More <i class="fa-solid fa-chevron-down nav-chevron"></i>
             </button>
             <div class="top-dropdown-menu align-right">
-              <div class="dropdown-header">GOVERNANCE & HELP</div>
+              <div class="dropdown-header">ANALYTICS & NOTIFS</div>
+              <button onclick="switchView('analytics')" class="dropdown-link">
+                <i class="fa-solid fa-chart-line"></i> Analytics Dashboard
+              </button>
+              <button onclick="switchView('notifications')" class="dropdown-link">
+                <i class="fa-solid fa-bell"></i> Notification Center
+              </button>
+              <div class="dropdown-header" style="margin-top: 0.3rem;">GOVERNANCE & HELP</div>
               <button onclick="switchView('audit-logs')" class="dropdown-link">
                 <i class="fa-solid fa-list-check"></i> Audit Logs
               </button>

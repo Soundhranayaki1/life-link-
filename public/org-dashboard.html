@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/top-header.css">
 
   <script src="js/mockData.js" defer></script>
   <script src="js/mockAuth.js" defer></script>
@@ -1319,7 +1320,7 @@
               <i class="fa-solid fa-route"></i> Fulfillment
             </button>
           </li>
-          <li class="nav-item-low-priority">
+          <li class="nav-item-secondary">
             <button onclick="switchView('org-support')" class="top-nav-btn" id="nav-org-support">
               <i class="fa-solid fa-hand-holding-hand" style="color: var(--blue-accent);"></i> 
               <span class="nav-text-long">Org Support</span>
@@ -1329,7 +1330,7 @@
           </li>
 
           <!-- More Dropdown -->
-          <li class="top-dropdown-item" id="moreDropdownGroup">
+          <li class="top-dropdown-item nav-item-more" id="moreDropdownGroup">
             <button class="top-nav-btn top-dropdown-toggle" id="moreDropdownToggle" onclick="toggleDropdownMenu(event, 'moreDropdownToggle')">
               <i class="fa-solid fa-ellipsis"></i> More <i class="fa-solid fa-chevron-down nav-chevron"></i>
             </button>
