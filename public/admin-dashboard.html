@@ -55,30 +55,36 @@
       font-weight: 400;
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       overflow-x: hidden;
     }
 
-    /* FIXED 3-TIER SIDEBAR NAVIGATION */
-    .sidebar {
-      width: var(--sidebar-width);
+    /* TOP NAVIGATION BAR STYLES */
+    .top-nav-bar {
       background: #FFFFFF;
-      border-right: 1px solid var(--slate-border);
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      min-height: 100vh;
-      max-height: 100vh;
-      position: fixed;
+      border-bottom: 1px solid var(--slate-border);
+      position: sticky;
       top: 0;
-      bottom: 0;
-      left: 0;
-      z-index: 100;
-      overflow: hidden;
+      z-index: 1000;
+      width: 100%;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
     }
 
-    .sidebar-header {
-      padding: 1rem 1.15rem;
-      border-bottom: 1px solid var(--slate-border);
+    .top-nav-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      height: 64px;
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .top-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
       flex-shrink: 0;
     }
 
@@ -87,28 +93,21 @@
       align-items: center;
       gap: 0.6rem;
       text-decoration: none;
+      color: var(--navy-dark);
     }
 
-    .brand-logo-icon {
-      width: 34px;
-      height: 34px;
-      background: linear-gradient(135deg, var(--navy-dark) 0%, #1E293B 100%);
-      border-radius: 8px;
+    .brand-text-side {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.05rem;
-      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.18);
+      flex-direction: column;
+      line-height: 1.1;
     }
 
     .brand-text-title {
       font-family: var(--font-main);
-      font-weight: 700;
-      font-size: 1.05rem;
+      font-weight: 800;
+      font-size: 1.1rem;
       letter-spacing: -0.02em;
       color: var(--navy-dark);
-      line-height: 1.1;
     }
 
     .brand-text-title span {
@@ -116,329 +115,372 @@
     }
 
     .brand-portal-tag {
-      font-size: 0.62rem;
-      font-weight: 700;
+      font-size: 0.6rem;
+      font-weight: 800;
       color: var(--red-primary);
       background: var(--red-soft);
-      padding: 0.12rem 0.4rem;
+      padding: 0.12rem 0.45rem;
       border-radius: 9999px;
       display: inline-block;
-      margin-top: 0.15rem;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
+      margin-top: 0.1rem;
     }
 
-    /* Middle Scrollable Menu */
-    .sidebar-menu {
-      padding: 0.6rem 0.5rem;
-      list-style: none;
+    .top-nav-center {
+      display: flex;
+      align-items: center;
       flex: 1;
-      overflow-y: auto;
+      justify-content: center;
+    }
+
+    .top-nav-links {
+      list-style: none;
       display: flex;
-      flex-direction: column;
-      gap: 0.12rem;
+      align-items: center;
+      gap: 0.35rem;
+      margin: 0;
+      padding: 0;
     }
 
-    .sidebar-menu::-webkit-scrollbar {
-      width: 4px;
-    }
-
-    .sidebar-menu::-webkit-scrollbar-thumb {
-      background: #CBD5E1;
-      border-radius: 4px;
-    }
-
-    .nav-section-label {
+    .top-nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.45rem 0.85rem;
+      border-radius: 9999px;
+      color: var(--slate-body);
       font-family: var(--font-main);
-      font-size: 11px;
       font-weight: 600;
-      color: #94A3B8;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 1.15rem 0.75rem 0.35rem 0.75rem;
-    }
-
-    .nav-item-btn {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      min-height: 40px;
-      padding: 0.45rem 0.75rem;
-      border-radius: 8px;
-      color: #475569;
-      text-decoration: none;
-      font-family: var(--font-main);
-      font-weight: 500;
-      font-size: 14px;
-      cursor: pointer;
-      border: 1px solid transparent;
-      border-left: 3px solid transparent;
-      transition: all 0.15s ease;
+      font-size: 0.85rem;
       background: transparent;
-      width: 100%;
-      text-align: left;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
     }
 
-    .nav-item-btn > span {
-      display: flex;
-      align-items: center;
-      gap: 11px;
+    .top-nav-btn:hover {
+      background: #F1F5F9;
+      color: var(--navy-dark);
     }
 
-    .nav-item-btn i.nav-icon {
-      font-size: 17px;
-      width: 20px;
-      text-align: center;
-      color: #64748B;
-      transition: color 0.15s ease;
-    }
-
-    .nav-item-btn:hover {
-      background: #F8FAFC;
-      color: #1E293B;
-    }
-
-    .nav-item-btn:hover i.nav-icon {
-      color: #475569;
-    }
-
-    .nav-item-btn.active {
+    .top-nav-btn.active {
       background: #FFF0F3;
       color: #E4002B;
-      border-left: 3px solid #E4002B;
-      font-weight: 600;
+      font-weight: 700;
+      border-color: #FFD6DE;
+    }
+
+    .top-dropdown-item {
+      position: relative;
+    }
+
+    .top-dropdown-toggle .nav-chevron {
+      font-size: 0.65rem;
+      transition: transform 0.2s ease;
+      margin-left: 0.2rem;
+      color: var(--slate-muted);
+    }
+
+    .top-dropdown-item:hover .top-dropdown-menu,
+    .top-dropdown-item.open .top-dropdown-menu {
+      display: flex;
+    }
+
+    .top-dropdown-item:hover .nav-chevron,
+    .top-dropdown-item.open .nav-chevron {
+      transform: rotate(180deg);
+    }
+
+    .top-dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 0.35rem;
+      background: #FFFFFF;
+      border: 1px solid var(--slate-border);
+      border-radius: 14px;
+      padding: 0.5rem;
+      min-width: 220px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+      flex-direction: column;
+      gap: 0.2rem;
+      z-index: 1050;
+      animation: dropdownFadeIn 0.18s ease;
+    }
+
+    @keyframes dropdownFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dropdown-header {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--slate-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.4rem 0.65rem 0.2rem 0.65rem;
+    }
+
+    .dropdown-link {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.45rem 0.75rem;
       border-radius: 8px;
-    }
-
-    .nav-item-btn.active i.nav-icon {
-      color: #E4002B !important;
-    }
-
-    .nav-badge-pill {
-      font-size: 11px;
+      color: var(--slate-body);
+      font-family: var(--font-main);
       font-weight: 600;
-      padding: 0.15rem 0.55rem;
+      font-size: 0.84rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: left;
+      width: 100%;
+      transition: all 0.15s ease;
+    }
+
+    .dropdown-link:hover {
+      background: #F8FAFC;
+      color: var(--navy-dark);
+    }
+
+    .dropdown-link.active {
+      background: #FFF0F3;
+      color: #E4002B;
+      font-weight: 700;
+    }
+
+    .badge-pill-sm {
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 0.1rem 0.45rem;
       border-radius: 9999px;
-      background: #E4002B;
-      color: #FFFFFF;
       margin-left: auto;
     }
 
-    .nav-badge-pill.amber {
-      background: #FEF3C7;
-      color: #D97706;
-    }
-    .nav-badge-pill.blue {
-      background: #EFF6FF;
-      color: #2563EB;
-    }
+    .badge-pill-sm.red { background: var(--red-primary); color: white; }
+    .badge-pill-sm.blue { background: #EFF6FF; color: #2563EB; }
+    .badge-pill-sm.amber { background: #FEF3C7; color: #D97706; }
 
-    /* COLLAPSIBLE GROUP NAVIGATION STYLES */
-    .nav-group-container {
-      margin-bottom: 0.12rem;
-    }
-
-    .nav-parent-btn {
+    .top-nav-right {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      min-height: 40px;
-      padding: 0.45rem 0.75rem;
-      border-radius: 8px;
-      color: #334155;
-      font-family: var(--font-main);
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-      border: 1px solid transparent;
-      transition: all 0.15s ease;
-      background: transparent;
-      width: 100%;
-      text-align: left;
-    }
-
-    .nav-parent-btn > span {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-    }
-
-    .nav-parent-btn i.nav-icon {
-      font-size: 17px;
-      width: 20px;
-      text-align: center;
-      color: #64748B;
-      transition: color 0.15s ease;
-    }
-
-    .nav-parent-btn:hover {
-      background: #F8FAFC;
-      color: #1E293B;
-    }
-
-    .nav-parent-btn:hover i.nav-icon {
-      color: #475569;
-    }
-
-    .nav-parent-btn .chevron-icon {
-      font-size: 0.72rem;
-      color: #64748B;
-      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .nav-parent-btn.expanded .chevron-icon {
-      transform: rotate(90deg);
-      color: #334155;
-    }
-
-    /* Submenu with Tree Guide Line */
-    .nav-sub-menu {
-      list-style: none;
-      padding-left: 0.75rem;
-      border-left: 1px solid #E2E8F0;
-      margin-left: 1.25rem;
-      margin-top: 0.15rem;
-      margin-bottom: 0.25rem;
-      display: none;
-      flex-direction: column;
-      gap: 0.12rem;
-    }
-
-    .nav-sub-menu.open {
-      display: flex;
-    }
-
-    .nav-child-btn {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      min-height: 38px;
-      padding: 0.4rem 0.65rem;
-      border-radius: 8px;
-      color: #475569;
-      text-decoration: none;
-      font-family: var(--font-main);
-      font-weight: 500;
-      font-size: 13.5px;
-      cursor: pointer;
-      border: 1px solid transparent;
-      border-left: 3px solid transparent;
-      transition: all 0.15s ease;
-      background: transparent;
-      width: 100%;
-      text-align: left;
-    }
-
-    .nav-child-btn > span {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-    }
-
-    .nav-child-btn i.child-icon {
-      font-size: 15px;
-      width: 18px;
-      text-align: center;
-      color: #64748B;
-      transition: color 0.15s ease;
-    }
-
-    .nav-child-btn:hover {
-      background: #F8FAFC;
-      color: #1E293B;
-    }
-
-    .nav-child-btn:hover i.child-icon {
-      color: #475569;
-    }
-
-    .nav-child-btn.active {
-      background: #FFF0F3;
-      color: #E4002B;
-      border-left: 3px solid #E4002B;
-      font-weight: 600;
-      border-radius: 8px;
-    }
-
-    .nav-child-btn.active i.child-icon {
-      color: #E4002B;
-    }
-
-    /* Bottom Account Card */
-    .sidebar-footer {
-      padding: 0.65rem;
-      border-top: 1px solid #E2E8F0;
-      background: #FFFFFF;
+      gap: 0.75rem;
       flex-shrink: 0;
     }
 
-    .admin-profile-card-mini {
-      background: #FFFFFF;
-      border: 1px solid #E2E8F0;
-      border-radius: 10px;
-      padding: 0.65rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+    .search-box-top {
+      position: relative;
+      width: 190px;
     }
 
-    .admin-mini-header {
+    .search-box-top input {
+      width: 100%;
+      padding: 0.4rem 0.75rem 0.4rem 1.9rem;
+      background: #F8FAFC;
+      border: 1px solid var(--slate-border);
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      outline: none;
+      transition: all 0.15s ease;
+    }
+
+    .search-box-top input:focus {
+      background: #FFFFFF;
+      border-color: var(--red-primary);
+      box-shadow: 0 0 0 3px rgba(230, 0, 46, 0.1);
+    }
+
+    .search-box-top i {
+      position: absolute;
+      left: 0.7rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--slate-muted);
+      font-size: 0.78rem;
+    }
+
+    .btn-top-notif {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #F8FAFC;
+      border: 1px solid var(--slate-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--navy-dark);
+      font-size: 0.95rem;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.15s ease;
+    }
+
+    .btn-top-notif:hover {
+      background: var(--red-soft);
+      color: var(--red-primary);
+      border-color: #FFD6DE;
+    }
+
+    .top-user-menu-item {
+      position: relative;
+    }
+
+    .btn-top-user-avatar {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-    }
-
-    .admin-avatar-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 6px;
-      background: #0F172A;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.88rem;
-      flex-shrink: 0;
-    }
-
-    .admin-mini-name {
-      font-family: var(--font-main);
-      font-weight: 700;
-      font-size: 13.5px;
-      color: #0F172A;
-      line-height: 1.2;
-    }
-
-    .btn-logout-sidebar {
-      width: 100%;
-      padding: 0.4rem;
-      background: #FFFFFF;
-      border: 1px solid #E2E8F0;
-      border-radius: 6px;
-      color: #64748B;
-      font-family: var(--font-main);
-      font-weight: 600;
-      font-size: 13px;
+      background: #F8FAFC;
+      border: 1px solid var(--slate-border);
+      padding: 0.25rem 0.65rem 0.25rem 0.35rem;
+      border-radius: 9999px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.35rem;
       transition: all 0.15s ease;
     }
 
-    .btn-logout-sidebar:hover {
-      background: #F1F5F9;
+    .btn-top-user-avatar:hover {
+      background: #FFFFFF;
       border-color: #CBD5E1;
-      color: #334155;
+    }
+
+    .user-avatar-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--navy-dark);
+      color: white;
+      font-weight: 800;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .user-name-txt {
+      font-family: var(--font-main);
+      font-weight: 700;
+      font-size: 0.82rem;
+      color: var(--navy-dark);
+    }
+
+    .user-dropdown-card {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      margin-top: 0.4rem;
+      background: #FFFFFF;
+      border: 1px solid var(--slate-border);
+      border-radius: 16px;
+      padding: 0.65rem;
+      width: 230px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+      z-index: 1100;
+    }
+
+    .user-dropdown-card.show {
+      display: block;
+    }
+
+    .user-info-header {
+      padding: 0.5rem 0.65rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .user-info-header strong {
+      font-family: var(--font-main);
+      font-weight: 800;
+      font-size: 0.88rem;
+      color: var(--navy-dark);
+    }
+
+    .dropdown-divider {
+      height: 1px;
+      background: var(--slate-border);
+      margin: 0.4rem 0;
+    }
+
+    .dropdown-user-link {
+      width: 100%;
+      padding: 0.45rem 0.65rem;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      color: var(--slate-body);
+      font-family: var(--font-main);
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      text-align: left;
+      transition: all 0.15s ease;
+    }
+
+    .dropdown-user-link:hover {
+      background: #F8FAFC;
+      color: var(--navy-dark);
+    }
+
+    .dropdown-user-link.logout {
+      color: var(--red-primary);
+    }
+
+    .dropdown-user-link.logout:hover {
+      background: var(--red-soft);
+    }
+
+    .mobile-nav-toggle {
+      display: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: 1px solid var(--slate-border);
+      background: #FFFFFF;
+      color: var(--navy-dark);
+      font-size: 1.1rem;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mobile-nav-drawer {
+      display: none;
+      position: absolute;
+      top: 64px;
+      left: 0;
+      right: 0;
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--slate-border);
+      box-shadow: 0 10px 25px rgba(15,23,42,0.1);
+      padding: 1rem 1.25rem;
+      flex-direction: column;
+      gap: 0.5rem;
+      z-index: 999;
+    }
+
+    .mobile-nav-drawer.open {
+      display: flex;
+    }
+
+    @media (max-width: 1024px) {
+      .top-nav-center { display: none; }
+      .mobile-nav-toggle { display: flex; }
+      .search-box-top { display: none; }
     }
 
     /* MAIN WRAPPER */
     .main-wrapper {
-      margin-left: var(--sidebar-width);
+      margin-left: 0;
+      width: 100%;
       flex: 1;
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
@@ -800,203 +842,205 @@
 </head>
 <body>
 
-  <!-- FIXED 3-TIER SIDEBAR NAVIGATION -->
-  <aside class="sidebar" id="sidebarNav">
-    <div class="sidebar-header">
-      <a href="admin-dashboard.html" class="brand-logo-card">
-        <img src="assets/images/lifelink-logo.png" alt="LIFE LINK Logo" style="width: 36px; height: 36px; object-fit: contain; border-radius: 50%; box-shadow: 0 3px 10px rgba(230, 0, 46, 0.2); flex-shrink: 0;">
-        <div>
-          <div class="brand-text-title">LIFE <span>LINK</span></div>
-          <span class="brand-portal-tag">Admin Portal</span>
-        </div>
-      </a>
-    </div>
-
-    <ul class="sidebar-menu">
-      <!-- 1. MAIN -->
-      <li class="nav-section-label">MAIN</li>
-      <li>
-        <button onclick="switchView('dashboard')" class="nav-item-btn active" id="nav-dashboard">
-          <span><i class="fa-solid fa-chart-pie nav-icon"></i> Dashboard</span>
-        </button>
-      </li>
-
-      <!-- 2. OPERATIONS -->
-      <li class="nav-section-label">OPERATIONS</li>
-      <li class="nav-group-container">
-        <button onclick="toggleNavGroup('operations')" class="nav-parent-btn" id="parent-operations">
-          <span><i class="fa-solid fa-tower-broadcast nav-icon"></i> Emergency Management</span>
-          <i class="fa-solid fa-chevron-right chevron-icon" id="chevron-operations"></i>
-        </button>
-        <ul class="nav-sub-menu" id="submenu-operations">
-          <li>
-            <button onclick="switchView('live-dispatch')" class="nav-child-btn" id="nav-live-dispatch">
-              <span><i class="fa-solid fa-satellite-dish child-icon"></i> Live Dispatch</span>
-              <span class="nav-badge-pill">7 Active</span>
-            </button>
-          </li>
-          <li>
-            <button onclick="switchView('emergency-requests')" class="nav-child-btn" id="nav-emergency-requests">
-              <span><i class="fa-solid fa-truck-medical child-icon"></i> Emergency Requests</span>
-            </button>
-          </li>
-          <li>
-            <button onclick="switchView('fulfillment-tracking')" class="nav-child-btn" id="nav-fulfillment-tracking">
-              <span><i class="fa-solid fa-bullseye child-icon"></i> Fulfillment Tracking</span>
-            </button>
-          </li>
-          <li>
-            <button onclick="switchView('request-history')" class="nav-child-btn" id="nav-request-history">
-              <span><i class="fa-solid fa-clock-rotate-left child-icon"></i> Request History</span>
-            </button>
-          </li>
-        </ul>
-      </li>
-
-      <!-- 3. ORGANIZATIONS -->
-      <li class="nav-section-label">ORGANIZATIONS</li>
-      <li class="nav-group-container">
-        <button onclick="toggleNavGroup('organizations')" class="nav-parent-btn" id="parent-organizations">
-          <span><i class="fa-solid fa-building-shield nav-icon"></i> Organization Management</span>
-          <i class="fa-solid fa-chevron-right chevron-icon" id="chevron-organizations"></i>
-        </button>
-        <ul class="nav-sub-menu" id="submenu-organizations">
-          <li>
-            <button onclick="switchView('organizations')" class="nav-child-btn" id="nav-organizations">
-              <span><i class="fa-solid fa-building child-icon"></i> All Organizations</span>
-              <span class="nav-badge-pill blue" id="navBadgeTotalOrg">28</span>
-            </button>
-          </li>
-          <li>
-            <button onclick="switchView('create-org')" class="nav-child-btn" id="nav-create-org">
-              <span><i class="fa-solid fa-square-plus child-icon"></i> Create Organization</span>
-            </button>
-          </li>
-          <li>
-            <button onclick="switchView('verification-requests')" class="nav-child-btn" id="nav-verification-requests">
-              <span><i class="fa-solid fa-user-check child-icon"></i> Verification Requests</span>
-              <span class="nav-badge-pill amber" id="navBadgePending">3</span>
-            </button>
-          </li>
-          <li>
-            <button onclick="switchView('change-requests')" class="nav-child-btn" id="nav-change-requests">
-              <span><i class="fa-solid fa-code-pull-request child-icon"></i> Change Requests</span>
-              <span class="nav-badge-pill blue" id="navBadgeChanges">2</span>
-            </button>
-          </li>
-          <li>
-            <button onclick="switchView('suspended-orgs')" class="nav-child-btn" id="nav-suspended-orgs">
-              <span><i class="fa-solid fa-ban child-icon"></i> Suspended Organizations</span>
-              <span class="nav-badge-pill" id="navBadgeSuspended">1</span>
-            </button>
-          </li>
-        </ul>
-      </li>
-
-      <!-- 4. DONORS -->
-      <li class="nav-section-label">DONORS</li>
-      <li class="nav-group-container">
-        <button onclick="toggleNavGroup('donors')" class="nav-parent-btn" id="parent-donors">
-          <span><i class="fa-solid fa-users-gear nav-icon"></i> Donor Management</span>
-          <i class="fa-solid fa-chevron-right chevron-icon" id="chevron-donors"></i>
-        </button>
-        <ul class="nav-sub-menu" id="submenu-donors">
-          <li>
-            <button onclick="switchView('donors')" class="nav-child-btn" id="nav-donors">
-              <span><i class="fa-solid fa-users child-icon"></i> Donors</span>
-              <span class="nav-badge-pill blue">1,248</span>
-            </button>
-          </li>
-        </ul>
-      </li>
-
-      <!-- 5. ANALYTICS -->
-      <li class="nav-section-label">ANALYTICS</li>
-      <li>
-        <button onclick="switchView('analytics')" class="nav-item-btn" id="nav-analytics">
-          <span><i class="fa-solid fa-chart-line nav-icon"></i> Analytics</span>
-        </button>
-      </li>
-      <li>
-        <button onclick="switchView('notifications')" class="nav-item-btn" id="nav-notifications">
-          <span><i class="fa-solid fa-bell nav-icon"></i> Notification Center</span>
-          <span class="nav-badge-pill" id="navBadgeNotifs">4</span>
-        </button>
-      </li>
-
-      <!-- 6. GOVERNANCE -->
-      <li class="nav-section-label">GOVERNANCE</li>
-      <li class="nav-group-container">
-        <button onclick="toggleNavGroup('governance')" class="nav-parent-btn" id="parent-governance">
-          <span><i class="fa-solid fa-shield-halved nav-icon"></i> Security & Governance</span>
-          <i class="fa-solid fa-chevron-right chevron-icon" id="chevron-governance"></i>
-        </button>
-        <ul class="nav-sub-menu" id="submenu-governance">
-          <li>
-            <button onclick="switchView('audit-logs')" class="nav-child-btn" id="nav-audit-logs">
-              <span><i class="fa-solid fa-list-check child-icon"></i> Audit Logs</span>
-            </button>
-          </li>
-          <li>
-            <button onclick="switchView('settings')" class="nav-child-btn" id="nav-settings">
-              <span><i class="fa-solid fa-gears child-icon"></i> System Settings</span>
-            </button>
-          </li>
-        </ul>
-      </li>
-
-      <!-- 7. SUPPORT -->
-      <li class="nav-section-label">SUPPORT</li>
-      <li>
-        <button onclick="switchView('help-support')" class="nav-item-btn" id="nav-help-support">
-          <span><i class="fa-solid fa-headset nav-icon"></i> Help & Support</span>
-        </button>
-      </li>
-    </ul>
-
-    <!-- Sidebar Footer Account Card -->
-    <div class="sidebar-footer">
-      <div class="admin-profile-card-mini">
-        <div class="admin-mini-header">
-          <div class="admin-avatar-icon">
-            <i class="fa-solid fa-user-shield"></i>
+  <!-- GLOBAL TOP NAVIGATION BAR -->
+  <header class="top-nav-bar">
+    <div class="top-nav-container">
+      
+      <!-- LEFT: Logo & Portal Tag -->
+      <div class="top-nav-left">
+        <a href="admin-dashboard.html#dashboard" onclick="switchView('dashboard')" class="brand-logo-card">
+          <img src="assets/images/lifelink-logo.png" alt="LIFE LINK Logo" style="width: 34px; height: 34px; object-fit: contain; border-radius: 50%; box-shadow: 0 3px 10px rgba(230, 0, 46, 0.2); flex-shrink: 0;" onerror="this.style.display='none'">
+          <div class="brand-text-side">
+            <div class="brand-text-title">LIFE <span>LINK</span></div>
+            <span class="brand-portal-tag">ADMIN PORTAL</span>
           </div>
-          <div>
-            <div class="admin-mini-name">System Administrator</div>
-            <div style="font-size: 0.68rem; color: var(--blue-accent); font-weight: 600;">Super Admin Access</div>
+        </a>
+      </div>
+
+      <!-- CENTER: Horizontal Top Navigation Bar -->
+      <nav class="top-nav-center">
+        <ul class="top-nav-links">
+          <!-- 1. MAIN -->
+          <li>
+            <button onclick="switchView('dashboard')" class="top-nav-btn active" id="nav-dashboard">
+              <i class="fa-solid fa-chart-line"></i> Dashboard
+            </button>
+          </li>
+
+          <!-- 2. OPERATIONS DROPDOWN -->
+          <li class="top-dropdown-item">
+            <button class="top-nav-btn top-dropdown-toggle" id="nav-parent-operations">
+              <i class="fa-solid fa-tower-broadcast"></i> Emergency Management <i class="fa-solid fa-chevron-down nav-chevron"></i>
+            </button>
+            <div class="top-dropdown-menu">
+              <div class="dropdown-header">EMERGENCY MANAGEMENT</div>
+              <button onclick="switchView('live-dispatch')" class="dropdown-link" id="nav-live-dispatch">
+                <i class="fa-solid fa-satellite-dish"></i> Live Dispatch <span class="badge-pill-sm red">7 Active</span>
+              </button>
+              <button onclick="switchView('emergency-requests')" class="dropdown-link" id="nav-emergency-requests">
+                <i class="fa-solid fa-truck-medical"></i> Emergency Requests
+              </button>
+              <button onclick="switchView('fulfillment-tracking')" class="dropdown-link" id="nav-fulfillment-tracking">
+                <i class="fa-solid fa-bullseye"></i> Fulfillment Tracking
+              </button>
+              <button onclick="switchView('request-history')" class="dropdown-link" id="nav-request-history">
+                <i class="fa-solid fa-clock-rotate-left"></i> Request History
+              </button>
+            </div>
+          </li>
+
+          <!-- 3. ORGANIZATIONS DROPDOWN -->
+          <li class="top-dropdown-item">
+            <button class="top-nav-btn top-dropdown-toggle" id="nav-parent-organizations">
+              <i class="fa-solid fa-building-shield"></i> Organization Management <i class="fa-solid fa-chevron-down nav-chevron"></i>
+            </button>
+            <div class="top-dropdown-menu">
+              <div class="dropdown-header">ORGANIZATION MANAGEMENT</div>
+              <button onclick="switchView('organizations')" class="dropdown-link" id="nav-organizations">
+                <i class="fa-solid fa-building"></i> All Organizations <span class="badge-pill-sm blue" id="navBadgeTotalOrg">28</span>
+              </button>
+              <button onclick="switchView('create-org')" class="dropdown-link" id="nav-create-org">
+                <i class="fa-solid fa-square-plus"></i> Create Organization
+              </button>
+              <button onclick="switchView('verification-requests')" class="dropdown-link" id="nav-verification-requests">
+                <i class="fa-solid fa-user-check"></i> Verification Requests <span class="badge-pill-sm amber" id="navBadgePending">3</span>
+              </button>
+              <button onclick="switchView('change-requests')" class="dropdown-link" id="nav-change-requests">
+                <i class="fa-solid fa-code-pull-request"></i> Change Requests <span class="badge-pill-sm blue" id="navBadgeChanges">2</span>
+              </button>
+              <button onclick="switchView('suspended-orgs')" class="dropdown-link" id="nav-suspended-orgs">
+                <i class="fa-solid fa-ban"></i> Suspended Organizations <span class="badge-pill-sm red" id="navBadgeSuspended">1</span>
+              </button>
+            </div>
+          </li>
+
+          <!-- 4. DONORS -->
+          <li>
+            <button onclick="switchView('donors')" class="top-nav-btn" id="nav-donors">
+              <i class="fa-solid fa-users"></i> Donors
+            </button>
+          </li>
+
+          <!-- 5. ANALYTICS & NOTIFICATIONS DROPDOWN -->
+          <li class="top-dropdown-item">
+            <button class="top-nav-btn top-dropdown-toggle" id="nav-parent-analytics">
+              <i class="fa-solid fa-chart-pie"></i> Analytics <i class="fa-solid fa-chevron-down nav-chevron"></i>
+            </button>
+            <div class="top-dropdown-menu">
+              <button onclick="switchView('analytics')" class="dropdown-link" id="nav-analytics">
+                <i class="fa-solid fa-chart-line"></i> Analytics
+              </button>
+              <button onclick="switchView('notifications')" class="dropdown-link" id="nav-notifications">
+                <i class="fa-solid fa-bell"></i> Notification Center <span class="badge-pill-sm red" id="navBadgeNotifs">4</span>
+              </button>
+            </div>
+          </li>
+
+          <!-- 6. GOVERNANCE DROPDOWN -->
+          <li class="top-dropdown-item">
+            <button class="top-nav-btn top-dropdown-toggle" id="nav-parent-governance">
+              <i class="fa-solid fa-shield-halved"></i> Security & Governance <i class="fa-solid fa-chevron-down nav-chevron"></i>
+            </button>
+            <div class="top-dropdown-menu">
+              <div class="dropdown-header">SECURITY & SYSTEM</div>
+              <button onclick="switchView('audit-logs')" class="dropdown-link" id="nav-audit-logs">
+                <i class="fa-solid fa-list-check"></i> Audit Logs
+              </button>
+              <button onclick="switchView('settings')" class="dropdown-link" id="nav-settings">
+                <i class="fa-solid fa-sliders"></i> System Settings
+              </button>
+            </div>
+          </li>
+
+          <!-- 7. SUPPORT -->
+          <li>
+            <button onclick="switchView('help-support')" class="top-nav-btn" id="nav-help-support">
+              <i class="fa-solid fa-headset"></i> Help & Support
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- RIGHT: Search, Notifications & Profile -->
+      <div class="top-nav-right">
+        <div class="search-box-top">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="globalAdminSearch" onkeyup="handleGlobalSearch(this.value)" placeholder="Search orgs, REQ...">
+        </div>
+
+        <button onclick="switchView('notifications')" class="btn-top-notif" title="Notifications">
+          <i class="fa-regular fa-bell"></i>
+          <div class="bell-pulse-badge"></div>
+        </button>
+
+        <!-- Profile Dropdown -->
+        <div class="top-user-menu-item">
+          <button class="btn-top-user-avatar" onclick="toggleUserMenuDropdown(event)">
+            <div class="user-avatar-circle">SA</div>
+            <span class="user-name-txt">System Admin</span>
+            <i class="fa-solid fa-chevron-down" style="font-size: 0.68rem; color: var(--slate-muted);"></i>
+          </button>
+          <div class="user-dropdown-card" id="adminUserMenuCard">
+            <div class="user-info-header">
+              <strong>System Administrator</strong>
+              <span style="font-size: 0.75rem; color: var(--slate-muted);">admin@lifelink.gov.in</span>
+              <span class="badge-status status-verified" style="margin-top: 0.35rem; font-size: 0.68rem; display: inline-block;">SUPER ADMIN</span>
+            </div>
+            <div class="dropdown-divider"></div>
+            <button onclick="switchView('settings')" class="dropdown-user-link">
+              <i class="fa-solid fa-sliders"></i> System Settings
+            </button>
+            <button onclick="switchView('audit-logs')" class="dropdown-user-link">
+              <i class="fa-solid fa-shield-halved"></i> Audit Logs
+            </button>
+            <div class="dropdown-divider"></div>
+            <button onclick="MockAuth.logout()" class="dropdown-user-link logout">
+              <i class="fa-solid fa-right-from-bracket"></i> Sign Out Portal
+            </button>
           </div>
         </div>
 
-        <button onclick="MockAuth.logout()" class="btn-logout-sidebar">
-          <i class="fa-solid fa-right-from-bracket"></i> Sign Out Portal
+        <!-- Mobile Menu Toggle Button -->
+        <button class="mobile-nav-toggle" onclick="toggleMobileNavDrawer()">
+          <i class="fa-solid fa-bars"></i>
         </button>
       </div>
+
     </div>
-  </aside>
+
+    <!-- Mobile Drawer -->
+    <div class="mobile-nav-drawer" id="mobileNavDrawer">
+      <button onclick="switchView('dashboard')" class="dropdown-link"><i class="fa-solid fa-chart-line"></i> Dashboard</button>
+      <button onclick="switchView('live-dispatch')" class="dropdown-link"><i class="fa-solid fa-satellite-dish"></i> Live Dispatch</button>
+      <button onclick="switchView('emergency-requests')" class="dropdown-link"><i class="fa-solid fa-truck-medical"></i> Emergency Requests</button>
+      <button onclick="switchView('organizations')" class="dropdown-link"><i class="fa-solid fa-building"></i> Organizations</button>
+      <button onclick="switchView('verification-requests')" class="dropdown-link"><i class="fa-solid fa-user-check"></i> Verification Requests</button>
+      <button onclick="switchView('donors')" class="dropdown-link"><i class="fa-solid fa-users"></i> Donors</button>
+      <button onclick="switchView('analytics')" class="dropdown-link"><i class="fa-solid fa-chart-pie"></i> Analytics</button>
+      <button onclick="switchView('notifications')" class="dropdown-link"><i class="fa-solid fa-bell"></i> Notifications</button>
+      <button onclick="switchView('settings')" class="dropdown-link"><i class="fa-solid fa-sliders"></i> System Settings</button>
+      <button onclick="switchView('help-support')" class="dropdown-link"><i class="fa-solid fa-headset"></i> Help & Support</button>
+      <div class="dropdown-divider"></div>
+      <button onclick="MockAuth.logout()" class="dropdown-user-link logout"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</button>
+    </div>
+  </header>
 
   <!-- MAIN WRAPPER -->
   <div class="main-wrapper">
 
-    <!-- TOP HEADER BAR -->
-    <header class="top-header-bar">
-      <div class="header-breadcrumb">
+    <!-- SUB HEADER BAR WITH VIEW TITLE -->
+    <div style="background: #FFFFFF; border-bottom: 1px solid var(--slate-border); padding: 0.75rem 1.75rem; display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; align-items: center; gap: 0.65rem;">
         <h2 class="page-title-text" id="topPageTitle">Admin Dashboard</h2>
         <span class="verified-org-chip">
           <i class="fa-solid fa-shield-halved"></i> MASTER PLATFORM GOVERNANCE
         </span>
       </div>
 
-      <div class="header-right-actions">
-        <div class="search-box-header">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" id="globalAdminSearch" onkeyup="handleGlobalSearch(this.value)" placeholder="Search organizations, IDs...">
-        </div>
-
-        <button onclick="switchView('create-org')" class="btn-create-org-cta">
-          <i class="fa-solid fa-plus"></i> CREATE ORGANIZATION
-        </button>
-      </div>
-    </header>
+      <button onclick="switchView('create-org')" class="btn-create-org-cta">
+        <i class="fa-solid fa-plus"></i> CREATE ORGANIZATION
+      </button>
+    </div>
 
     <!-- CONTENT AREA -->
     <main class="content-area">
@@ -2736,7 +2780,7 @@
 
     function switchView(viewId) {
       document.querySelectorAll('.view-pane').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.nav-item-btn, .nav-child-btn').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.top-nav-btn, .dropdown-link, .nav-item-btn, .nav-child-btn').forEach(el => el.classList.remove('active'));
 
       const targetPane = document.getElementById(`view-${viewId}`);
       const targetNav = document.getElementById(`nav-${viewId}`);
@@ -2744,10 +2788,11 @@
       if (targetPane) targetPane.classList.add('active');
       if (targetNav) targetNav.classList.add('active');
 
-      // Automatically expand parent group for active child view
+      // Highlight parent dropdown toggle for active child view
       const parentGroup = navGroupMapping[viewId];
       if (parentGroup) {
-        expandNavGroup(parentGroup);
+        const parentBtn = document.getElementById(`nav-parent-${parentGroup}`);
+        if (parentBtn) parentBtn.classList.add('active');
       }
 
       const titles = {
@@ -2772,7 +2817,32 @@
 
       const topTitle = document.getElementById('topPageTitle');
       if (topTitle) topTitle.textContent = titles[viewId] || 'Admin Dashboard';
+
+      closeAllNavDropdowns();
+      window.location.hash = viewId;
     }
+
+    function toggleUserMenuDropdown(e) {
+      if (e) e.stopPropagation();
+      const card = document.getElementById('adminUserMenuCard');
+      if (card) card.classList.toggle('show');
+    }
+
+    function toggleMobileNavDrawer() {
+      const drawer = document.getElementById('mobileNavDrawer');
+      if (drawer) drawer.classList.toggle('open');
+    }
+
+    function closeAllNavDropdowns() {
+      const card = document.getElementById('adminUserMenuCard');
+      if (card) card.classList.remove('show');
+      const drawer = document.getElementById('mobileNavDrawer');
+      if (drawer) drawer.classList.remove('open');
+    }
+
+    document.addEventListener('click', () => {
+      closeAllNavDropdowns();
+    });
 
     function closeModal(modalId) {
       const modal = document.getElementById(modalId);

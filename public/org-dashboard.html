@@ -54,61 +54,59 @@
       font-weight: 400;
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       overflow-x: hidden;
     }
 
-    /* SIDEBAR NAVIGATION */
-    .sidebar {
-      width: var(--sidebar-width);
+    /* TOP NAVIGATION BAR STYLES */
+    .top-nav-bar {
       background: #FFFFFF;
-      border-right: 1px solid var(--slate-border);
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      min-height: 100vh;
-      max-height: 100vh;
-      position: fixed;
+      border-bottom: 1px solid var(--slate-border);
+      position: sticky;
       top: 0;
-      bottom: 0;
-      left: 0;
-      z-index: 100;
-      transition: all 0.3s ease;
-      overflow: hidden;
+      z-index: 1000;
+      width: 100%;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
     }
 
-    .sidebar-header {
-      padding: 1.25rem 1.5rem 1rem 1.5rem;
-      border-bottom: 1px solid var(--slate-border);
+    .top-nav-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      height: 64px;
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .top-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
       flex-shrink: 0;
     }
 
     .brand-logo-card {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.6rem;
       text-decoration: none;
+      color: var(--navy-dark);
     }
 
-    .brand-logo-icon {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, var(--red-primary) 0%, var(--red-dark) 100%);
-      border-radius: 12px;
+    .brand-text-side {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.25rem;
-      box-shadow: 0 4px 14px rgba(230, 0, 46, 0.25);
+      flex-direction: column;
+      line-height: 1.1;
     }
 
     .brand-text-title {
       font-family: var(--font-main);
       font-weight: 800;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       letter-spacing: -0.02em;
       color: var(--navy-dark);
-      line-height: 1.1;
     }
 
     .brand-text-title span {
@@ -116,217 +114,337 @@
     }
 
     .brand-portal-tag {
-      font-size: 0.68rem;
+      font-size: 0.6rem;
       font-weight: 800;
       color: var(--blue-accent);
       background: var(--blue-soft);
-      padding: 0.2rem 0.5rem;
+      padding: 0.12rem 0.45rem;
       border-radius: 9999px;
       display: inline-block;
-      margin-top: 0.25rem;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.05em;
       text-transform: uppercase;
+      margin-top: 0.1rem;
     }
 
-    /* Nav List (Middle Scrollable) */
-    .sidebar-menu {
-      padding: 1rem 0.85rem;
-      list-style: none;
-      flex: 1;
-      overflow-y: auto;
+    .top-nav-center {
       display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
+      align-items: center;
+      flex: 1;
+      justify-content: center;
     }
 
-    .sidebar-menu::-webkit-scrollbar {
-      width: 4px;
+    .top-nav-links {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin: 0;
+      padding: 0;
     }
 
-    .sidebar-menu::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .sidebar-menu::-webkit-scrollbar-thumb {
-      background: #CBD5E1;
-      border-radius: 4px;
-    }
-
-    .nav-section-label {
+    .top-nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.45rem 0.85rem;
+      border-radius: 9999px;
+      color: var(--slate-body);
       font-family: var(--font-main);
-      font-size: 0.7rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .top-nav-btn:hover {
+      background: #F1F5F9;
+      color: var(--navy-dark);
+    }
+
+    .top-nav-btn.active {
+      background: #FFF0F3;
+      color: #E4002B;
+      font-weight: 700;
+      border-color: #FFD6DE;
+    }
+
+    .top-dropdown-item {
+      position: relative;
+    }
+
+    .top-dropdown-toggle .nav-chevron {
+      font-size: 0.65rem;
+      transition: transform 0.2s ease;
+      margin-left: 0.2rem;
+      color: var(--slate-muted);
+    }
+
+    .top-dropdown-item:hover .top-dropdown-menu,
+    .top-dropdown-item.open .top-dropdown-menu {
+      display: flex;
+    }
+
+    .top-dropdown-item:hover .nav-chevron,
+    .top-dropdown-item.open .nav-chevron {
+      transform: rotate(180deg);
+    }
+
+    .top-dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 0.35rem;
+      background: #FFFFFF;
+      border: 1px solid var(--slate-border);
+      border-radius: 14px;
+      padding: 0.5rem;
+      min-width: 220px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+      flex-direction: column;
+      gap: 0.2rem;
+      z-index: 1050;
+      animation: dropdownFadeIn 0.18s ease;
+    }
+
+    @keyframes dropdownFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dropdown-header {
+      font-size: 0.68rem;
       font-weight: 800;
       color: var(--slate-muted);
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      padding: 0.65rem 0.75rem 0.3rem 0.75rem;
+      padding: 0.4rem 0.65rem 0.2rem 0.65rem;
     }
 
-    .nav-item-btn {
+    .dropdown-link {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 0.65rem 0.85rem;
-      border-radius: 12px;
+      gap: 0.55rem;
+      padding: 0.45rem 0.75rem;
+      border-radius: 8px;
       color: var(--slate-body);
-      text-decoration: none;
       font-family: var(--font-main);
       font-weight: 600;
-      font-size: 0.88rem;
-      cursor: pointer;
-      border: 1px solid transparent;
-      transition: all 0.2s ease;
+      font-size: 0.84rem;
       background: transparent;
-      width: 100%;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
       text-align: left;
+      width: 100%;
+      transition: all 0.15s ease;
     }
 
-    .nav-item-btn i.nav-icon {
-      font-size: 1.05rem;
-      width: 24px;
-      color: var(--slate-muted);
-      transition: color 0.2s ease;
-    }
-
-    .nav-item-btn:hover {
-      background: var(--red-soft);
-      color: var(--red-primary);
-    }
-
-    .nav-item-btn:hover i.nav-icon {
-      color: var(--red-primary);
-    }
-
-    .nav-item-btn.active {
-      background: #FFEBEF;
-      color: var(--red-primary);
-      border-color: #FFD6DE;
-      font-weight: 800;
-    }
-
-    .nav-item-btn.active i.nav-icon {
-      color: var(--red-primary);
-    }
-
-    .nav-badge-pill {
-      font-size: 0.72rem;
-      font-weight: 800;
-      padding: 0.15rem 0.5rem;
-      border-radius: 9999px;
-      background: var(--red-primary);
-      color: white;
-    }
-
-    .nav-badge-pill.blue {
-      background: var(--blue-accent);
-    }
-
-    /* Sidebar Footer Profile Card (Bottom Fixed) */
-    .sidebar-footer {
-      padding: 1rem 0.85rem;
-      border-top: 1px solid var(--slate-border);
-      background: #FFFFFF;
-      flex-shrink: 0;
-    }
-
-    .org-profile-card-mini {
+    .dropdown-link:hover {
       background: #F8FAFC;
-      border: 1px solid var(--slate-border);
-      border-radius: 16px;
-      padding: 0.85rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
+      color: var(--navy-dark);
     }
 
-    .org-mini-header {
+    .dropdown-link.active {
+      background: #FFF0F3;
+      color: #E4002B;
+      font-weight: 700;
+    }
+
+    .top-nav-right {
       display: flex;
       align-items: center;
       gap: 0.65rem;
-    }
-
-    .org-avatar-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: #E2E8F0;
-      color: var(--navy-dark);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
       flex-shrink: 0;
     }
 
-    .org-mini-info {
-      flex: 1;
-      overflow: hidden;
-    }
-
-    .org-mini-name {
-      font-family: var(--font-main);
-      font-weight: 700;
-      font-size: 0.84rem;
-      color: var(--navy-dark);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .org-mini-status {
-      font-size: 0.72rem;
-      color: var(--green-success);
-      font-weight: 700;
+    .search-input-box {
+      position: relative;
       display: flex;
       align-items: center;
-      gap: 0.25rem;
     }
 
-    .btn-logout-sidebar {
-      width: 100%;
-      padding: 0.5rem;
-      background: #FFFFFF;
-      border: 1px solid var(--slate-border);
-      border-radius: 10px;
+    .search-input-box i {
+      position: absolute;
+      left: 0.75rem;
       color: var(--slate-muted);
-      font-family: var(--font-main);
-      font-weight: 700;
-      font-size: 0.8rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
+      font-size: 0.82rem;
+    }
+
+    .search-input-box input {
+      padding: 0.4rem 0.75rem 0.4rem 2.1rem;
+      background: #F8FAFC;
+      border: 1px solid var(--slate-border);
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      width: 180px;
       transition: all 0.2s ease;
     }
 
-    .btn-logout-sidebar:hover {
-      background: #FEF2F2;
-      border-color: #FCA5A5;
-      color: var(--red-primary);
+    .search-input-box input:focus {
+      width: 230px;
+      background: #FFFFFF;
+      border-color: var(--red-primary);
+      outline: none;
+    }
+
+    .top-nav-icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #F8FAFC;
+      border: 1px solid var(--slate-border);
+      color: var(--navy-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    .top-nav-icon-btn:hover {
+      background: #F1F5F9;
+      border-color: #CBD5E1;
+    }
+
+    .badge-dot {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 8px;
+      height: 8px;
+      background: var(--red-primary);
+      border-radius: 50%;
+      border: 2px solid white;
+    }
+
+    .user-menu-dropdown {
+      position: relative;
+    }
+
+    .user-profile-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.65rem 0.35rem 0.4rem;
+      background: #F8FAFC;
+      border: 1px solid var(--slate-border);
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .user-profile-btn:hover {
+      background: #F1F5F9;
+    }
+
+    .user-avatar-mini {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--red-primary), var(--red-dark));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.75rem;
+    }
+
+    .user-name-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--navy-dark);
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .user-dropdown-card {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 0.4rem;
+      background: #FFFFFF;
+      border: 1px solid var(--slate-border);
+      border-radius: 16px;
+      padding: 1rem;
+      width: 260px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+      flex-direction: column;
+      gap: 0.75rem;
+      z-index: 1050;
+    }
+
+    .user-dropdown-card.show {
+      display: flex;
     }
 
     /* MAIN CONTENT WRAPPER */
     .main-wrapper {
-      margin-left: var(--sidebar-width);
+      margin-left: 0;
+      width: 100%;
       flex: 1;
-      min-height: 100vh;
+      min-height: calc(100vh - 64px);
       display: flex;
       flex-direction: column;
     }
 
-    /* TOP HEADER BAR */
-    .top-header-bar {
-      height: 56px;
+    /* SUB HEADER BAR */
+    .top-sub-header {
       background: #FFFFFF;
       border-bottom: 1px solid var(--slate-border);
-      padding: 0 1.5rem;
+      padding: 0.85rem 1.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 90;
+    }
+
+    .mobile-nav-toggle {
+      display: none;
+      background: transparent;
+      border: none;
+      font-size: 1.2rem;
+      color: var(--navy-dark);
+      cursor: pointer;
+      padding: 0.4rem;
+    }
+
+    .mobile-nav-drawer {
+      display: none;
+      position: fixed;
+      top: 64px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #FFFFFF;
+      z-index: 999;
+      padding: 1.25rem;
+      overflow-y: auto;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .mobile-nav-drawer.open {
+      display: flex;
+    }
+
+    @media (max-width: 1024px) {
+      .top-nav-center {
+        display: none;
+      }
+      .mobile-nav-toggle {
+        display: block;
+      }
+      .search-input-box {
+        display: none;
+      }
     }
 
     .header-breadcrumb {
@@ -1129,140 +1247,177 @@
 </head>
 <body>
 
-  <!-- SIDEBAR NAVIGATION -->
-  <aside class="sidebar" id="sidebarNav">
-    <div class="sidebar-header">
-      <a href="org-dashboard.html" class="brand-logo-card">
-        <img src="assets/images/lifelink-logo.png" alt="LIFE LINK Logo" style="width: 36px; height: 36px; object-fit: contain; border-radius: 50%; box-shadow: 0 3px 10px rgba(230, 0, 46, 0.2); flex-shrink: 0;">
-        <div>
-          <div class="brand-text-title">LIFE <span>LINK</span></div>
-          <span class="brand-portal-tag">Organization Portal</span>
-        </div>
-      </a>
-    </div>
-
-    <ul class="sidebar-menu">
-      <li class="nav-section-label">Main Dispatch Controls</li>
-
-      <li>
-        <button onclick="switchView('dashboard')" class="nav-item-btn active" id="nav-dashboard">
-          <span><i class="fa-solid fa-gauge-high nav-icon"></i> Dashboard</span>
-        </button>
-      </li>
-
-      <li>
-        <button onclick="switchView('create-request')" class="nav-item-btn" id="nav-create-request">
-          <span><i class="fa-solid fa-circle-plus nav-icon" style="color: var(--red-primary);"></i> Create Request</span>
-          <span class="nav-badge-pill">New</span>
-        </button>
-      </li>
-
-      <li>
-        <button onclick="switchView('active-requests')" class="nav-item-btn" id="nav-active-requests">
-          <span><i class="fa-solid fa-list-check nav-icon"></i> Active Requests</span>
-          <span class="nav-badge-pill blue" id="activeReqBadge">3</span>
-        </button>
-      </li>
-
-      <li>
-        <button onclick="switchView('donor-responses')" class="nav-item-btn" id="nav-donor-responses">
-          <span><i class="fa-solid fa-user-check nav-icon"></i> Donor Responses</span>
-          <span class="nav-badge-pill" id="donorResponseBadge">5</span>
-        </button>
-      </li>
-
-      <li>
-        <button onclick="switchView('fulfillment-tracking')" class="nav-item-btn" id="nav-fulfillment-tracking">
-          <span><i class="fa-solid fa-route nav-icon"></i> Fulfillment Tracking</span>
-        </button>
-      </li>
-
-      <li class="nav-section-label">Management & Logs</li>
-
-      <li>
-        <button onclick="switchView('request-history')" class="nav-item-btn" id="nav-request-history">
-          <span><i class="fa-solid fa-clock-rotate-left nav-icon"></i> Request History</span>
-        </button>
-      </li>
-
-      <li>
-        <button onclick="switchView('notifications')" class="nav-item-btn" id="nav-notifications">
-          <span><i class="fa-solid fa-bell nav-icon"></i> Notifications</span>
-          <span class="nav-badge-pill" style="background: var(--amber-warn);">4</span>
-        </button>
-      </li>
-
-      <li>
-        <button onclick="switchView('org-profile')" class="nav-item-btn" id="nav-org-profile">
-          <span><i class="fa-solid fa-building-user nav-icon"></i> Facility Profile</span>
-        </button>
-      </li>
-
-      <li>
-        <button onclick="switchView('org-support')" class="nav-item-btn" id="nav-org-support">
-          <span><i class="fa-solid fa-hand-holding-hand nav-icon" style="color: var(--blue-accent);"></i> Org-to-Org Support</span>
-          <span class="nav-badge-pill blue" id="orgSupportBadge">2</span>
-        </button>
-      </li>
-
-      <li>
-        <button onclick="switchView('help-support')" class="nav-item-btn" id="nav-help-support">
-          <span><i class="fa-solid fa-circle-question nav-icon"></i> Help & Support</span>
-        </button>
-      </li>
-    </ul>
-
-    <!-- Sidebar Footer Profile Card -->
-    <div class="sidebar-footer">
-      <div class="org-profile-card-mini">
-        <div class="org-mini-header">
-          <div class="org-avatar-icon">
-            <i class="fa-solid fa-hospital"></i>
+  <!-- TOP NAVIGATION BAR -->
+  <header class="top-nav-bar">
+    <div class="top-nav-container">
+      <div class="top-nav-left">
+        <a href="org-dashboard.html" class="brand-logo-card">
+          <img src="assets/images/lifelink-logo.png" alt="LIFE LINK Logo" style="width: 36px; height: 36px; object-fit: contain; border-radius: 50%; box-shadow: 0 3px 10px rgba(230, 0, 46, 0.2); flex-shrink: 0;">
+          <div class="brand-text-side">
+            <div class="brand-text-title">LIFE <span>LINK</span></div>
+            <span class="brand-portal-tag">ORGANIZATION PORTAL</span>
           </div>
-          <div class="org-mini-info">
-            <div class="org-mini-name" id="sidebarOrgName">Government General Hospital</div>
-            <div class="org-mini-status">
-              <i class="fa-solid fa-circle-check"></i> Verified Organization
+        </a>
+      </div>
+
+      <nav class="top-nav-center">
+        <ul class="top-nav-links">
+          <li>
+            <button onclick="switchView('create-request')" class="top-nav-btn" id="nav-create-request">
+              <i class="fa-solid fa-circle-plus" style="color: var(--red-primary);"></i> Create Request
+              <span class="nav-badge-pill" style="font-size: 0.65rem; padding: 0.1rem 0.4rem; border-radius: 9999px; background: var(--red-primary); color: white;">New</span>
+            </button>
+          </li>
+          <li>
+            <button onclick="switchView('active-requests')" class="top-nav-btn" id="nav-active-requests">
+              <i class="fa-solid fa-list-check"></i> Active Requests
+              <span class="nav-badge-pill blue" id="activeReqBadge" style="font-size: 0.65rem; padding: 0.1rem 0.4rem; border-radius: 9999px; background: var(--blue-accent); color: white;">3</span>
+            </button>
+          </li>
+          <li>
+            <button onclick="switchView('donor-responses')" class="top-nav-btn" id="nav-donor-responses">
+              <i class="fa-solid fa-user-check"></i> Donor Responses
+              <span class="nav-badge-pill" id="donorResponseBadge" style="font-size: 0.65rem; padding: 0.1rem 0.4rem; border-radius: 9999px; background: var(--red-primary); color: white;">5</span>
+            </button>
+          </li>
+          <li>
+            <button onclick="switchView('fulfillment-tracking')" class="top-nav-btn" id="nav-fulfillment-tracking">
+              <i class="fa-solid fa-route"></i> Fulfillment
+            </button>
+          </li>
+          <li>
+            <button onclick="switchView('org-support')" class="top-nav-btn" id="nav-org-support">
+              <i class="fa-solid fa-hand-holding-hand" style="color: var(--blue-accent);"></i> Org Support
+              <span class="nav-badge-pill blue" id="orgSupportBadge" style="font-size: 0.65rem; padding: 0.1rem 0.4rem; border-radius: 9999px; background: var(--blue-accent); color: white;">2</span>
+            </button>
+          </li>
+
+          <!-- More Dropdown -->
+          <li class="top-dropdown-item" id="moreDropdownGroup">
+            <button class="top-nav-btn top-dropdown-toggle" id="moreDropdownToggle">
+              <i class="fa-solid fa-ellipsis"></i> More <i class="fa-solid fa-chevron-down nav-chevron"></i>
+            </button>
+            <div class="top-dropdown-menu">
+              <div class="dropdown-header">Overview & Logs</div>
+              <button onclick="switchView('dashboard')" class="dropdown-link" id="nav-dashboard">
+                <i class="fa-solid fa-gauge-high"></i> Dashboard
+              </button>
+              <button onclick="switchView('request-history')" class="dropdown-link" id="nav-request-history">
+                <i class="fa-solid fa-clock-rotate-left"></i> Request History
+              </button>
+              <button onclick="switchView('notifications')" class="dropdown-link" id="nav-notifications">
+                <i class="fa-solid fa-bell"></i> Notifications
+                <span class="nav-badge-pill" style="font-size: 0.65rem; padding: 0.1rem 0.4rem; border-radius: 9999px; background: var(--amber-warn); color: white; margin-left: auto;">4</span>
+              </button>
+              <div class="dropdown-header" style="margin-top: 0.3rem;">Facility & Help</div>
+              <button onclick="switchView('org-profile')" class="dropdown-link" id="nav-org-profile">
+                <i class="fa-solid fa-building-user"></i> Facility Profile
+              </button>
+              <button onclick="switchView('help-support')" class="dropdown-link" id="nav-help-support">
+                <i class="fa-solid fa-circle-question"></i> Help & Support
+              </button>
             </div>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="top-nav-right">
+        <div class="search-input-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search requests..." id="topGlobalSearch">
+        </div>
+
+        <button onclick="switchView('notifications')" class="top-nav-icon-btn" title="Notifications">
+          <i class="fa-solid fa-bell"></i>
+          <span class="badge-dot"></span>
+        </button>
+
+        <div class="user-menu-dropdown">
+          <button class="user-profile-btn" onclick="toggleUserMenuDropdown(event)">
+            <div class="user-avatar-mini">
+              <i class="fa-solid fa-hospital"></i>
+            </div>
+            <span class="user-name-label" id="headerOrgName">Govt General Hospital</span>
+            <i class="fa-solid fa-chevron-down" style="font-size: 0.65rem; color: var(--slate-muted);"></i>
+          </button>
+          
+          <div class="user-dropdown-card" id="userMenuDropdownCard">
+            <div style="display: flex; align-items: center; gap: 0.65rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--slate-border);">
+              <div style="width: 36px; height: 36px; border-radius: 10px; background: var(--red-soft); color: var(--red-primary); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;">
+                <i class="fa-solid fa-hospital"></i>
+              </div>
+              <div>
+                <div style="font-weight: 800; font-size: 0.88rem; color: var(--navy-dark);" id="dropdownOrgName">Govt General Hospital</div>
+                <div style="font-size: 0.72rem; color: var(--green-success); font-weight: 700; display: flex; align-items: center; gap: 0.25rem;">
+                  <i class="fa-solid fa-circle-check"></i> Verified Hospital
+                </div>
+              </div>
+            </div>
+            <button onclick="switchView('org-profile')" class="dropdown-link">
+              <i class="fa-solid fa-building-user"></i> Facility Profile
+            </button>
+            <button onclick="switchView('org-support')" class="dropdown-link">
+              <i class="fa-solid fa-hand-holding-hand"></i> Org Support
+            </button>
+            <button onclick="MockAuth.logout()" class="dropdown-link" style="color: var(--red-primary); border-top: 1px solid var(--slate-border); margin-top: 0.25rem; padding-top: 0.65rem;">
+              <i class="fa-solid fa-right-from-bracket"></i> Sign Out Portal
+            </button>
           </div>
         </div>
 
-        <button onclick="MockAuth.logout()" class="btn-logout-sidebar">
-          <i class="fa-solid fa-right-from-bracket"></i> Sign Out Portal
+        <button class="mobile-nav-toggle" onclick="toggleMobileNavDrawer()">
+          <i class="fa-solid fa-bars"></i>
         </button>
       </div>
     </div>
-  </aside>
+  </header>
+
+  <!-- MOBILE NAV DRAWER -->
+  <div class="mobile-nav-drawer" id="mobileNavDrawer">
+    <div style="font-size: 0.7rem; font-weight: 800; color: var(--slate-muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 0.4rem 0;">Navigation Menu</div>
+    <button onclick="switchView('create-request')" class="dropdown-link" id="mob-nav-create-request">
+      <i class="fa-solid fa-circle-plus" style="color: var(--red-primary);"></i> Create Request
+    </button>
+    <button onclick="switchView('active-requests')" class="dropdown-link" id="mob-nav-active-requests">
+      <i class="fa-solid fa-list-check"></i> Active Requests
+    </button>
+    <button onclick="switchView('donor-responses')" class="dropdown-link" id="mob-nav-donor-responses">
+      <i class="fa-solid fa-user-check"></i> Donor Responses
+    </button>
+    <button onclick="switchView('fulfillment-tracking')" class="dropdown-link" id="mob-nav-fulfillment-tracking">
+      <i class="fa-solid fa-route"></i> Fulfillment Tracking
+    </button>
+    <button onclick="switchView('org-support')" class="dropdown-link" id="mob-nav-org-support">
+      <i class="fa-solid fa-hand-holding-hand" style="color: var(--blue-accent);"></i> Org Support
+    </button>
+    <button onclick="switchView('dashboard')" class="dropdown-link" id="mob-nav-dashboard">
+      <i class="fa-solid fa-gauge-high"></i> Dashboard
+    </button>
+    <button onclick="switchView('request-history')" class="dropdown-link" id="mob-nav-request-history">
+      <i class="fa-solid fa-clock-rotate-left"></i> Request History
+    </button>
+    <button onclick="switchView('notifications')" class="dropdown-link" id="mob-nav-notifications">
+      <i class="fa-solid fa-bell"></i> Notifications
+    </button>
+    <button onclick="switchView('org-profile')" class="dropdown-link" id="mob-nav-org-profile">
+      <i class="fa-solid fa-building-user"></i> Facility Profile
+    </button>
+    <button onclick="switchView('help-support')" class="dropdown-link" id="mob-nav-help-support">
+      <i class="fa-solid fa-circle-question"></i> Help & Support
+    </button>
+    <button onclick="MockAuth.logout()" class="dropdown-link" style="color: var(--red-primary); margin-top: 1rem; border-top: 1px solid var(--slate-border); padding-top: 0.75rem;">
+      <i class="fa-solid fa-right-from-bracket"></i> Sign Out Portal
+    </button>
+  </div>
 
   <!-- MAIN WRAPPER -->
   <div class="main-wrapper">
-
-    <!-- TOP HEADER BAR -->
-    <header class="top-header-bar">
-      <div class="header-breadcrumb">
-        <button class="mobile-menu-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
-        <h2 class="page-title-text" id="topPageTitle">Organization Dashboard</h2>
-        <span class="verified-org-chip">
-          <i class="fa-solid fa-shield-check"></i> VERIFIED HEALTHCARE ORGANIZATION
-        </span>
-      </div>
-
-      <div class="header-right-actions">
-        <div class="search-box-header">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" placeholder="Search REQ, blood group...">
-        </div>
-
-        <button class="btn-notif-bell" onclick="switchView('notifications')" title="Notifications">
-          <i class="fa-regular fa-bell"></i>
-          <div class="bell-pulse-badge"></div>
-        </button>
-
-        <button onclick="switchView('create-request')" class="btn-create-req-cta">
-          <i class="fa-solid fa-plus"></i> NEW REQUEST
-        </button>
-      </div>
-    </header>
+    <div class="top-sub-header">
+      <h2 class="page-title-text" id="topPageTitle">Organization Dashboard</h2>
+      <span class="verified-org-chip">
+        <i class="fa-solid fa-shield-check"></i> VERIFIED HEALTHCARE ORGANIZATION
+      </span>
+    </div>
 
     <!-- CONTENT AREA -->
     <main class="content-area">
@@ -2484,13 +2639,26 @@
 
     function switchView(viewId) {
       document.querySelectorAll('.view-pane').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.nav-item-btn').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.top-nav-btn, .dropdown-link').forEach(el => el.classList.remove('active'));
 
       const targetPane = document.getElementById(`view-${viewId}`);
       const targetNav = document.getElementById(`nav-${viewId}`);
+      const mobNav = document.getElementById(`mob-nav-${viewId}`);
 
       if (targetPane) targetPane.classList.add('active');
       if (targetNav) targetNav.classList.add('active');
+      if (mobNav) mobNav.classList.add('active');
+
+      // Check if active view belongs to the "More" dropdown
+      const moreNavIds = ['dashboard', 'request-history', 'notifications', 'org-profile', 'help-support'];
+      const moreToggle = document.getElementById('moreDropdownToggle');
+      if (moreToggle) {
+        if (moreNavIds.includes(viewId)) {
+          moreToggle.classList.add('active');
+        } else {
+          moreToggle.classList.remove('active');
+        }
+      }
 
       activeView = viewId;
       window.location.hash = viewId;
@@ -2522,15 +2690,32 @@
         }
       }
 
-      // Close mobile sidebar if open
-      const sidebar = document.getElementById('sidebarNav');
-      if (sidebar) sidebar.classList.remove('open');
+      closeAllNavDropdowns();
+      const mobileDrawer = document.getElementById('mobileNavDrawer');
+      if (mobileDrawer) mobileDrawer.classList.remove('open');
     }
 
-    function toggleSidebar() {
-      const sidebar = document.getElementById('sidebarNav');
-      if (sidebar) sidebar.classList.toggle('open');
+    function toggleUserMenuDropdown(e) {
+      if (e) e.stopPropagation();
+      const card = document.getElementById('userMenuDropdownCard');
+      if (card) card.classList.toggle('show');
     }
+
+    function toggleMobileNavDrawer() {
+      const drawer = document.getElementById('mobileNavDrawer');
+      if (drawer) drawer.classList.toggle('open');
+    }
+
+    function closeAllNavDropdowns() {
+      const card = document.getElementById('userMenuDropdownCard');
+      if (card) card.classList.remove('show');
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.user-menu-dropdown')) {
+        closeAllNavDropdowns();
+      }
+    });
 
     function selectBloodGroup(btn, group) {
       document.querySelectorAll('.bg-select-btn').forEach(b => b.classList.remove('active'));
@@ -2592,8 +2777,8 @@
       const hotEl = document.getElementById('profEmergencyHotline');
       const imgPreview = document.getElementById('orgFacilityImagePreview');
       const titleEl = document.getElementById('orgProfileDisplayTitle');
-      const sidebarName = document.getElementById('sidebarOrgName');
-
+      const headerOrg = document.getElementById('headerOrgName');
+      const dropdownOrg = document.getElementById('dropdownOrgName');
       if (nameEl) nameEl.value = profile.name;
       if (typeEl) typeEl.value = profile.type;
       if (certEl) certEl.value = profile.certificationNo;
@@ -2604,7 +2789,8 @@
       if (hotEl) hotEl.value = profile.emergencyHotline;
       if (imgPreview && profile.imageUrl) imgPreview.src = profile.imageUrl;
       if (titleEl) titleEl.textContent = profile.name;
-      if (sidebarName) sidebarName.textContent = profile.name;
+      if (headerOrg) headerOrg.textContent = profile.name;
+      if (dropdownOrg) dropdownOrg.textContent = profile.name;
     }
 
     function previewFacilityImage(e) {
