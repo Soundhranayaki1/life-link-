@@ -2103,7 +2103,7 @@
               </p>
             </div>
 
-            <button onclick="openCreateSupportModal()" class="btn-primary-red" style="font-size: 0.85rem;">
+            <button onclick="switchView('create-org-support')" class="btn-primary-red" style="font-size: 0.85rem;">
               <i class="fa-solid fa-plus"></i> Request Support
             </button>
           </div>
@@ -2134,6 +2134,210 @@
                 <!-- Rendered dynamically -->
               </tbody>
             </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 8C. REQUEST ORGANIZATION SUPPORT FORM VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-create-org-support" class="view-pane">
+        <div class="card-white" style="max-width: 820px; margin: 0 auto;">
+          <button onclick="switchView('org-support')" class="btn-secondary-outline" style="margin-bottom: 1.25rem; font-size: 0.82rem; padding: 0.4rem 0.85rem;">
+            <i class="fa-solid fa-arrow-left"></i> Back to Organization Support
+          </button>
+
+          <div style="border-bottom: 1px solid var(--slate-border); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
+            <span class="verified-org-chip" style="background: #EFF6FF; border-color: #BFDBFE; color: #1D4ED8; margin-bottom: 0.4rem;">
+              <i class="fa-solid fa-hand-holding-hand"></i> INTER-ORGANIZATION DISPATCH & SUPPORT
+            </span>
+            <h1 style="font-family: var(--font-main); font-size: 1.8rem; font-weight: 800; color: var(--navy-dark);">
+              Request Organization Support
+            </h1>
+            <p style="font-size: 0.92rem; color: var(--slate-muted); margin-top: 0.25rem;">
+              Request blood inventory or operational support from a verified healthcare organization.
+            </p>
+          </div>
+
+          <form id="createOrgSupportForm" onsubmit="handleOrgSupportFormSubmit(event)">
+            <!-- 1. Support Type -->
+            <div class="form-group-item">
+              <label class="form-label-txt">1. Select Support Type <span style="color: var(--red-primary);">*</span></label>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <label style="background: #F8FAFC; border: 1.5px solid var(--red-primary); border-radius: 12px; padding: 0.9rem 1.15rem; display: flex; align-items: center; gap: 0.65rem; cursor: pointer; transition: all 0.2s ease;" id="labelSuppTypeBlood">
+                  <input type="radio" name="suppType" value="Blood / Blood Component" checked onchange="toggleSuppTypeOptions(this.value)" style="accent-color: var(--red-primary);">
+                  <div>
+                    <strong style="display: block; font-family: var(--font-main); font-size: 0.92rem; color: var(--navy-dark);">Blood / Blood Component</strong>
+                    <span style="font-size: 0.78rem; color: var(--slate-muted);">Transfer units from verified blood bank inventory</span>
+                  </div>
+                </label>
+                <label style="background: #F8FAFC; border: 1px solid var(--slate-border); border-radius: 12px; padding: 0.9rem 1.15rem; display: flex; align-items: center; gap: 0.65rem; cursor: pointer; transition: all 0.2s ease;" id="labelSuppTypeOps">
+                  <input type="radio" name="suppType" value="Operational Support" onchange="toggleSuppTypeOptions(this.value)" style="accent-color: var(--red-primary);">
+                  <div>
+                    <strong style="display: block; font-family: var(--font-main); font-size: 0.92rem; color: var(--navy-dark);">Operational Support</strong>
+                    <span style="font-size: 0.78rem; color: var(--slate-muted);">Staff, mobile collection, or cold-chain logistics support</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- 2. Blood Group -->
+            <div class="form-group-item" id="suppBloodGroupSection">
+              <label class="form-label-txt">2. Required Blood Group <span style="color: var(--red-primary);">*</span></label>
+              <div class="bg-grid-select">
+                <button type="button" class="bg-select-btn active" onclick="selectSuppBloodGroup(this, 'O+')">O+</button>
+                <button type="button" class="bg-select-btn" onclick="selectSuppBloodGroup(this, 'O-')">O-</button>
+                <button type="button" class="bg-select-btn" onclick="selectSuppBloodGroup(this, 'A+')">A+</button>
+                <button type="button" class="bg-select-btn" onclick="selectSuppBloodGroup(this, 'A-')">A-</button>
+                <button type="button" class="bg-select-btn" onclick="selectSuppBloodGroup(this, 'B+')">B+</button>
+                <button type="button" class="bg-select-btn" onclick="selectSuppBloodGroup(this, 'B-')">B-</button>
+                <button type="button" class="bg-select-btn" onclick="selectSuppBloodGroup(this, 'AB+')">AB+</button>
+                <button type="button" class="bg-select-btn" onclick="selectSuppBloodGroup(this, 'AB-')">AB-</button>
+              </div>
+              <input type="hidden" id="suppBloodGroup" value="O+">
+            </div>
+
+            <!-- 3. Blood Component & 4. Units Required -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+              <div class="form-group-item" id="suppComponentSection">
+                <label class="form-label-txt" for="suppComponent">3. Blood Component <span style="color: var(--red-primary);">*</span></label>
+                <select id="suppComponent" class="form-control-select" required>
+                  <option value="Packed Red Cells" selected>Packed Red Cells</option>
+                  <option value="Whole Blood">Whole Blood</option>
+                  <option value="Platelets">Platelets</option>
+                  <option value="Plasma">Plasma</option>
+                </select>
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-txt" for="suppUnits">4. Units Required <span style="color: var(--red-primary);">*</span></label>
+                <input type="number" id="suppUnits" class="form-control-input" value="3" min="1" max="50" required>
+              </div>
+            </div>
+
+            <!-- 5. Urgency & 6. Required By -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+              <div class="form-group-item">
+                <label class="form-label-txt" for="suppUrgency">5. Urgency Level <span style="color: var(--red-primary);">*</span></label>
+                <select id="suppUrgency" class="form-control-select" required>
+                  <option value="Critical" selected>Critical (Immediate Coordination)</option>
+                  <option value="High">High Priority (Within 3 Hours)</option>
+                  <option value="Moderate">Moderate (Within 12 Hours)</option>
+                </select>
+              </div>
+
+              <div class="form-group-item">
+                <label class="form-label-txt" for="suppRequiredBy">6. Required By (Date & Time) <span style="color: var(--red-primary);">*</span></label>
+                <input type="datetime-local" id="suppRequiredBy" class="form-control-input" required>
+              </div>
+            </div>
+
+            <!-- 7. Select Receiving / Supporting Organization -->
+            <div class="form-group-item">
+              <label class="form-label-txt">7. Select Receiving / Supporting Organization <span style="color: var(--red-primary);">*</span></label>
+              <p style="font-size: 0.8rem; color: var(--slate-muted); margin-top: -0.2rem; margin-bottom: 0.75rem;">
+                Select a verified eligible healthcare organization or blood bank in your regional network:
+              </p>
+              
+              <div id="suppOrgCardsGrid" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <!-- Populated dynamically via JS -->
+              </div>
+              <input type="hidden" id="suppReceivingOrg" value="City Blood Bank" required>
+            </div>
+
+            <!-- 8. Additional Notes -->
+            <div class="form-group-item">
+              <label class="form-label-txt" for="suppNotes">8. Additional Support Notes (Optional)</label>
+              <textarea id="suppNotes" class="form-control-textarea" rows="3" placeholder="Specify logistics details, cold-chain transport requirements, or patient context..."></textarea>
+            </div>
+
+            <!-- 9. Requesting Organization (Auto-populated) -->
+            <div class="form-group-item">
+              <label class="form-label-txt">9. Requesting Organization (Logged-in Facility)</label>
+              <div style="background: #F1F5F9; border: 1px solid var(--slate-border); border-radius: 12px; padding: 0.85rem 1.15rem; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                  <strong style="font-family: var(--font-main); font-size: 0.95rem; color: var(--navy-dark);" id="suppRequestingOrgName">Government General Hospital</strong>
+                  <div style="font-size: 0.78rem; color: var(--slate-muted); margin-top: 0.15rem;">Facility ID: LL-GH-2026-001 • Hosur, Tamil Nadu</div>
+                </div>
+                <span class="verified-org-chip">
+                  <i class="fa-solid fa-shield-check"></i> VERIFIED
+                </span>
+              </div>
+            </div>
+
+            <!-- Bottom Actions -->
+            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--slate-border);">
+              <button type="button" onclick="switchView('org-support')" class="btn-secondary-outline" style="padding: 0.75rem 1.5rem;">
+                Cancel
+              </button>
+              <button type="submit" class="btn-primary-red" style="padding: 0.75rem 1.75rem; font-size: 0.95rem;">
+                <i class="fa-solid fa-paper-plane"></i> Submit Support Request
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 8D. SUPPORT REQUEST CONFIRMATION / DETAIL VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-org-support-detail" class="view-pane">
+        <div class="card-white" style="max-width: 740px; margin: 0 auto; text-align: center; padding: 2.25rem 2rem;">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--green-soft); border: 2px solid #A7F3D0; color: var(--green-success); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; margin: 0 auto 1.25rem auto;">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+
+          <h2 style="font-family: var(--font-main); font-size: 1.8rem; font-weight: 800; color: var(--navy-dark); margin-bottom: 0.25rem;">
+            Support Request Submitted
+          </h2>
+          <div style="font-family: var(--font-main); font-weight: 800; font-size: 1.15rem; color: var(--red-primary); margin-bottom: 1.5rem;" id="detailSupportId">
+            SUP-2026-718
+          </div>
+
+          <div style="background: #F8FAFC; border: 1px solid var(--slate-border); border-radius: 18px; padding: 1.5rem; text-align: left; margin-bottom: 1.75rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; font-size: 0.9rem;">
+              <div>
+                <span style="color: var(--slate-muted); font-size: 0.8rem; display: block; font-weight: 600;">Status</span>
+                <span class="badge-status status-active" id="detailStatus" style="display: inline-block; margin-top: 0.2rem;">Support Requested</span>
+              </div>
+              <div>
+                <span style="color: var(--slate-muted); font-size: 0.8rem; display: block; font-weight: 600;">Urgency</span>
+                <strong style="color: var(--red-primary);" id="detailUrgency">Critical</strong>
+              </div>
+              <div>
+                <span style="color: var(--slate-muted); font-size: 0.8rem; display: block; font-weight: 600;">Requesting Organization</span>
+                <strong id="detailRequestingOrg" style="color: var(--navy-dark);">Government General Hospital</strong>
+              </div>
+              <div>
+                <span style="color: var(--slate-muted); font-size: 0.8rem; display: block; font-weight: 600;">Receiving Organization</span>
+                <strong id="detailReceivingOrg" style="color: var(--navy-dark);">City Blood Bank</strong>
+              </div>
+              <div>
+                <span style="color: var(--slate-muted); font-size: 0.8rem; display: block; font-weight: 600;">Blood Component / Details</span>
+                <strong id="detailComponent" style="color: var(--navy-dark);">O+ Packed Red Cells</strong>
+              </div>
+              <div>
+                <span style="color: var(--slate-muted); font-size: 0.8rem; display: block; font-weight: 600;">Units Required</span>
+                <strong id="detailUnits" style="color: var(--navy-dark);">3 Units</strong>
+              </div>
+              <div>
+                <span style="color: var(--slate-muted); font-size: 0.8rem; display: block; font-weight: 600;">Required By</span>
+                <strong id="detailRequiredBy" style="color: var(--navy-dark);">Today • Within 2 Hours</strong>
+              </div>
+              <div>
+                <span style="color: var(--slate-muted); font-size: 0.8rem; display: block; font-weight: 600;">Submission Timestamp</span>
+                <span id="detailTimestamp" style="color: var(--slate-muted);">Just now</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 1rem; justify-content: center;">
+            <button onclick="switchView('org-support')" class="btn-primary-red" style="padding: 0.75rem 1.6rem;">
+              <i class="fa-solid fa-list-check"></i> View Support Request
+            </button>
+            <button onclick="switchView('create-org-support')" class="btn-secondary-outline" style="padding: 0.75rem 1.6rem;">
+              <i class="fa-solid fa-plus"></i> Create Another Request
+            </button>
           </div>
         </div>
       </div>
@@ -2291,7 +2495,6 @@
       activeView = viewId;
       window.location.hash = viewId;
 
-      // Update Top Title
       const titleMap = {
         'dashboard': 'Organization Dashboard',
         'create-request': 'Create Emergency Blood Request',
@@ -2302,10 +2505,22 @@
         'notifications': 'Notification Center',
         'org-profile': 'Facility Profile & Verification',
         'org-support': 'Organization-to-Organization Support',
+        'create-org-support': 'Request Organization Support',
+        'org-support-detail': 'Support Request Details',
         'help-support': 'Help & Support'
       };
       const titleEl = document.getElementById('topPageTitle');
       if (titleEl) titleEl.textContent = titleMap[viewId] || 'Organization Portal';
+
+      if (viewId === 'create-org-support') {
+        renderEligibleOrgCards();
+        const suppTimeInput = document.getElementById('suppRequiredBy');
+        if (suppTimeInput && !suppTimeInput.value) {
+          const now = new Date();
+          now.setHours(now.getHours() + 3);
+          suppTimeInput.value = now.toISOString().slice(0, 16);
+        }
+      }
 
       // Close mobile sidebar if open
       const sidebar = document.getElementById('sidebarNav');
@@ -2536,30 +2751,129 @@
       }).join('');
     }
 
-    function openCreateSupportModal() {
-      const targetOrg = prompt('Enter recipient hospital/blood bank for support request:', 'City Blood Bank');
-      if (!targetOrg) return;
+    const eligibleOrgsList = [
+      { id: 'bb1', name: 'City Blood Bank', type: 'Government Blood Bank', distance: '~4.2 km', location: 'Hosur Central', status: 'VERIFIED' },
+      { id: 'bb2', name: 'District Blood Bank', type: 'Government Blood Bank', distance: '~6.8 km', location: 'Krishnagiri', status: 'VERIFIED' },
+      { id: 'bb3', name: 'Salem Regional Blood Bank', type: 'Private Blood Bank', distance: '~12.4 km', location: 'Salem', status: 'VERIFIED' },
+      { id: 'bb4', name: 'Apex Blood Centre', type: 'Authorized Healthcare Facility', distance: '~8.1 km', location: 'Hosur East', status: 'VERIFIED' }
+    ];
 
-      const units = prompt('Enter required units:', '3');
-      if (!units) return;
+    function renderEligibleOrgCards() {
+      const container = document.getElementById('suppOrgCardsGrid');
+      if (!container) return;
 
-      MockData.createOrgSupportRequest({
-        requestingOrg: 'Government General Hospital',
-        receivingOrg: targetOrg,
-        bloodGroup: 'O+',
-        component: 'Packed Red Cells',
+      const currentSelected = document.getElementById('suppReceivingOrg')?.value || 'City Blood Bank';
+
+      container.innerHTML = eligibleOrgsList.map(o => {
+        const isSelected = o.name === currentSelected;
+        return `
+          <div onclick="selectReceivingOrgCard('${o.name}')" class="supp-org-card ${isSelected ? 'selected' : ''}" style="background: ${isSelected ? '#FFF5F7' : '#FFFFFF'}; border: ${isSelected ? '2px solid var(--red-primary)' : '1px solid var(--slate-border)'}; border-radius: 14px; padding: 1rem 1.15rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s ease;">
+            <div style="display: flex; align-items: center; gap: 0.85rem;">
+              <div style="width: 38px; height: 38px; border-radius: 10px; background: ${isSelected ? 'var(--red-primary)' : '#F1F5F9'}; color: ${isSelected ? 'white' : 'var(--navy-dark)'}; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;">
+                <i class="fa-solid fa-building-circle-check"></i>
+              </div>
+              <div>
+                <div style="font-family: var(--font-main); font-weight: 800; font-size: 0.95rem; color: var(--navy-dark);">${o.name}</div>
+                <div style="font-size: 0.78rem; color: var(--slate-muted);">${o.type} • ${o.location} (<strong>${o.distance}</strong>)</div>
+              </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <span class="verified-org-chip"><i class="fa-solid fa-shield-check"></i> VERIFIED</span>
+              <div style="width: 20px; height: 20px; border-radius: 50%; border: 2px solid ${isSelected ? 'var(--red-primary)' : '#CBD5E1'}; background: ${isSelected ? 'var(--red-primary)' : 'transparent'}; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.65rem;">
+                ${isSelected ? '<i class="fa-solid fa-check"></i>' : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectReceivingOrgCard(orgName) {
+      const input = document.getElementById('suppReceivingOrg');
+      if (input) input.value = orgName;
+      renderEligibleOrgCards();
+    }
+
+    function selectSuppBloodGroup(btn, group) {
+      document.querySelectorAll('#suppBloodGroupSection .bg-select-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const input = document.getElementById('suppBloodGroup');
+      if (input) input.value = group;
+    }
+
+    function toggleSuppTypeOptions(type) {
+      const bgSec = document.getElementById('suppBloodGroupSection');
+      const compSec = document.getElementById('suppComponentSection');
+      const lblBlood = document.getElementById('labelSuppTypeBlood');
+      const lblOps = document.getElementById('labelSuppTypeOps');
+
+      if (type === 'Operational Support') {
+        if (bgSec) bgSec.style.display = 'none';
+        if (compSec) compSec.style.display = 'none';
+        if (lblBlood) { lblBlood.style.border = '1px solid var(--slate-border)'; }
+        if (lblOps) { lblOps.style.border = '1.5px solid var(--red-primary)'; }
+      } else {
+        if (bgSec) bgSec.style.display = 'block';
+        if (compSec) compSec.style.display = 'block';
+        if (lblBlood) { lblBlood.style.border = '1.5px solid var(--red-primary)'; }
+        if (lblOps) { lblOps.style.border = '1px solid var(--slate-border)'; }
+      }
+    }
+
+    function handleOrgSupportFormSubmit(e) {
+      e.preventDefault();
+
+      const typeRadios = document.getElementsByName('suppType');
+      let suppType = 'Blood / Blood Component';
+      for (const r of typeRadios) { if (r.checked) suppType = r.value; }
+
+      const bloodGroup = document.getElementById('suppBloodGroup')?.value || 'O+';
+      const component = suppType === 'Operational Support' ? 'Operational Support' : (document.getElementById('suppComponent')?.value || 'Packed Red Cells');
+      const units = document.getElementById('suppUnits')?.value || '3';
+      const urgency = document.getElementById('suppUrgency')?.value || 'Critical';
+      const requiredBy = document.getElementById('suppRequiredBy')?.value || 'Within 3 Hours';
+      const receivingOrg = document.getElementById('suppReceivingOrg')?.value || 'City Blood Bank';
+      const notes = document.getElementById('suppNotes')?.value || '';
+      const requestingOrg = 'Government General Hospital';
+
+      const newSupport = MockData.createOrgSupportRequest({
+        requestingOrg,
+        receivingOrg,
+        bloodGroup: suppType === 'Operational Support' ? 'N/A' : bloodGroup,
+        component,
         unitsRequired: units,
-        urgency: 'CRITICAL',
-        requiredBy: '2 hours'
+        urgency,
+        requiredBy,
+        notes
       });
 
-      alert(`✓ Support Request submitted to ${targetOrg}. Inter-organization dispatch initiated.`);
+      // Update detail page view
+      const detailId = document.getElementById('detailSupportId');
+      if (detailId) detailId.textContent = newSupport.id;
+      const detailStatus = document.getElementById('detailStatus');
+      if (detailStatus) detailStatus.textContent = newSupport.status;
+      const detailUrgency = document.getElementById('detailUrgency');
+      if (detailUrgency) detailUrgency.textContent = urgency;
+      const detailReqOrg = document.getElementById('detailRequestingOrg');
+      if (detailReqOrg) detailReqOrg.textContent = requestingOrg;
+      const detailRecOrg = document.getElementById('detailReceivingOrg');
+      if (detailRecOrg) detailRecOrg.textContent = receivingOrg;
+      const detailComp = document.getElementById('detailComponent');
+      if (detailComp) detailComp.textContent = suppType === 'Operational Support' ? 'Operational Assistance' : `${bloodGroup} (${component})`;
+      const detailUnits = document.getElementById('detailUnits');
+      if (detailUnits) detailUnits.textContent = `${units} Units`;
+      const detailReqBy = document.getElementById('detailRequiredBy');
+      if (detailReqBy) detailReqBy.textContent = requiredBy;
+      const detailTime = document.getElementById('detailTimestamp');
+      if (detailTime) detailTime.textContent = newSupport.timestamp;
+
       renderOrgSupportTable();
+      switchView('org-support-detail');
     }
 
     function respondOrgSupport(supportId, action) {
       MockData.updateOrgSupportStatus(supportId, action);
-      alert(`Inter-organization support ${supportId} marked as ${action}.`);
       renderOrgSupportTable();
     }
 
