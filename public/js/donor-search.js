@@ -66,7 +66,7 @@ function renderDonorCards(donors) {
 
         <h3 style="font-size: 1.25rem; margin-bottom: 0.35rem;">${d.name}</h3>
         <div style="color: var(--slate-muted); font-size: 0.9rem; margin-bottom: 0.35rem;">
-          📍 Location: <strong>${d.city}${d.address ? ', ' + d.address : ''}</strong>
+          📍 Location: <strong>${d.city} (${d.approxDistance || '~2.8 km'})</strong>
         </div>
         <div style="color: var(--slate-muted); font-size: 0.9rem; margin-bottom: 0.35rem;">
           ⭐ Completed Donations: <strong>${d.totalDonations || 0} times</strong>

@@ -16,8 +16,12 @@ const notificationSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['EmergencyRequest', 'MatchAlert', 'Verification', 'StockUpdate'],
+    enum: ['EmergencyRequest', 'MatchAlert', 'Verification', 'StockUpdate', 'OrgResponse', 'Fulfillment', 'OrgSupport', 'SystemAlert'],
     default: 'EmergencyRequest'
+  },
+  link: {
+    type: String,
+    default: ''
   },
   isRead: {
     type: Boolean,

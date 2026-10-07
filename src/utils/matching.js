@@ -9,10 +9,15 @@ const { calculateEligibility } = require('./eligibility');
  * Perform smart ranked donor matching for an emergency request
  * @param {Object} request { bloodGroup, city, searchRadiusKm }
  * @param {Array} donors List of donor profiles/users
+ * @param {Object} settings System settings { initialRadius, expansionStep, maxRadius }
  * @returns {Array} Ranked list of matched donors
  */
-function matchDonorsForRequest(request, donors) {
+function matchDonorsForRequest(request, donors, settings = {}) {
   if (!request || !Array.isArray(donors)) return [];
+
+  const initialRadius = settings.initialRadius || 3.0;
+  const expansionStep = settings.expansionStep || 2.0;
+  const maxRadius = settings.maxRadius || 8.0;
 
   const requiredGroup = request.bloodGroup || 'O+';
   const compatibleGroups = getCompatibleDonors(requiredGroup);
@@ -29,16 +34,19 @@ function matchDonorsForRequest(request, donors) {
       const isAvailable = donor.isAvailable !== false;
 
       // Distance estimation (Simulated proximity if exact coords not set)
-      let dist = donor.distanceKm !== undefined ? parseFloat(donor.distanceKm) : (Math.random() * 6 + 1.2);
+      let dist = donor.distanceKm !== undefined ? parseFloat(donor.distanceKm) : (Math.random() * 4 + 1.2);
       if (targetCity && donor.city && !donor.city.toLowerCase().includes(targetCity)) {
         dist += 4.0; // Distance penalty for different city
       }
       dist = Math.round(dist * 10) / 10;
 
-      // Determine Notification Wave Round
-      let waveRound = 'Round 1 (0–3 km)';
-      if (dist > 3.0 && dist <= 5.0) waveRound = 'Round 2 (3–5 km)';
-      else if (dist > 5.0) waveRound = 'Round 3 (5–8 km)';
+      // Determine Notification Wave Round based on dynamic system settings
+      let waveRound = `Round 1 (0–${initialRadius} km)`;
+      if (dist > initialRadius && dist <= (initialRadius + expansionStep)) {
+        waveRound = `Round 2 (${initialRadius}–${initialRadius + expansionStep} km)`;
+      } else if (dist > (initialRadius + expansionStep)) {
+        waveRound = `Round 3 (${initialRadius + expansionStep}–${maxRadius} km)`;
+      }
 
       // Calculate Match Score
       let matchScore = 0;
@@ -46,9 +54,9 @@ function matchDonorsForRequest(request, donors) {
       else if (isUniversal) matchScore += 45;
       else if (isCompatible) matchScore += 30;
 
-      if (dist <= 3.0) matchScore += 30;
-      else if (dist <= 5.0) matchScore += 20;
-      else if (dist <= 8.0) matchScore += 10;
+      if (dist <= initialRadius) matchScore += 30;
+      else if (dist <= (initialRadius + expansionStep)) matchScore += 20;
+      else if (dist <= maxRadius) matchScore += 10;
 
       if (isAvailable) matchScore += 10;
       if (eligibility.isEligible) matchScore += 10;

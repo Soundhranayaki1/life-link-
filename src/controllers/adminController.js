@@ -3,6 +3,8 @@ const DonorProfile = require('../models/DonorProfile');
 const Organization = require('../models/Organization');
 const BloodRequest = require('../models/BloodRequest');
 const BloodStock = require('../models/BloodStock');
+const Notification = require('../models/Notification');
+const AuditLog = require('../models/AuditLog');
 const { mockUsers, mockRequests, mockInventory } = require('../utils/mockStore');
 
 // @desc    Get system administration dashboard metrics
@@ -33,14 +35,14 @@ const getAdminStats = async (req, res, next) => {
         success: true,
         stats: {
           totalUsers,
-          totalDonors: totalDonors || 4,
-          availableDonors: availableDonors || 4,
-          totalRequests: totalRequests || 3,
-          activeRequests: activeRequests || 2,
-          fulfilledRequests: fulfilledRequests || 1,
+          totalDonors,
+          availableDonors,
+          totalRequests,
+          activeRequests,
+          fulfilledRequests,
           pendingOrgs,
           verifiedOrgs,
-          totalUnitsInStock: totalUnitsInStock || 261
+          totalUnitsInStock
         }
       });
     } else {
@@ -48,11 +50,11 @@ const getAdminStats = async (req, res, next) => {
         success: true,
         stats: {
           totalUsers: mockUsers.length,
-          totalDonors: 4,
-          availableDonors: 4,
+          totalDonors: mockUsers.filter(u => u.role === 'Donor').length,
+          availableDonors: mockUsers.filter(u => u.role === 'Donor' && u.isAvailable).length,
           totalRequests: mockRequests.length,
-          activeRequests: 2,
-          fulfilledRequests: 1,
+          activeRequests: mockRequests.filter(r => r.status === 'Pending' || r.status === 'In Progress').length,
+          fulfilledRequests: mockRequests.filter(r => r.status === 'Fulfilled').length,
           pendingOrgs: 1,
           verifiedOrgs: 1,
           totalUnitsInStock: mockInventory.reduce((a, b) => a + b.unitsAvailable, 0)
@@ -69,7 +71,7 @@ const getAdminStats = async (req, res, next) => {
 // @access  Private (Admin Only)
 const getOrganizations = async (req, res, next) => {
   try {
-    const { status } = req.query; // 'PENDING_VERIFICATION', 'VERIFIED', 'REJECTED', 'SUSPENDED', 'All'
+    const { status } = req.query;
 
     if (Organization.db && Organization.db.readyState === 1) {
       let query = {};
@@ -81,35 +83,8 @@ const getOrganizations = async (req, res, next) => {
     } else {
       return res.json({
         success: true,
-        count: 2,
-        organizations: [
-          {
-            _id: 'org_1',
-            orgName: 'Apollo Government Hospital',
-            orgType: 'GovtHospital',
-            certificationNumber: 'GOVT-HOSP-2026-991',
-            officialPhone: '+91 22 2493 1111',
-            officialEmail: 'contact@apollohosp.gov.in',
-            address: 'Central Hospital Zone, Worli',
-            city: 'Mumbai',
-            representativeName: 'Dr. S. K. Mehta',
-            verificationStatus: 'VERIFIED',
-            createdAt: new Date()
-          },
-          {
-            _id: 'org_2',
-            orgName: 'Red Cross Regional Blood Bank',
-            orgType: 'CertifiedBloodBank',
-            certificationNumber: 'BB-LIC-8820',
-            officialPhone: '+91 11 2371 6441',
-            officialEmail: 'info@redcrossblood.org',
-            address: '1 Red Cross Rd, Connaught Place',
-            city: 'Delhi',
-            representativeName: 'Dr. Ananya Roy',
-            verificationStatus: 'PENDING_VERIFICATION',
-            createdAt: new Date()
-          }
-        ]
+        count: 0,
+        organizations: []
       });
     }
   } catch (error) {
@@ -137,14 +112,30 @@ const verifyOrganization = async (req, res, next) => {
       if (status === 'VERIFIED') {
         org.verifiedAt = new Date();
         org.verifiedBy = req.user.id || req.user._id;
-
-        // Also update associated User account status
         await User.findByIdAndUpdate(org.userId, { status: 'VERIFIED' });
+
+        // Create Notification for Org
+        await Notification.create({
+          recipientId: org.userId,
+          title: '🎉 Organization Account Approved & Verified!',
+          message: `Your organization (${org.orgName}) verification request has been approved by Admin. Emergency request broadcasting is now active.`,
+          type: 'Verification',
+          link: 'org-dashboard.html'
+        });
       } else {
         await User.findByIdAndUpdate(org.userId, { status: status });
       }
 
       await org.save();
+
+      await AuditLog.create({
+        action: `Organization Verification ${status}`,
+        performerName: req.user.name || 'Admin',
+        role: 'Admin',
+        category: 'ORGANIZATION_GOVERNANCE',
+        description: `Organization ${org.orgName} status updated to ${status}.`,
+        target: org.orgName
+      });
 
       return res.json({
         success: true,
@@ -154,8 +145,64 @@ const verifyOrganization = async (req, res, next) => {
     } else {
       return res.json({
         success: true,
-        message: `Organization verification status updated to ${status} (Demo)`
+        message: `Organization status updated to ${status}`
       });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Get all donors for governance
+// @route   GET /api/admin/donors
+// @access  Private (Admin Only)
+const getAdminDonors = async (req, res, next) => {
+  try {
+    if (DonorProfile.db && DonorProfile.db.readyState === 1) {
+      const profiles = await DonorProfile.find().populate('userId', 'name email phone status role createdAt');
+      const donors = profiles.map(p => ({
+        id: p._id,
+        userId: p.userId ? p.userId._id : null,
+        name: p.userId ? p.userId.name : 'Donor',
+        email: p.userId ? p.userId.email : '',
+        phone: p.userId ? p.userId.phone : '',
+        bloodGroup: p.bloodGroup,
+        city: p.city,
+        isAvailable: p.isAvailable,
+        totalDonations: p.totalDonations,
+        verificationStatus: p.verificationStatus,
+        status: p.userId ? p.userId.status : 'VERIFIED',
+        createdAt: p.createdAt
+      }));
+      return res.json({ success: true, count: donors.length, donors });
+    } else {
+      return res.json({ success: true, count: 0, donors: [] });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Update Donor account status (Suspend / Activate)
+// @route   PATCH /api/admin/donors/:id/status
+// @access  Private (Admin Only)
+const updateDonorStatus = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body; // 'VERIFIED', 'SUSPENDED'
+
+    if (DonorProfile.db && DonorProfile.db.readyState === 1) {
+      const profile = await DonorProfile.findById(id);
+      if (profile) {
+        profile.verificationStatus = status;
+        await profile.save();
+        if (profile.userId) {
+          await User.findByIdAndUpdate(profile.userId, { status });
+        }
+      }
+      return res.json({ success: true, message: `Donor status updated to ${status}` });
+    } else {
+      return res.json({ success: true, message: `Donor status updated to ${status}` });
     }
   } catch (error) {
     next(error);
@@ -165,5 +212,7 @@ const verifyOrganization = async (req, res, next) => {
 module.exports = {
   getAdminStats,
   getOrganizations,
-  verifyOrganization
+  verifyOrganization,
+  getAdminDonors,
+  updateDonorStatus
 };

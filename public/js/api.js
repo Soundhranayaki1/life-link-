@@ -40,6 +40,30 @@ const API = {
       console.error('[API Error]', error);
       return { ok: false, status: 500, data: { success: false, message: 'Server communication error' } };
     }
+  },
+
+  async requireAuth(requiredRole = null) {
+    const token = this.getToken();
+    if (!token) {
+      window.location.href = requiredRole === 'Admin' ? 'admin-login.html' : 'login.html';
+      return null;
+    }
+
+    const res = await this.request('/api/auth/me');
+    if (!res.ok || !res.data.success) {
+      this.clearSession();
+      window.location.href = requiredRole === 'Admin' ? 'admin-login.html' : 'login.html';
+      return null;
+    }
+
+    const user = res.data.user;
+    if (requiredRole && user.role !== requiredRole && user.role !== 'Admin') {
+      window.location.href = 'index.html';
+      return null;
+    }
+
+    this.setSession(token, user);
+    return res.data;
   }
 };
 

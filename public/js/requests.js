@@ -25,7 +25,7 @@ async function fetchAndRenderRequests() {
 
   let query = `?bloodGroup=${encodeURIComponent(bloodGroup)}&urgency=${encodeURIComponent(urgency)}&status=${encodeURIComponent(status)}&city=${encodeURIComponent(city)}`;
 
-  const res = await fetchAPI(`/api/requests${query}`);
+  const res = await API.request(`/api/requests${query}`);
 
   if (res.ok && res.data.success) {
     renderRequestCards(res.data.requests);
@@ -205,7 +205,7 @@ function renderCreateRequestModalHTML() {
         additionalNotes: document.getElementById('reqNotes').value
       };
 
-      const res = await fetchAPI('/api/requests', {
+      const res = await API.request('/api/requests', {
         method: 'POST',
         body: JSON.stringify(payload)
       });
@@ -233,13 +233,13 @@ function closeCreateRequestModal() {
 }
 
 async function handleDonorRespond(requestId, requiredBloodGroup) {
-  if (!state.token) {
+  if (!API.getToken()) {
     showToast('Please log in as a donor to respond to blood requests.', 'info');
-    openAuthModal('login');
+    setTimeout(() => { window.location.href = 'login.html'; }, 500);
     return;
   }
 
-  const res = await fetchAPI(`/api/requests/${requestId}/respond`, {
+  const res = await API.request(`/api/requests/${requestId}/respond`, {
     method: 'POST'
   });
 

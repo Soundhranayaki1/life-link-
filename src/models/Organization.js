@@ -48,6 +48,22 @@ const organizationSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Authorized representative name is required']
   },
+  facilityImage: {
+    type: String,
+    default: 'assets/images/lifelink-logo.png'
+  },
+  deskPhone: {
+    type: String,
+    default: ''
+  },
+  emergencyHotline: {
+    type: String,
+    default: ''
+  },
+  locationCoords: {
+    latitude: { type: Number, default: 19.0760 },
+    longitude: { type: Number, default: 72.8777 }
+  },
   verificationStatus: {
     type: String,
     enum: ['PENDING_VERIFICATION', 'VERIFIED', 'REJECTED', 'SUSPENDED'],

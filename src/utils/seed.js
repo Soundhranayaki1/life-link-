@@ -15,6 +15,11 @@ const defaultPassword = bcrypt.hashSync('password123', 10);
 
 const seedData = async () => {
   try {
+    if (process.env.NODE_ENV === 'production') {
+      console.error('\n[SAFETY ALERT] Seeding is disabled in PRODUCTION environment to prevent data loss.');
+      process.exit(1);
+    }
+
     const connUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/lifelink';
     console.log(`Connecting to MongoDB at ${connUri}...`);
 

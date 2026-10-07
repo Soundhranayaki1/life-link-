@@ -46,6 +46,22 @@ const donorProfileSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  donationRadiusKm: {
+    type: Number,
+    default: 10
+  },
+  livesHelped: {
+    type: Number,
+    default: 0
+  },
+  lastNotifiedAt: {
+    type: Date,
+    default: null
+  },
+  locationCoords: {
+    latitude: { type: Number, default: null },
+    longitude: { type: Number, default: null }
+  },
   age: {
     type: Number,
     min: 18,

@@ -239,10 +239,74 @@ const getDonationHistory = async (req, res, next) => {
   }
 };
 
+// @desc    Update donor radius
+// @route   PATCH /api/donors/radius
+// @access  Private (Donor Only)
+const updateRadius = async (req, res, next) => {
+  try {
+    const userId = req.user.id || req.user._id;
+    const { radiusKm } = req.body;
+
+    if (DonorProfile.db && DonorProfile.db.readyState === 1) {
+      let profile = await DonorProfile.findOne({ userId });
+      if (profile) {
+        profile.donationRadiusKm = parseFloat(radiusKm) || 10;
+        await profile.save();
+      }
+    }
+    return res.json({ success: true, message: `Donation radius updated to ${radiusKm} km`, radiusKm });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Update donor profile details
+// @route   PATCH /api/donors/profile
+// @access  Private (Donor Only)
+const updateProfile = async (req, res, next) => {
+  try {
+    const userId = req.user.id || req.user._id;
+    const { name, bloodGroup, city, district, address, phone } = req.body;
+
+    if (User.db && User.db.readyState === 1) {
+      if (name || phone) {
+        await User.findByIdAndUpdate(userId, {
+          ...(name && { name: name.trim() }),
+          ...(phone && { phone: phone.trim() })
+        });
+      }
+
+      let profile = await DonorProfile.findOne({ userId });
+      if (!profile) {
+        profile = new DonorProfile({ userId, bloodGroup: bloodGroup || 'O+', city: city || 'Mumbai' });
+      }
+
+      if (bloodGroup) profile.bloodGroup = bloodGroup;
+      if (city) profile.city = city.trim();
+      if (district !== undefined) profile.district = district.trim();
+      if (address !== undefined) profile.address = address.trim();
+
+      await profile.save();
+
+      return res.json({
+        success: true,
+        message: 'Profile updated successfully!',
+        profile
+      });
+    } else {
+      return res.json({ success: true, message: 'Profile updated' });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getDonors,
   matchDonors,
   toggleAvailability,
-  getDonationHistory
+  getDonationHistory,
+  updateRadius,
+  updateProfile
 };
 

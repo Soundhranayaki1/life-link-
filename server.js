@@ -18,11 +18,17 @@ const bankRoutes = require('./src/routes/bankRoutes');
 const notificationRoutes = require('./src/routes/notificationRoutes');
 const adminRoutes = require('./src/routes/adminRoutes');
 const donationRoutes = require('./src/routes/donationRoutes');
+const referralRoutes = require('./src/routes/referralRoutes');
+const orgSupportRoutes = require('./src/routes/orgSupportRoutes');
+const { runBackgroundDispatchCycle } = require('./src/utils/dispatchEngine');
 
 const app = express();
 
 // Initialize Database connection
 connectDB();
+
+// Run automated adaptive dispatch evaluation worker every 15 seconds
+setInterval(runBackgroundDispatchCycle, 15000);
 
 // Middleware
 app.use(cors());
@@ -41,6 +47,8 @@ app.use('/api/blood-banks', bankRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/donations', donationRoutes);
+app.use('/api/referrals', referralRoutes);
+app.use('/api/org-support', orgSupportRoutes);
 
 // Health & Status Endpoint
 app.get('/api/status', (req, res) => {

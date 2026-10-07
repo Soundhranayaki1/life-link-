@@ -1,5 +1,5 @@
 /**
- * LIFE LINK – Role Dashboard Controllers with Strict Verification Logic
+ * LIFE LINK – Role Dashboard Controllers with Real API Connections & Production Empty States
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -14,15 +14,12 @@ document.addEventListener('DOMContentLoaded', () => {
    ========================================================== */
 async function initDonorDashboard() {
   const profileCard = document.getElementById('donorProfileCard');
-  const user = API.getUser();
 
-  if (!user || user.role !== 'Donor') {
-    if (profileCard) profileCard.innerHTML = `<p style="color: var(--slate-muted);">Please sign in with a Verified Donor account.</p>`;
-    return;
-  }
+  const authData = await API.requireAuth('Donor');
+  if (!authData) return;
 
-  const res = await API.request('/api/auth/me');
-  const profile = (res.ok && res.data.profile) ? res.data.profile : { bloodGroup: 'O+', isAvailable: true, totalDonations: 4, city: 'Mumbai' };
+  const user = authData.user;
+  const profile = authData.profile || { bloodGroup: 'O+', isAvailable: true, city: 'City Not Set' };
 
   profileCard.innerHTML = `
     <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
@@ -34,7 +31,7 @@ async function initDonorDashboard() {
             <span class="badge badge-success">✓ VERIFIED MOBILE DONOR</span>
           </div>
           <div style="color: var(--slate-muted); font-size: 0.9rem;">
-            📍 ${profile.city || 'Mumbai'} • 📞 ${user.phone}
+            📍 ${profile.city || 'Location Not Specified'} • 📞 ${user.phone}
           </div>
         </div>
       </div>
@@ -70,7 +67,7 @@ async function loadDonorInvites(bloodGroup) {
     if (res.data.requests.length === 0) {
       container.innerHTML = `
         <div style="grid-column: 1/-1; padding: 2rem;" class="card card-body">
-          <p style="color: var(--slate-muted);">No urgent emergency requests matching your blood group at this time.</p>
+          <p style="color: var(--slate-muted);">No compatible emergency blood requests are currently active in your area.</p>
         </div>
       `;
       return;
@@ -79,20 +76,30 @@ async function loadDonorInvites(bloodGroup) {
     container.innerHTML = res.data.requests.map(r => `
       <div class="card card-body card-hover" style="border-left: 4px solid var(--primary-red);">
         <div style="margin-bottom: 0.5rem;">
-          <span class="badge badge-success" style="font-size: 0.72rem;">${r.orgName || '✓ VERIFIED GOVERNMENT HOSPITAL'}</span>
+          <span class="badge badge-success" style="font-size: 0.72rem;">${r.orgName || '✓ VERIFIED HEALTHCARE ORGANIZATION'}</span>
         </div>
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
           <h3 style="font-size: 1.15rem;">${r.patientName}</h3>
           <span class="badge badge-critical">${r.urgency}</span>
         </div>
         <p style="font-size: 0.88rem; color: var(--slate-muted); margin-bottom: 0.35rem;">🏥 ${r.hospitalName}, ${r.city}</p>
-        <p style="font-size: 0.88rem; color: var(--slate-muted); margin-bottom: 1rem;">Needed: <strong>${r.unitsNeeded} Units of ${r.bloodGroup}</strong> (~3.4 km away)</p>
+        <p style="font-size: 0.88rem; color: var(--slate-muted); margin-bottom: 1rem;">Needed: <strong>${r.unitsNeeded} Units of ${r.bloodGroup}</strong></p>
 
         <button onclick="handleRespondRequest('${r._id}')" class="btn btn-primary btn-sm" style="width: 100%;">
           I Can Donate
         </button>
       </div>
     `).join('');
+  }
+}
+
+async function handleRespondRequest(requestId) {
+  const res = await API.request(`/api/requests/${requestId}/respond`, { method: 'POST' });
+  if (res.ok && res.data.success) {
+    showToast(res.data.message, 'success');
+    initDonorDashboard();
+  } else {
+    showToast(res.data.message || 'Response failed', 'error');
   }
 }
 
@@ -114,7 +121,7 @@ async function loadDonorHistory() {
   } else {
     tbody.innerHTML = `
       <tr>
-        <td colspan="5" style="text-align: center; color: var(--slate-muted); padding: 2rem;">No completed donation records found.</td>
+        <td colspan="5" style="text-align: center; color: var(--slate-muted); padding: 2rem;">No prior donation history records found.</td>
       </tr>
     `;
   }
@@ -125,23 +132,20 @@ async function loadDonorHistory() {
    ========================================================== */
 async function initRequesterDashboard() {
   const headerCard = document.getElementById('orgHeaderCard');
-  const user = API.getUser();
 
-  if (!user) {
-    if (headerCard) headerCard.innerHTML = `<p style="color: var(--slate-muted);">Please sign in with your Organization account.</p>`;
-    return;
-  }
+  const authData = await API.requireAuth('Organization');
+  if (!authData) return;
 
-  const res = await API.request('/api/auth/me');
-  const org = (res.ok && res.data.organization) ? res.data.organization : {
+  const user = authData.user;
+  const org = authData.organization || {
     orgName: user.name,
-    certificationNumber: 'GOVT-CERT-2026-991',
-    verificationStatus: user.status || 'VERIFIED',
-    representativeName: 'Dr. S. K. Mehta',
+    certificationNumber: 'PENDING',
+    verificationStatus: user.status || 'PENDING_VERIFICATION',
+    representativeName: user.name,
     city: 'Mumbai'
   };
 
-  const isVerified = org.verificationStatus === 'VERIFIED' || user.status === 'VERIFIED' || user.role === 'Admin';
+  const isVerified = org.verificationStatus === 'VERIFIED' || user.status === 'VERIFIED';
 
   if (headerCard) {
     headerCard.innerHTML = `
@@ -154,7 +158,7 @@ async function initRequesterDashboard() {
             </span>
           </div>
           <div style="color: var(--slate-muted); font-size: 0.9rem;">
-            📜 Certification #: <strong>${org.certificationNumber || 'GOVT-CERT-2026'}</strong> • Representative: <strong>${org.representativeName || 'Authorized Officer'}</strong> • 📍 ${org.city || 'Mumbai'}
+            📜 Cert #: <strong>${org.certificationNumber}</strong> • Representative: <strong>${org.representativeName}</strong> • 📍 ${org.city}
           </div>
         </div>
 
@@ -187,25 +191,89 @@ async function loadRequesterRequests() {
   const container = document.getElementById('requesterRequestsGrid');
   if (!container) return;
 
-  const res = await API.request('/api/requests');
+  const res = await API.request('/api/requests/org');
   if (res.ok && res.data.success) {
-    container.innerHTML = res.data.requests.map(r => `
-      <div class="card card-body card-hover">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
-          <h3 style="font-size: 1.2rem;">${r.patientName}</h3>
-          <span class="badge ${r.status === 'Fulfilled' ? 'badge-success' : 'badge-warning'}">${r.status}</span>
+    if (res.data.requests.length === 0) {
+      container.innerHTML = `
+        <div style="grid-column: 1/-1; padding: 2rem;" class="card card-body">
+          <p style="color: var(--slate-muted);">No emergency blood requests created yet by your organization.</p>
         </div>
-        <p style="color: var(--slate-muted); font-size: 0.9rem; margin-bottom: 0.35rem;">🏥 Hospital: ${r.hospitalName}, ${r.city}</p>
-        <p style="color: var(--slate-muted); font-size: 0.9rem; margin-bottom: 1rem;">
-          Blood Requirement: <strong style="color: var(--primary-red);">${r.unitsNeeded} Units (${r.bloodGroup})</strong>
-        </p>
+      `;
+      return;
+    }
 
-        <div style="border-top: 1px solid var(--slate-border); padding-top: 0.75rem; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
-          <span>Donors Committed: <strong>${r.respondedDonors ? r.respondedDonors.length : 0} Donor(s)</strong></span>
-          <a href="tel:${r.contactPhone}" class="btn btn-secondary btn-sm">Contact Contact</a>
+    container.innerHTML = res.data.requests.map(r => {
+      const target = r.targetConfirmations || r.unitsNeeded || 2;
+      const responses = r.respondedDonors ? r.respondedDonors.length : 0;
+      const confirmed = r.respondedDonors ? r.respondedDonors.filter(d => ['Confirmed', 'CONFIRMED', 'Arrived', 'ARRIVED', 'Completed', 'COMPLETED', 'Accepted', 'ACCEPTED'].includes(d.status)).length : 0;
+      const remaining = Math.max(0, target - confirmed);
+      const curRadius = r.currentRadiusKm || r.initialRadius || 3;
+      const maxRad = r.maxRadius || 8;
+      const nextWaveText = curRadius < maxRad ? `Round ${(r.currentWaveNumber || 1) + 1} (${curRadius}–${Math.min(maxRad, curRadius + 2)} km)` : 'Max Radius Reached (8 km)';
+      const dispatchStatusText = r.dispatchStatus === 'COMPLETED' ? 'COMPLETED ✓' :
+                                 r.dispatchStatus === 'MAX_RADIUS_REACHED' ? 'MAX RADIUS REACHED' :
+                                 r.dispatchStatus === 'CANCELLED' ? 'CANCELLED' :
+                                 r.dispatchStatus === 'FULFILLED' ? 'FULFILLED ✓' : 'DISPATCH IN PROGRESS 🟢';
+
+      return `
+        <div class="card card-body card-hover">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+            <div>
+              <h3 style="font-size: 1.2rem; margin-bottom: 0.2rem;">${r.patientName}</h3>
+              <span class="badge badge-success" style="font-size: 0.72rem;">🏥 ${r.hospitalName}, ${r.city}</span>
+            </div>
+            <span class="badge ${r.status === 'Fulfilled' ? 'badge-success' : 'badge-warning'}">${r.status}</span>
+          </div>
+
+          <div style="background: var(--bg-light, #F8FAFC); padding: 0.85rem; border-radius: 12px; margin-bottom: 1rem; border: 1px solid var(--slate-border, #E2E8F0);">
+            <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem; color: var(--navy-dark);">
+              <span>Wave: <span style="color: var(--primary-red);">${r.dispatchWave || 'Round 1 (0–3 km)'}</span></span>
+              <span class="badge ${r.dispatchStatus === 'COMPLETED' ? 'badge-success' : 'badge-neutral'}" style="font-size: 0.68rem;">${dispatchStatusText}</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem; font-size: 0.78rem; text-align: center;">
+              <div style="background: white; padding: 0.4rem; border-radius: 8px; border: 1px solid #E2E8F0;">
+                <div style="color: var(--slate-muted); font-size: 0.68rem;">Donors Notified</div>
+                <strong>${r.donorsNotifiedCount || 0}</strong>
+              </div>
+              <div style="background: white; padding: 0.4rem; border-radius: 8px; border: 1px solid #E2E8F0;">
+                <div style="color: var(--slate-muted); font-size: 0.68rem;">Responses</div>
+                <strong>${responses}</strong>
+              </div>
+              <div style="background: white; padding: 0.4rem; border-radius: 8px; border: 1px solid #E2E8F0;">
+                <div style="color: var(--slate-muted); font-size: 0.68rem;">Confirmed</div>
+                <strong style="color: #10B981;">${confirmed} / ${target}</strong>
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-top: 0.5rem; color: var(--slate-muted);">
+              <span>Remaining Required: <strong>${remaining}</strong></span>
+              <span>Current Radius: <strong>${curRadius} km</strong></span>
+              <span>Next Wave: <strong>${nextWaveText}</strong></span>
+            </div>
+          </div>
+
+          <div style="border-top: 1px solid var(--slate-border); padding-top: 0.75rem; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+            <a href="tel:${r.contactPhone}" class="btn btn-secondary btn-sm">Contact Hotline (${r.contactPhone})</a>
+            ${curRadius < maxRad && r.dispatchStatus === 'IN_PROGRESS' ? `
+              <button onclick="handleTriggerWaveExpansion('${r._id}')" class="btn btn-primary btn-sm">
+                Expand Wave Now
+              </button>
+            ` : ''}
+          </div>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
+  }
+}
+
+async function handleTriggerWaveExpansion(requestId) {
+  const res = await API.request(`/api/requests/${requestId}/expand-wave`, { method: 'PATCH' });
+  if (res.ok && res.data.success) {
+    showToast(res.data.message || 'Dispatch wave expanded', 'success');
+    loadRequesterRequests();
+  } else {
+    showToast(res.data.message || 'Expansion failed', 'error');
   }
 }
 
@@ -261,25 +329,28 @@ async function initAdminDashboard() {
   const kpiGrid = document.getElementById('adminKpiGrid');
   if (!kpiGrid) return;
 
+  const authData = await API.requireAuth('Admin');
+  if (!authData) return;
+
   const res = await API.request('/api/admin/stats');
   if (res.ok && res.data.success) {
     const s = res.data.stats;
     kpiGrid.innerHTML = `
       <div class="card card-body" style="text-align: center;">
         <div style="font-size: 0.85rem; color: var(--slate-muted);">Total Registered Users</div>
-        <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--slate-dark);">${s.totalUsers || 6}</div>
+        <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--slate-dark);">${s.totalUsers || 0}</div>
       </div>
       <div class="card card-body" style="text-align: center;">
         <div style="font-size: 0.85rem; color: var(--slate-muted);">Pending Org Verifications</div>
-        <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--status-warning);">${s.pendingOrgs || 1}</div>
+        <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--status-warning);">${s.pendingOrgs || 0}</div>
       </div>
       <div class="card card-body" style="text-align: center;">
         <div style="font-size: 0.85rem; color: var(--slate-muted);">Verified Organizations</div>
-        <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--status-success);">${s.verifiedOrgs || 2}</div>
+        <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--status-success);">${s.verifiedOrgs || 0}</div>
       </div>
       <div class="card card-body" style="text-align: center;">
         <div style="font-size: 0.85rem; color: var(--slate-muted);">Total Blood Units in Stock</div>
-        <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: #3B82F6;">${s.totalUnitsInStock || 261}</div>
+        <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: #3B82F6;">${s.totalUnitsInStock || 0}</div>
       </div>
     `;
   }
@@ -323,7 +394,7 @@ async function loadAdminOrganizations(filterStatus = 'ALL') {
   } else {
     tbody.innerHTML = `
       <tr>
-        <td colspan="7" style="text-align: center; color: var(--slate-muted); padding: 2rem;">No organization records found for status filter.</td>
+        <td colspan="7" style="text-align: center; color: var(--slate-muted); padding: 2rem;">No organization records found.</td>
       </tr>
     `;
   }

@@ -9,21 +9,14 @@ const getNotifications = async (req, res, next) => {
 
     if (Notification.db && Notification.db.readyState === 1) {
       const notifications = await Notification.find({ recipientId: userId }).sort({ createdAt: -1 });
-      return res.json({ success: true, count: notifications.length, notifications });
+      const unreadCount = notifications.filter(n => !n.isRead).length;
+      return res.json({ success: true, count: notifications.length, unreadCount, notifications });
     } else {
       return res.json({
         success: true,
-        count: 1,
-        notifications: [
-          {
-            _id: 'n_1',
-            title: 'Urgent Match Nearby',
-            message: 'An O- blood requirement was posted in Mumbai nearby your registered location.',
-            type: 'EmergencyRequest',
-            isRead: false,
-            createdAt: new Date()
-          }
-        ]
+        count: 0,
+        unreadCount: 0,
+        notifications: []
       });
     }
   } catch (error) {
@@ -47,7 +40,24 @@ const markRead = async (req, res, next) => {
   }
 };
 
+// @desc    Mark all user notifications as read
+// @route   PATCH /api/notifications/read-all
+// @access  Private
+const markAllRead = async (req, res, next) => {
+  try {
+    const userId = req.user.id || req.user._id;
+
+    if (Notification.db && Notification.db.readyState === 1) {
+      await Notification.updateMany({ recipientId: userId, isRead: false }, { isRead: true });
+    }
+    return res.json({ success: true, message: 'All notifications marked as read' });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getNotifications,
-  markRead
+  markRead,
+  markAllRead
 };
