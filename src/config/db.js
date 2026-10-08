@@ -68,9 +68,12 @@ const cleanIncompatibleNotifications = async () => {
 const connectDB = async () => {
   const connUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/lifelink';
 
+  // Disable buffering so operations immediately fail when disconnected rather than hanging for 10 seconds
+  mongoose.set('bufferCommands', false);
+
   try {
     const options = {
-      serverSelectionTimeoutMS: 3000,
+      serverSelectionTimeoutMS: 5000,
       dbName: 'lifelink'
     };
     
