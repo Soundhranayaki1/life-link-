@@ -3,7 +3,9 @@ const router = express.Router();
 const {
   getAdminStats,
   getOrganizations,
+  createOrganization,
   verifyOrganization,
+  resetOrgPassword,
   getAdminDonors,
   updateDonorStatus
 } = require('../controllers/adminController');
@@ -13,7 +15,11 @@ const { protect, adminOnly } = require('../middleware/authMiddleware');
 
 router.get('/stats', protect, adminOnly, getAdminStats);
 router.get('/organizations', protect, adminOnly, getOrganizations);
+router.post('/organizations', protect, adminOnly, createOrganization);
+router.post('/create-org', protect, adminOnly, createOrganization);
 router.patch('/organizations/:id/verify', protect, adminOnly, verifyOrganization);
+router.post('/organizations/:id/reset-password', protect, adminOnly, resetOrgPassword);
+
 router.get('/donors', protect, adminOnly, getAdminDonors);
 router.patch('/donors/:id/status', protect, adminOnly, updateDonorStatus);
 

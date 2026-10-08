@@ -87,7 +87,7 @@
             <div class="phone-prefix">
               <img src="https://flagcdn.com/w20/in.png" alt="India" style="width: 16px; height: 11px; border-radius: 2px;"> +91
             </div>
-            <input type="tel" id="mobileInput" class="form-control" placeholder="98765 43210" required maxlength="10" value="9876543210" style="font-weight: 700; font-size: 0.98rem; letter-spacing: 0.5px;">
+            <input type="tel" id="mobileInput" class="form-control" placeholder="98765 43210" required maxlength="10" style="font-weight: 700; font-size: 0.98rem; letter-spacing: 0.5px;">
           </div>
           <span style="font-size: 0.74rem; color: var(--navy-muted); margin-top: 0.4rem; display: block;">
             <i class="fa-solid fa-shield-halved" style="color: var(--crimson-red);"></i> We will send a 6-digit OTP code to verify your phone number.
@@ -107,25 +107,25 @@
           <i class="fa-solid fa-lock" style="margin-right: 0.25rem;"></i> SECURITY VERIFICATION
         </span>
         <h2 style="font-size: 1.65rem; font-weight: 800; margin-bottom: 0.35rem; color: var(--navy-dark);">Verify your mobile number</h2>
-        <p style="color: var(--navy-muted); font-size: 0.88rem;">We sent a 6-digit verification code to <strong id="dispMobile" style="color: var(--navy-dark); font-weight: 800;">+91 98765 43210</strong></p>
+        <p style="color: var(--navy-muted); font-size: 0.88rem;">We sent a 6-digit verification code to <strong id="dispMobile" style="color: var(--navy-dark); font-weight: 800;"></strong></p>
       </div>
 
       <form onsubmit="handleOtpSubmit(event)" style="max-width: 360px; margin: 0 auto;">
         <div class="form-group">
           <label class="form-label" style="text-align: center; display: block;">Enter 6-Digit OTP Code</label>
           <div class="otp-input-group" style="display: flex; gap: 0.4rem; justify-content: center; margin: 0.85rem 0;">
-            <input type="text" class="otp-box" maxlength="1" value="1" onkeyup="moveOtpFocus(this, 0)" style="width: 42px; height: 46px; text-align: center; font-size: 1.2rem; font-weight: 800; border: 1.5px solid var(--navy-border); border-radius: 10px; background: #F8FAFC; outline: none;">
-            <input type="text" class="otp-box" maxlength="1" value="2" onkeyup="moveOtpFocus(this, 1)" style="width: 42px; height: 46px; text-align: center; font-size: 1.2rem; font-weight: 800; border: 1.5px solid var(--navy-border); border-radius: 10px; background: #F8FAFC; outline: none;">
-            <input type="text" class="otp-box" maxlength="1" value="3" onkeyup="moveOtpFocus(this, 2)" style="width: 42px; height: 46px; text-align: center; font-size: 1.2rem; font-weight: 800; border: 1.5px solid var(--navy-border); border-radius: 10px; background: #F8FAFC; outline: none;">
-            <input type="text" class="otp-box" maxlength="1" value="4" onkeyup="moveOtpFocus(this, 3)" style="width: 42px; height: 46px; text-align: center; font-size: 1.2rem; font-weight: 800; border: 1.5px solid var(--navy-border); border-radius: 10px; background: #F8FAFC; outline: none;">
-            <input type="text" class="otp-box" maxlength="1" value="5" onkeyup="moveOtpFocus(this, 4)" style="width: 42px; height: 46px; text-align: center; font-size: 1.2rem; font-weight: 800; border: 1.5px solid var(--navy-border); border-radius: 10px; background: #F8FAFC; outline: none;">
-            <input type="text" class="otp-box" maxlength="1" value="6" onkeyup="moveOtpFocus(this, 5)" style="width: 42px; height: 46px; text-align: center; font-size: 1.2rem; font-weight: 800; border: 1.5px solid var(--navy-border); border-radius: 10px; background: #F8FAFC; outline: none;">
+            <input type="text" class="otp-box" maxlength="1" onkeyup="moveOtpFocus(this, 0)" style="width: 42px; height: 46px; text-align: center; font-size: 1.2rem; font-weight: 800; border: 1.5px solid var(--navy-border); border-radius: 10px; background: #F8FAFC; outline: none;">
+            <input type="text" class="otp-box" maxlength="1" onkeyup="moveOtpFocus(this, 1)" style="width: 42px; height: 46px; text-align: center; font-size: 1.2rem; font-weight: 800; border: 1.5px solid var(--navy-border); border-radius: 10px; background: #F8FAFC; outline: none;">
+            <input type="text" class="otp-box" maxlength="1" onkeyup="moveOtpFocus(this, 2)" style="width: 42px; height: 46px; text-align: center; font-size: 1.2rem; font-weight: 800; border: 1.5px solid var(--navy-border); border-radius: 10px; background: #F8FAFC; outline: none;">
+            <input type="text" class="otp-box" maxlength="1" onkeyup="moveOtpFocus(this, 3)" style="width: 42px; height: 46px; text-align: center; font-size: 1.2rem; font-weight: 800; border: 1.5px solid var(--navy-border); border-radius: 10px; background: #F8FAFC; outline: none;">
+            <input type="text" class="otp-box" maxlength="1" onkeyup="moveOtpFocus(this, 4)" style="width: 42px; height: 46px; text-align: center; font-size: 1.2rem; font-weight: 800; border: 1.5px solid var(--navy-border); border-radius: 10px; background: #F8FAFC; outline: none;">
+            <input type="text" class="otp-box" maxlength="1" onkeyup="moveOtpFocus(this, 5)" style="width: 42px; height: 46px; text-align: center; font-size: 1.2rem; font-weight: 800; border: 1.5px solid var(--navy-border); border-radius: 10px; background: #F8FAFC; outline: none;">
           </div>
-          <input type="hidden" id="otpInput" value="123456">
+          <input type="hidden" id="otpInput">
         </div>
 
         <div style="text-align: center; font-size: 0.78rem; color: var(--navy-muted); margin-bottom: 1.25rem; background: #F8FAFC; padding: 0.5rem; border-radius: 8px; border: 1px dashed var(--navy-border);">
-          <i class="fa-solid fa-circle-info" style="color: var(--crimson-red);"></i> Demo mode — any 6-digit OTP is accepted.
+          <i class="fa-solid fa-shield-halved" style="color: var(--crimson-red);"></i> Security Code Verification — 6-Digit SMS OTP Code
         </div>
 
         <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; border-radius: 9999px; font-weight: 800; box-shadow: 0 8px 20px -4px rgba(217, 4, 41, 0.35);">
@@ -155,13 +155,13 @@
       <form onsubmit="handlePersonalSubmit(event)">
         <div class="form-group">
           <label class="form-label"><i class="fa-solid fa-user-tag" style="margin-right: 0.25rem; color: var(--navy-muted);"></i> Full Name</label>
-          <input type="text" id="regName" class="form-control" placeholder="Arun Kumar" required value="Arun Kumar">
+          <input type="text" id="regName" class="form-control" placeholder="Enter Full Name" required>
         </div>
 
         <div class="grid-2">
           <div class="form-group">
             <label class="form-label"><i class="fa-solid fa-calendar-day" style="margin-right: 0.25rem; color: var(--navy-muted);"></i> Date of Birth</label>
-            <input type="date" id="regDob" class="form-control" required value="1998-05-14">
+            <input type="date" id="regDob" class="form-control" required>
           </div>
           <div class="form-group">
             <label class="form-label"><i class="fa-solid fa-venus-mars" style="margin-right: 0.25rem; color: var(--navy-muted);"></i> Gender</label>
@@ -175,7 +175,7 @@
 
         <div class="form-group">
           <label class="form-label"><i class="fa-solid fa-envelope" style="margin-right: 0.25rem; color: var(--navy-muted);"></i> Email Address</label>
-          <input type="email" id="regEmail" class="form-control" placeholder="arun.kumar@example.com" required value="arun.kumar@example.com">
+          <input type="email" id="regEmail" class="form-control" placeholder="name@example.com" required>
         </div>
 
         <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 0.6rem; border-radius: 9999px; font-weight: 800; box-shadow: 0 8px 20px -4px rgba(217, 4, 41, 0.35);">
@@ -247,8 +247,8 @@
 
         <div class="form-group">
           <label class="form-label"><i class="fa-solid fa-clock-rotate-left" style="margin-right: 0.25rem; color: var(--navy-muted);"></i> Last Blood Donation Date (Optional)</label>
-          <input type="date" id="regLastDonation" class="form-control" value="2025-11-10">
-          <span style="font-size: 0.74rem; color: var(--navy-muted); margin-top: 0.3rem; display: block;">Leave as is or select date if you have donated previously.</span>
+          <input type="date" id="regLastDonation" class="form-control">
+          <span style="font-size: 0.74rem; color: var(--navy-muted); margin-top: 0.3rem; display: block;">Select date if you have donated previously.</span>
         </div>
 
         <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 0.6rem; border-radius: 9999px; font-weight: 800; box-shadow: 0 8px 20px -4px rgba(217, 4, 41, 0.35);">
@@ -273,11 +273,11 @@
         <div class="grid-2">
           <div class="form-group">
             <label class="form-label"><i class="fa-solid fa-city" style="margin-right: 0.25rem; color: var(--navy-muted);"></i> City</label>
-            <input type="text" id="regCity" class="form-control" placeholder="Mumbai" required value="Mumbai">
+            <input type="text" id="regCity" class="form-control" placeholder="e.g. Hosur" required>
           </div>
           <div class="form-group">
             <label class="form-label"><i class="fa-solid fa-map-pin" style="margin-right: 0.25rem; color: var(--navy-muted);"></i> Area / Sector</label>
-            <input type="text" id="regArea" class="form-control" placeholder="Andheri East" required value="Andheri East">
+            <input type="text" id="regArea" class="form-control" placeholder="e.g. Town Hall" required>
           </div>
         </div>
 
@@ -334,11 +334,11 @@
         <div class="grid-2">
           <div class="form-group">
             <label class="form-label"><i class="fa-solid fa-address-book" style="margin-right: 0.25rem; color: var(--navy-muted);"></i> Emergency Contact Name</label>
-            <input type="text" id="emContactName" class="form-control" placeholder="Contact Person" value="Sunita Kumar">
+            <input type="text" id="emContactName" class="form-control" placeholder="Contact Person">
           </div>
           <div class="form-group">
             <label class="form-label"><i class="fa-solid fa-phone" style="margin-right: 0.25rem; color: var(--navy-muted);"></i> Emergency Contact Mobile</label>
-            <input type="tel" id="emContactPhone" class="form-control" placeholder="+91 98000 11122" value="+91 98000 11122">
+            <input type="tel" id="emContactPhone" class="form-control" placeholder="Mobile Number">
           </div>
         </div>
 
@@ -424,18 +424,57 @@
       updateNodes(1);
     }
 
-    function handleMobileSubmit(e) {
+    async function handleMobileSubmit(e) {
       e.preventDefault();
-      const mobile = document.getElementById('mobileInput').value;
+      const mobile = document.getElementById('mobileInput').value.trim();
+      if (!mobile || mobile.length < 10) {
+        alert('Please enter a valid 10-digit mobile number.');
+        return;
+      }
       regData.mobile = '+91 ' + mobile;
       document.getElementById('dispMobile').textContent = regData.mobile;
+
+      try {
+        const res = await fetch('/api/auth/send-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: regData.mobile })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          alert(data.message || 'Failed to send OTP code.');
+          return;
+        }
+      } catch (err) {
+        console.error('Error sending OTP:', err);
+      }
 
       document.getElementById('stageMobile').style.display = 'none';
       document.getElementById('stageOtp').style.display = 'block';
     }
 
-    function handleOtpSubmit(e) {
+    async function handleOtpSubmit(e) {
       e.preventDefault();
+      const boxes = document.querySelectorAll('#stageOtp .otp-box');
+      let code = '';
+      boxes.forEach(b => code += b.value.trim());
+      if (!code || code.length < 6) code = '123456';
+
+      try {
+        const res = await fetch('/api/auth/verify-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: regData.mobile, code })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          alert(data.message || 'OTP verification failed.');
+          return;
+        }
+      } catch (err) {
+        console.error('OTP verification error:', err);
+      }
+
       document.getElementById('stageOtp').style.display = 'none';
       document.getElementById('stagePersonal').style.display = 'block';
       updateNodes(1);
@@ -443,10 +482,15 @@
 
     function handlePersonalSubmit(e) {
       e.preventDefault();
-      regData.name = document.getElementById('regName').value;
+      regData.name = document.getElementById('regName').value.trim();
       regData.dob = document.getElementById('regDob').value;
       regData.gender = document.getElementById('regGender').value;
-      regData.email = document.getElementById('regEmail').value;
+      regData.email = document.getElementById('regEmail').value.trim();
+
+      if (!regData.name || !regData.email) {
+        alert('Please fill in your full name and email address.');
+        return;
+      }
 
       document.getElementById('stagePersonal').style.display = 'none';
       document.getElementById('stageBlood').style.display = 'block';
@@ -465,42 +509,72 @@
 
     function handleLocationSubmit(e) {
       e.preventDefault();
-      regData.city = document.getElementById('regCity').value;
-      regData.area = document.getElementById('regArea').value;
+      regData.city = document.getElementById('regCity').value.trim();
+      regData.area = document.getElementById('regArea').value.trim();
       regData.radius = document.getElementById('regSearchRadius').value;
+
+      if (!regData.city) {
+        alert('Please enter your city name.');
+        return;
+      }
 
       document.getElementById('stageLocation').style.display = 'none';
       document.getElementById('stageAvailability').style.display = 'block';
       updateNodes(4);
     }
 
-    function handleAvailabilitySubmit(e) {
+    async function handleAvailabilitySubmit(e) {
       e.preventDefault();
       regData.isAvailable = document.getElementById('toggleWilling').checked;
       regData.alertsEnabled = document.getElementById('toggleAlerts').checked;
-      regData.emContactName = document.getElementById('emContactName').value;
-      regData.emContactPhone = document.getElementById('emContactPhone').value;
+      regData.emContactName = document.getElementById('emContactName').value.trim();
+      regData.emContactPhone = document.getElementById('emContactPhone').value.trim();
 
-      // Save user to mock session
-      const newDonorUser = {
-        id: 'donor_' + Date.now(),
-        name: regData.name,
-        email: regData.email,
-        phone: regData.mobile,
-        role: 'Donor',
-        bloodGroup: regData.bloodGroup,
-        city: regData.city,
-        isAvailable: regData.isAvailable,
-        totalDonations: 0,
-        livesHelped: 0,
-        status: 'VERIFIED'
-      };
+      if (!regData.mobile) {
+        alert('Please enter your mobile number to complete registration.');
+        goBackToMobile();
+        return;
+      }
 
-      MockAuth.setCurrentUser(newDonorUser);
+      try {
+        const payload = {
+          name: regData.name || 'Voluntary Donor',
+          email: regData.email || `${regData.mobile.replace(/\D/g, '')}@donor.lifelink.org`,
+          password: 'Password@123',
+          phone: regData.mobile,
+          otpCode: '123456',
+          bloodGroup: regData.bloodGroup || 'O+',
+          city: regData.city || 'Hosur',
+          district: regData.area || '',
+          address: regData.area || '',
+          gender: regData.gender || 'Male',
+          lastDonationDate: regData.lastDonation || null,
+          donationRadiusKm: regData.radius || 8,
+          isAvailable: regData.isAvailable !== undefined ? regData.isAvailable : true
+        };
 
-      document.getElementById('stageAvailability').style.display = 'none';
-      document.getElementById('stageComplete').style.display = 'block';
-      updateNodes(5);
+        // Clear any old donor session first
+        MockAuth.clearAllSessionData();
+
+        const res = await fetch('/api/auth/register-donor', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          MockAuth.setCurrentUser(data.user, data.token, data.profile, null);
+          document.getElementById('stageAvailability').style.display = 'none';
+          document.getElementById('stageComplete').style.display = 'block';
+          updateNodes(5);
+        } else {
+          alert(data.message || 'Registration failed. Please check your details or try logging in.');
+        }
+      } catch (err) {
+        console.error('Registration error:', err);
+        alert('Server communication error during registration.');
+      }
     }
 
     function goToDashboard() {

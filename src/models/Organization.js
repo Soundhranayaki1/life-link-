@@ -14,7 +14,12 @@ const organizationSchema = new mongoose.Schema({
   },
   orgType: {
     type: String,
-    enum: ['GovtHospital', 'CertifiedBloodBank', 'AuthorizedMedicalOrg'],
+    enum: [
+      'GovtHospital', 'CertifiedBloodBank', 'AuthorizedMedicalOrg',
+      'Government Hospital', 'Govt Hospital', 'Certified Blood Bank',
+      'Blood Bank', 'Authorized Medical Organization', 'Medical Organization',
+      'Organization', 'BloodBank', 'Hospital'
+    ],
     required: [true, 'Organization type is required'],
     default: 'GovtHospital'
   },

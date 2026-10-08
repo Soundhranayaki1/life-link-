@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   sendOtpHandler,
   verifyOtpHandler,
+  donorLoginOtp,
   registerDonor,
   registerOrganization,
   loginUser,
@@ -12,6 +13,7 @@ const { protect } = require('../middleware/authMiddleware');
 
 router.post('/send-otp', sendOtpHandler);
 router.post('/verify-otp', verifyOtpHandler);
+router.post('/donor-login-otp', donorLoginOtp);
 router.post('/register-donor', registerDonor);
 router.post('/register-org', registerOrganization);
 router.post('/login', loginUser);

@@ -441,7 +441,7 @@
       <li style="position: relative;">
         <a href="javascript:void(0)" id="notifBellBtn" onclick="toggleNotifPopup(event)" class="nav-link-item">
           <i class="fa-solid fa-bell"></i> Notifications
-          <span class="nav-badge-count" id="notifBadgeCount">2</span>
+          <span class="nav-badge-count" id="notifBadgeCount" style="display: none;">0</span>
         </a>
       </li>
       <li>
@@ -453,8 +453,8 @@
 
     <div class="header-user-actions">
       <a href="donor-profile.html" class="user-profile-btn">
-        <div class="user-avatar-circle">A</div>
-        <span>Arun</span> <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; color: var(--slate-muted);"></i>
+        <div class="user-avatar-circle">--</div>
+        <span>Donor</span> <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; color: var(--slate-muted);"></i>
       </a>
 
       <button onclick="MockAuth.logout()" class="btn-signout" title="Sign Out">
@@ -599,20 +599,35 @@
   </footer>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      updateAvailabilityUI();
-      const currentRadius = MockData.getDonationRadius();
-      selectRadius(currentRadius);
-      renderEmergencyRequests();
+    let currentDonorProfile = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadProfileAndUI();
     });
 
-    // 1. AVAILABILITY LOGIC
+    async function loadProfileAndUI() {
+      try {
+        MockAuth.syncHeaderUserUI();
+        const meRes = await fetch('/api/auth/me', { headers: MockAuth.getAuthHeaders() });
+        const meData = await meRes.json();
+        if (meData.success) {
+          currentDonorProfile = meData.profile || {};
+          updateAvailabilityUI();
+          selectRadius(currentDonorProfile.donationRadiusKm || 8);
+          await renderEmergencyRequests();
+        }
+      } catch (err) {
+        console.error('Error loading profile:', err);
+      }
+    }
+
     function updateAvailabilityUI() {
-      const avail = MockData.getDonorAvailability();
       const container = document.getElementById('availabilityCardContainer');
       if (!container) return;
 
-      if (avail.status === 'AVAILABLE') {
+      const isAvailable = currentDonorProfile ? currentDonorProfile.isAvailable : true;
+
+      if (isAvailable) {
         container.innerHTML = `
           <div class="availability-card-active">
             <div style="display: flex; align-items: center; gap: 0.85rem;">
@@ -627,7 +642,7 @@
               </div>
             </div>
 
-            <button onclick="openPauseModal()" class="btn-pause-avail">
+            <button onclick="toggleAvailabilityAction(false)" class="btn-pause-avail">
               Pause Availability
             </button>
           </div>
@@ -642,66 +657,38 @@
                   Availability Paused
                 </div>
                 <div style="font-size: 0.82rem; color: #BE123C;">
-                  You are currently not receiving emergency requests. (${avail.duration || 'Paused'})
+                  You are currently not receiving emergency requests.
                 </div>
               </div>
             </div>
 
-            <button onclick="resumeAvailability()" class="btn-resume-avail">
+            <button onclick="toggleAvailabilityAction(true)" class="btn-resume-avail">
               Resume Availability
             </button>
           </div>
         `;
       }
-
-      renderEmergencyRequests();
     }
 
-    function openPauseModal() {
-      document.getElementById('pauseModal').style.display = 'flex';
-    }
-
-    function closePauseModal() {
-      document.getElementById('pauseModal').style.display = 'none';
-    }
-
-    function confirmPauseAvailability() {
-      const radios = document.getElementsByName('pauseDuration');
-      let chosen = 'Until I Resume';
-      radios.forEach(r => { if (r.checked) chosen = r.value; });
-
-      MockData.setDonorAvailability('PAUSED', chosen);
-      closePauseModal();
-      updateAvailabilityUI();
-    }
-
-    function resumeAvailability() {
-      MockData.setDonorAvailability('AVAILABLE');
-      updateAvailabilityUI();
-    }
-
-    function simulate24hPauseReminder() {
-      const avail = MockData.getDonorAvailability();
-      avail.status = 'PAUSED';
-      avail.simulated24h = true;
-      avail.pausedAt = new Date(Date.now() - (25 * 60 * 60 * 1000)).toISOString();
-      localStorage.setItem('lifelink_donor_availability', JSON.stringify(avail));
-      localStorage.removeItem('lifelink_pause_reminder_sent');
-
-      MockData.checkPauseReminder();
-
-      const badge = document.getElementById('notifBadgeCount');
-      if (badge) {
-        badge.textContent = (MockData.notifications ? MockData.notifications.length : 3).toString();
+    async function toggleAvailabilityAction(targetStatus) {
+      try {
+        const res = await fetch('/api/donors/availability', {
+          method: 'PATCH',
+          headers: MockAuth.getAuthHeaders(),
+          body: JSON.stringify({ isAvailable: targetStatus })
+        });
+        const data = await res.json();
+        if (data.success) {
+          if (currentDonorProfile) currentDonorProfile.isAvailable = data.isAvailable;
+          updateAvailabilityUI();
+          await renderEmergencyRequests();
+        }
+      } catch (err) {
+        alert('Failed to update availability');
       }
-      alert('24-Hour website pause reminder triggered! Check your Notification Center (bell icon).');
-      updateAvailabilityUI();
     }
 
-    // 2. RADIUS LOGIC & DYNAMIC GRAPHIC
-    function selectRadius(radiusKm) {
-      MockData.setDonationRadius(radiusKm);
-
+    async function selectRadius(radiusKm) {
       [3, 5, 8, 10].forEach(r => {
         const btn = document.getElementById(`radiusBtn${r}`);
         if (btn) {
@@ -713,7 +700,6 @@
       document.getElementById('currentRadiusDisplay').textContent = `${radiusKm} km`;
       document.getElementById('radiusDescriptionText').textContent = `LIFE LINK can consider compatible emergency requests within approximately ${radiusKm} km of your location.`;
 
-      // Dynamically animate circle size (3km: 80px, 5km: 110px, 8km: 140px, 10km: 170px)
       const sizeMap = { 3: 80, 5: 110, 8: 140, 10: 170 };
       const pxSize = sizeMap[radiusKm] || 110;
       const circle = document.getElementById('radiusCircleGraphic');
@@ -722,16 +708,23 @@
         circle.style.height = pxSize + 'px';
       }
 
-      renderEmergencyRequests();
+      try {
+        await fetch('/api/donors/radius', {
+          method: 'PATCH',
+          headers: MockAuth.getAuthHeaders(),
+          body: JSON.stringify({ radiusKm })
+        });
+      } catch (err) {}
+
+      await renderEmergencyRequests();
     }
 
-    // 3. EMERGENCY REQUESTS LIST RENDERER
-    function renderEmergencyRequests() {
+    async function renderEmergencyRequests() {
       const container = document.getElementById('emergencyRequestsContainer');
       if (!container) return;
 
-      const isAvailable = MockData.isDonorAvailable();
-      const currentRadius = MockData.getDonationRadius();
+      const isAvailable = currentDonorProfile ? currentDonorProfile.isAvailable : true;
+      const currentRadius = currentDonorProfile ? (currentDonorProfile.donationRadiusKm || 8) : 8;
 
       if (!isAvailable) {
         container.innerHTML = `
@@ -741,7 +734,7 @@
             <p style="font-size: 0.88rem; max-width: 460px; margin: 0 auto 1.25rem auto; color: #BE123C;">
               You are excluded from emergency matching while your availability is paused. Resume your availability to receive active emergency requests within your ${currentRadius} km travel radius.
             </p>
-            <button onclick="resumeAvailability()" class="btn-resume-avail">
+            <button onclick="toggleAvailabilityAction(true)" class="btn-resume-avail">
               Resume Availability Now
             </button>
           </div>
@@ -749,105 +742,75 @@
         return;
       }
 
-      // Filter active requests within radius
-      const mockRequests = [
-        {
-          id: 'REQ-8821',
-          urgency: 'CRITICAL',
-          bloodGroup: 'O+',
-          unitsNeeded: 2,
-          hospitalName: 'XYZ Government Hospital',
-          hospitalType: 'Government Hospital',
-          location: 'Hosur Sector 4',
-          distanceKm: 3.4,
-          timeRemaining: '1h 42m',
-          status: 'RESPONSE CONFIRMED'
-        },
-        {
-          id: 'REQ-8822',
-          urgency: 'URGENT',
-          bloodGroup: 'O+',
-          unitsNeeded: 3,
-          hospitalName: 'City Trauma Care Center',
-          hospitalType: 'Authorized Healthcare Center',
-          location: 'Hosur Industrial Area',
-          distanceKm: 4.8,
-          timeRemaining: '3h 15m',
-          status: 'AWAITING RESPONSE'
-        },
-        {
-          id: 'REQ-8823',
-          urgency: 'MODERATE',
-          bloodGroup: 'O+',
-          unitsNeeded: 1,
-          hospitalName: 'General Medical Institute',
-          hospitalType: 'Government Hospital',
-          location: 'Krishnagiri Highway',
-          distanceKm: 7.5,
-          timeRemaining: '6h 00m',
-          status: 'AWAITING RESPONSE'
+      try {
+        const res = await fetch('/api/requests/donor-feed', { headers: MockAuth.getAuthHeaders() });
+        const data = await res.json();
+        if (res.status === 401 || data.message === 'Not authorized') {
+          MockAuth.logout();
+          return;
         }
-      ];
+        const requests = (data.success && data.requests) ? data.requests : [];
 
-      const visibleRequests = mockRequests.filter(r => r.distanceKm <= currentRadius);
+        if (requests.length === 0) {
+          container.innerHTML = `
+            <div style="padding: 2.5rem; background: #F8FAFC; border-radius: 12px; border: 1px solid var(--slate-border); text-align: center; color: var(--slate-muted);">
+              <i class="fa-solid fa-location-crosshairs" style="font-size: 2rem; margin-bottom: 0.75rem; color: var(--slate-muted);"></i>
+              <h4 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 0.35rem; color: var(--navy-dark);">No Active Emergency Requests Match</h4>
+              <p style="font-size: 0.88rem; max-width: 480px; margin: 0 auto; color: var(--slate-muted);">
+                There are currently no urgent blood requests matching your profile within your search radius.
+              </p>
+            </div>
+          `;
+          return;
+        }
 
-      if (visibleRequests.length === 0) {
-        container.innerHTML = `
-          <div style="padding: 2.5rem; background: #F8FAFC; border-radius: 12px; border: 1px solid var(--slate-border); text-align: center; color: var(--slate-muted);">
-            <i class="fa-solid fa-location-crosshairs" style="font-size: 2rem; margin-bottom: 0.75rem; color: var(--slate-muted);"></i>
-            <h4 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 0.35rem; color: var(--navy-dark);">No Emergency Requests Within ${currentRadius} km</h4>
-            <p style="font-size: 0.88rem; max-width: 480px; margin: 0 auto; color: var(--slate-muted);">
-              There are no urgent blood requests matching your O+ blood group within your current ${currentRadius} km travel radius. You can expand your radius to 8 km or 10 km above.
-            </p>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = visibleRequests.map(r => `
-        <div class="request-row-card">
-          <div>
-            <span style="display: inline-block; font-size: 0.68rem; font-weight: 800; padding: 0.2rem 0.5rem; border-radius: 9999px; background: ${r.urgency === 'CRITICAL' ? '#FFE4E6' : '#FEF3C7'}; color: ${r.urgency === 'CRITICAL' ? '#BE123C' : '#B45309'}; margin-bottom: 0.4rem;">
-              ${r.urgency}
-            </span>
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-              <span style="width: 38px; height: 38px; background: #FFF0F3; color: var(--red-primary); border-radius: 8px; font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
-                ${r.bloodGroup}
+        container.innerHTML = requests.map(r => `
+          <div class="request-row-card">
+            <div>
+              <span style="display: inline-block; font-size: 0.68rem; font-weight: 800; padding: 0.2rem 0.5rem; border-radius: 9999px; background: ${(r.urgency || '').toUpperCase().includes('CRIT') ? '#FFE4E6' : '#FEF3C7'}; color: ${(r.urgency || '').toUpperCase().includes('CRIT') ? '#BE123C' : '#B45309'}; margin-bottom: 0.4rem;">
+                ${r.urgency || 'URGENT'}
               </span>
-              <div>
-                <div style="font-weight: 800; font-size: 0.95rem;">${r.unitsNeeded} UNITS NEEDED</div>
-                <div style="font-size: 0.75rem; color: var(--slate-muted);">${r.status}</div>
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="width: 38px; height: 38px; background: #FFF0F3; color: var(--red-primary); border-radius: 8px; font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                  ${r.bloodGroup}
+                </span>
+                <div>
+                  <div style="font-weight: 800; font-size: 0.95rem;">${r.unitsNeeded} UNITS NEEDED</div>
+                  <div style="font-size: 0.75rem; color: var(--slate-muted);">${r.status || 'Active'}</div>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div>
-            <div style="font-weight: 800; font-size: 0.98rem; color: var(--navy-dark); margin-bottom: 0.2rem;">
-              🏥 ${r.hospitalName} <i class="fa-solid fa-circle-check" style="color: #16A34A; font-size: 0.8rem;"></i>
+            <div>
+              <div style="font-weight: 800; font-size: 0.98rem; color: var(--navy-dark); margin-bottom: 0.2rem;">
+                🏥 ${r.hospitalName || r.orgName} <i class="fa-solid fa-circle-check" style="color: #16A34A; font-size: 0.8rem;"></i>
+              </div>
+              <div style="font-size: 0.8rem; color: var(--slate-muted);">
+                📍 ${r.city} (~${r.distanceKm || 2.5} km away)
+              </div>
+              <div style="font-size: 0.78rem; color: var(--red-primary); font-weight: 700; margin-top: 0.2rem;">
+                ⏱ Required within: ${r.requiredBy || 'Within 3 Hours'}
+              </div>
             </div>
-            <div style="font-size: 0.8rem; color: var(--slate-muted);">
-              📍 ${r.location} (${r.distanceKm} km away)
-            </div>
-            <div style="font-size: 0.78rem; color: var(--red-primary); font-weight: 700; margin-top: 0.2rem;">
-              ⏱ Required within: ${r.timeRemaining}
-            </div>
-          </div>
 
-          <div style="background: #F8FAFC; padding: 0.75rem; border-radius: 10px; border: 1px solid var(--slate-border); font-size: 0.8rem;">
-            <div style="font-weight: 700; color: var(--navy-dark); margin-bottom: 0.2rem;">LIFE LINK Verified</div>
-            <div style="color: var(--slate-muted); font-size: 0.75rem;">Authorized hospital request dispatched to nearby O+ donors within ${currentRadius} km.</div>
-          </div>
+            <div style="background: #F8FAFC; padding: 0.75rem; border-radius: 10px; border: 1px solid var(--slate-border); font-size: 0.8rem;">
+              <div style="font-weight: 700; color: var(--navy-dark); margin-bottom: 0.2rem;">LIFE LINK Verified</div>
+              <div style="color: var(--slate-muted); font-size: 0.75rem;">Authorized request dispatched to eligible donors in MongoDB.</div>
+            </div>
 
-          <div style="display: flex; flex-direction: column; gap: 0.4rem;">
-            <button onclick="openRequestDetail('${r.id}')" class="btn-action-primary">
-              <i class="fa-solid fa-eye"></i> View Request
-            </button>
-            <button onclick="openReferralModal('${r.id}')" class="btn-action-refer">
-              <i class="fa-solid fa-user-plus"></i> Refer a Donor
-            </button>
+            <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+              <button onclick="openRequestDetail('${r._id || r.id}')" class="btn-action-primary">
+                <i class="fa-solid fa-eye"></i> View Request
+              </button>
+              <button onclick="openReferralModal('${r._id || r.id}')" class="btn-action-refer">
+                <i class="fa-solid fa-user-plus"></i> Refer a Donor
+              </button>
+            </div>
           </div>
-        </div>
-      `).join('');
+        `).join('');
+      } catch (err) {
+        console.error('Error rendering emergency requests:', err);
+      }
     }
 
     function toggleNotifPopup(e) {

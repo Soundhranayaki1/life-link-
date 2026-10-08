@@ -49,13 +49,27 @@ const bloodRequestSchema = new mongoose.Schema({
     required: [true, 'City is required'],
     trim: true
   },
+  district: {
+    type: String,
+    default: ''
+  },
+  locationCoords: {
+    latitude: { type: Number, default: null },
+    longitude: { type: Number, default: null }
+  },
   contactPhone: {
     type: String,
     required: [true, 'Contact phone is required']
   },
   urgency: {
     type: String,
-    enum: ['Critical', 'Urgent', 'Standard'],
+    enum: [
+      'Critical', 'Urgent', 'Standard',
+      'CRITICAL', 'URGENT', 'STANDARD',
+      'critical', 'urgent', 'standard',
+      'HIGH', 'High', 'high', 'MEDIUM', 'Medium', 'medium', 'LOW', 'Low', 'low',
+      'Critical (Immediate Dispatch)', 'Urgent (Within 4-6 Hours)', 'Standard (Routine)'
+    ],
     default: 'Urgent'
   },
   status: {
@@ -142,12 +156,27 @@ const bloodRequestSchema = new mongoose.Schema({
     approxDistance: String,
     status: {
       type: String,
-      enum: ['Accepted', 'ACCEPTED', 'Standby', 'STANDBY', 'Contacted', 'CONTACTED', 'Confirmed', 'CONFIRMED', 'Arrived', 'ARRIVED', 'Completed', 'COMPLETED', 'Declined', 'DECLINED', 'Unable', 'UNABLE'],
-      default: 'Accepted'
+      enum: ['Accepted', 'ACCEPTED', 'Standby', 'STANDBY', 'Contacted', 'CONTACTED', 'Confirmed', 'CONFIRMED', 'Arrived', 'ARRIVED', 'Completed', 'COMPLETED', 'Declined', 'DECLINED', 'Unable', 'UNABLE', 'Withdrawn', 'WITHDRAWN'],
+      default: 'Confirmed'
     },
     respondedAt: { type: Date, default: Date.now },
+    confirmedAt: { type: Date, default: Date.now },
+    withdrawnAt: { type: Date },
     arrivedAt: { type: Date },
     fulfilledAt: { type: Date }
+  }],
+  referrals: [{
+    referringDonorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    referringDonorName: String,
+    referringDonorPhone: String,
+    referredPhone: String,
+    referredName: String,
+    status: {
+      type: String,
+      enum: ['Pending', 'Verified', 'Responded', 'Declined'],
+      default: 'Pending'
+    },
+    referredAt: { type: Date, default: Date.now }
   }]
 }, {
   timestamps: true

@@ -1002,89 +1002,8 @@
             </div>
           </div>
 
-          <div class="popup-body-list">
-
-            <!-- ITEM 1: URGENT RED HIGHLIGHT -->
-            <div class="notif-card-item notif-card-red">
-              <div class="notif-icon-circle circle-red">
-                <i class="fa-solid fa-bell"></i>
-              </div>
-              <div class="notif-content-area">
-                <div class="notif-header-row">
-                  <span class="notif-tag-red">URGENT O+ REQUEST NEARBY</span>
-                  <span class="notif-time-tag">10 mins ago <span class="dot-unread" id="dotUnread1">●</span></span>
-                </div>
-                <p class="notif-body-text">
-                  XYZ Government Hospital needs 2 units of O+ blood.
-                </p>
-                <div class="notif-meta-row">
-                  <span><i class="fa-solid fa-location-dot" style="color: var(--red-primary);"></i> 3.4 km away</span>
-                  <span style="margin: 0 0.35rem; color: #CBD5E1;">|</span>
-                  <span><i class="fa-regular fa-clock" style="color: var(--red-primary);"></i> Required within <strong style="color: var(--red-primary);">2 hours</strong></span>
-                </div>
-                <a href="emergency-requests.html?id=REQ-8821" class="btn-popup-view-req">
-                  View Request →
-                </a>
-              </div>
-            </div>
-
-            <!-- ITEM 2: CONFIRMED GREEN HIGHLIGHT -->
-            <div class="notif-card-item notif-card-green">
-              <div class="notif-icon-circle circle-green">
-                <i class="fa-solid fa-check"></i>
-              </div>
-              <div class="notif-content-area">
-                <div class="notif-header-row">
-                  <span class="notif-tag-green">RESPONSE CONFIRMED</span>
-                  <span class="notif-time-tag">1 hour ago</span>
-                </div>
-                <p class="notif-body-text">
-                  Your donation commitment was received by XYZ Government Hospital.
-                </p>
-                <p class="notif-sub-text">
-                  Hospital contact line is open for your visit.
-                </p>
-              </div>
-            </div>
-
-            <!-- ITEM 3: ACTIVE BLUE HIGHLIGHT -->
-            <div class="notif-card-item notif-card-blue">
-              <div class="notif-icon-circle circle-blue">
-                <i class="fa-solid fa-tower-broadcast"></i>
-              </div>
-              <div class="notif-content-area">
-                <div class="notif-header-row">
-                  <span class="notif-tag-blue">AVAILABILITY ACTIVE</span>
-                  <span class="notif-time-tag">Yesterday</span>
-                </div>
-                <p class="notif-body-text">
-                  Your profile is currently visible to emergency healthcare providers nearby.
-                </p>
-                <p class="notif-sub-text">
-                  8 km notification radius enabled.
-                </p>
-              </div>
-            </div>
-
-            <!-- ITEM 4: VERIFIED GRAY HIGHLIGHT -->
-            <div class="notif-card-item notif-card-gray">
-              <div class="notif-icon-circle circle-gray">
-                <i class="fa-solid fa-user"></i>
-              </div>
-              <div class="notif-content-area">
-                <div class="notif-header-row">
-                  <span class="notif-tag-dark">DONOR PROFILE VERIFIED</span>
-                  <span class="notif-time-tag">2 days ago</span>
-                </div>
-                <p class="notif-body-text">
-                  Mobile verification and blood group details recorded successfully.
-                </p>
-                <p class="notif-sub-text">
-                  Verified Voluntary Donor.
-                </p>
-              </div>
-            </div>
-
+          <div class="popup-body-list" id="notifPopupBodyList">
+            <div style="color: var(--slate-muted); font-size: 0.85rem; text-align: center; padding: 1rem;">No new notifications.</div>
           </div>
 
           <div class="popup-footer-row">
@@ -1105,9 +1024,9 @@
     <div class="header-user-actions">
       <a href="donor-profile.html" class="user-profile-btn">
         <div class="user-avatar-circle">
-          A
+          --
         </div>
-        <span>Arun</span> <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; color: var(--slate-muted);"></i>
+        <span>Donor</span> <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; color: var(--slate-muted);"></i>
       </a>
 
       <button onclick="MockAuth.logout()" class="btn-signout" title="Sign Out">
@@ -1173,64 +1092,9 @@
         <p class="section-subtitle">A record of your donations and the lives you've helped.</p>
 
         <div class="journey-timeline-table">
-          
-          <!-- ITEM 1: AUG 2026 -->
-          <div class="timeline-item-row">
-            <div class="date-column">AUG 2026</div>
-
-            <div class="facility-info-column">
-              <div class="facility-icon-square">
-                <i class="fa-solid fa-hospital"></i>
-              </div>
-              <div>
-                <div class="facility-name">Blood Donation</div>
-                <div class="facility-location">XYZ Government Hospital</div>
-              </div>
-            </div>
-
-            <span class="pill-completed">
-              <i class="fa-solid fa-circle-check"></i> Completed
-            </span>
+          <div style="text-align: center; color: var(--slate-muted); padding: 2rem;">
+            <i class="fa-solid fa-spinner fa-spin" style="margin-right: 0.5rem;"></i> Loading donation history...
           </div>
-
-          <!-- ITEM 2: MAR 2026 -->
-          <div class="timeline-item-row">
-            <div class="date-column">MAR 2026</div>
-
-            <div class="facility-info-column">
-              <div class="facility-icon-square">
-                <i class="fa-solid fa-hospital"></i>
-              </div>
-              <div>
-                <div class="facility-name">Blood Donation</div>
-                <div class="facility-location">ABC Regional Blood Bank</div>
-              </div>
-            </div>
-
-            <span class="pill-completed">
-              <i class="fa-solid fa-circle-check"></i> Completed
-            </span>
-          </div>
-
-          <!-- ITEM 3: NOV 2025 -->
-          <div class="timeline-item-row">
-            <div class="date-column">NOV 2025</div>
-
-            <div class="facility-info-column">
-              <div class="facility-icon-square">
-                <i class="fa-solid fa-users"></i>
-              </div>
-              <div>
-                <div class="facility-name">Community Drive</div>
-                <div class="facility-location">City Central Center</div>
-              </div>
-            </div>
-
-            <span class="pill-completed">
-              <i class="fa-solid fa-circle-check"></i> Completed
-            </span>
-          </div>
-
         </div>
       </div>
 
@@ -1246,8 +1110,8 @@
             <span>Last Donation</span>
           </div>
 
-          <div class="last-don-date">August 2026</div>
-          <div class="last-don-facility">XYZ Government Hospital</div>
+          <div class="last-don-date">--</div>
+          <div class="last-don-facility">--</div>
           <div class="last-don-subtext">Your kindness continues to save lives.</div>
         </div>
 
@@ -1298,57 +1162,105 @@
   </footer>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      loadMyDonationHistory();
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadMyDonationHistory();
     });
 
-    function loadMyDonationHistory() {
-      let user = MockAuth.getCurrentUser();
-      if (!user) {
-        user = MockAuth.quickDemoLogin('Donor');
-      }
+    async function loadMyDonationHistory() {
+      const token = MockAuth.getToken();
+      if (!token) return;
+      MockAuth.syncHeaderUserUI();
 
-      const history = JSON.parse(localStorage.getItem('lifelink_donation_history') || '[]');
-      const timelineContainer = document.querySelector('.journey-timeline-table');
-      const countEl = document.querySelector('.stat-num-pink');
-      const livesEl = document.querySelector('.stat-num-blue');
+      try {
+        const meRes = await fetch('/api/auth/me', { headers: MockAuth.getAuthHeaders() });
+        const meData = await meRes.json();
+        const profile = (meData.success && meData.profile) ? meData.profile : {};
+        const user = (meData.success && meData.user) ? meData.user : {};
 
-      if (countEl) countEl.textContent = (user.totalDonations || 4).toString().padStart(2, '0');
-      if (livesEl) livesEl.textContent = (user.livesHelped || 12).toString().padStart(2, '0');
+        const countEl = document.querySelector('.stat-num-pink');
+        const livesEl = document.querySelector('.stat-num-blue');
+        if (countEl) countEl.textContent = (profile.totalDonations || 0).toString().padStart(2, '0');
+        if (livesEl) livesEl.textContent = ((profile.totalDonations || 0) * 3).toString().padStart(2, '0');
 
-      if (history.length > 0 && timelineContainer) {
-        timelineContainer.innerHTML = history.map(item => `
-          <div class="timeline-item-row">
-            <div class="date-column">${(item.donationDate || '').toUpperCase()}</div>
-            <div class="facility-info-column">
-              <div class="facility-icon-square">🏥</div>
-              <div>
-                <div class="facility-name">${item.location || 'Hosur Healthcare Center'}</div>
-                <div class="facility-location">Donation Type: ${item.donationType || 'Whole Blood'} (${item.bloodGroup || 'O+'})</div>
+        const res = await fetch('/api/donors/history', { headers: MockAuth.getAuthHeaders() });
+        const data = await res.json();
+        const history = (data.success && data.history) ? data.history : [];
+
+        const timelineContainer = document.querySelector('.journey-timeline-table');
+        if (timelineContainer) {
+          if (history.length === 0) {
+            timelineContainer.innerHTML = `<div style="text-align: center; color: var(--slate-muted); padding: 2rem;">No donation history records recorded yet.</div>`;
+          } else {
+            timelineContainer.innerHTML = history.map(item => `
+              <div class="timeline-item-row">
+                <div class="date-column">${item.donationDate ? new Date(item.donationDate).toLocaleDateString().toUpperCase() : 'RECENT'}</div>
+                <div class="facility-info-column">
+                  <div class="facility-icon-square">🏥</div>
+                  <div>
+                    <div class="facility-name">${item.facilityName || 'Healthcare Facility'}</div>
+                    <div class="facility-location">Donation Type: ${item.donationType || 'Whole Blood'} (${item.bloodGroup || 'O+'}) • ${item.unitsDonated || 1} Unit</div>
+                  </div>
+                </div>
+                <div class="pill-completed">
+                  <i class="fa-solid fa-check"></i> ${item.status || 'COMPLETED'}
+                </div>
               </div>
-            </div>
-            <div class="pill-completed">
-              <i class="fa-solid fa-check"></i> ${item.status || 'COMPLETED'}
-            </div>
-          </div>
-        `).join('');
-      }
+            `).join('');
+          }
+        }
 
-      // Update 48-Day Eligibility Box
-      if (typeof MockData !== 'undefined' && MockData.calculateEligibility) {
-        const lastDate = user.lastDonationDate || '2026-06-15';
-        const eligibility = MockData.calculateEligibility(lastDate);
         const lastDonDateEl = document.querySelector('.last-don-date');
         const lastDonFacilityEl = document.querySelector('.last-don-facility');
         const lastDonSubtextEl = document.querySelector('.last-don-subtext');
 
-        if (lastDonDateEl) lastDonDateEl.textContent = eligibility.lastDonationFormatted;
-        if (lastDonFacilityEl) lastDonFacilityEl.textContent = `Status: ${eligibility.statusText}`;
-        if (lastDonSubtextEl) {
-          lastDonSubtextEl.innerHTML = eligibility.isEligible 
-            ? '<strong style="color: #16A34A;">✓ You are eligible to donate blood today.</strong>' 
-            : `<strong style="color: var(--red-primary);">⚠️ Next Eligible Date: ${eligibility.nextEligibleFormatted} (${eligibility.daysRemaining} days remaining)</strong>`;
+        if (profile.lastDonationDate) {
+          if (lastDonDateEl) lastDonDateEl.textContent = new Date(profile.lastDonationDate).toLocaleDateString();
+          if (lastDonFacilityEl) lastDonFacilityEl.textContent = 'Status: Verified Records';
+          if (lastDonSubtextEl) lastDonSubtextEl.innerHTML = '<strong style="color: #16A34A;">✓ You are eligible to donate blood today.</strong>';
+        } else {
+          if (lastDonDateEl) lastDonDateEl.textContent = 'No previous donations';
+          if (lastDonFacilityEl) lastDonFacilityEl.textContent = 'Ready for first donation!';
+          if (lastDonSubtextEl) lastDonSubtextEl.innerHTML = '<strong style="color: #16A34A;">✓ You are eligible to donate blood.</strong>';
         }
+
+        // Fetch Notifications
+        try {
+          const notifRes = await fetch('/api/notifications', { headers: MockAuth.getAuthHeaders() });
+          const notifData = await notifRes.json();
+          if (notifData.success) {
+            const notifs = notifData.notifications || [];
+            const notifBody = document.getElementById('notifPopupBodyList');
+            const notifBadge = document.getElementById('notifBadgeCount');
+            if (notifBadge) {
+              if (notifData.unreadCount > 0) {
+                notifBadge.textContent = notifData.unreadCount;
+                notifBadge.style.display = 'inline-block';
+              } else {
+                notifBadge.style.display = 'none';
+              }
+            }
+            if (notifBody) {
+              if (notifs.length === 0) {
+                notifBody.innerHTML = '<div style="color: var(--slate-muted); font-size: 0.85rem; text-align: center; padding: 1rem;">No new notifications.</div>';
+              } else {
+                notifBody.innerHTML = notifs.map(n => `
+                  <div class="notif-card-item ${n.isRead ? 'notif-card-gray' : 'notif-card-red'}">
+                    <div class="notif-content-area">
+                      <div class="notif-header-row">
+                        <span class="${n.isRead ? 'notif-tag-dark' : 'notif-tag-red'}">${n.title}</span>
+                        <span class="notif-time-tag">${new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                      </div>
+                      <p class="notif-body-text">${n.message}</p>
+                    </div>
+                  </div>
+                `).join('');
+              }
+            }
+          }
+        } catch (e) {}
+
+      } catch (err) {
+        console.error('Error loading donation history:', err);
       }
     }
 

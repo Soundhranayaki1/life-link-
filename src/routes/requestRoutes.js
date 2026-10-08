@@ -8,6 +8,7 @@ const {
   getOrgRequests,
   getRequestById,
   respondToRequest,
+  referEmergencyRequest,
   updateResponderStatus,
   fulfillRequest
 } = require('../controllers/requestController');
@@ -21,6 +22,8 @@ router.post('/', protect, verifiedOrgOnly, createRequest);
 router.patch('/:id/expand-wave', protect, verifiedOrgOnly, expandDispatchWave);
 router.post('/:id/evaluate-dispatch', protect, verifiedOrgOnly, expandDispatchWave);
 router.post('/:id/respond', protect, verifiedDonorOnly, respondToRequest);
+router.post('/:id/withdraw', protect, verifiedDonorOnly, respondToRequest);
+router.post('/:id/refer', protect, verifiedDonorOnly, referEmergencyRequest);
 router.patch('/:id/responders/:donorId', protect, verifiedOrgOnly, updateResponderStatus);
 router.patch('/:id/fulfill', protect, verifiedOrgOnly, fulfillRequest);
 

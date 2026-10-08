@@ -679,17 +679,17 @@
     <div class="hero-card">
       <div class="avatar-wrapper">
         <div id="heroAvatarCircle" class="avatar-circle">
-          <span id="heroInitials">AK</span>
+          <span id="heroInitials">--</span>
           <img id="heroAvatarImg" src="" alt="Profile Photo" style="display:none; width:100%; height:100%; object-fit:cover;">
         </div>
       </div>
 
       <div class="hero-details">
-        <h2 class="hero-name" id="displayHeroName">Arun Kumar</h2>
+        <h2 class="hero-name" id="displayHeroName">--</h2>
 
         <div class="hero-meta-row">
           <span class="hero-group-badge" id="displayHeroGroup">
-            <i class="fa-solid fa-droplet"></i> O+ Blood Donor
+            <i class="fa-solid fa-droplet"></i> -- Blood Donor
           </span>
 
           <span class="badge-avail-status badge-avail-active" id="displayHeroAvail">
@@ -698,7 +698,7 @@
         </div>
 
         <div class="hero-location" id="displayHeroLoc">
-          <i class="fa-solid fa-location-dot" style="color: var(--red-primary);"></i> Hosur, Tamil Nadu
+          <i class="fa-solid fa-location-dot" style="color: var(--red-primary);"></i> --
         </div>
       </div>
 
@@ -713,7 +713,7 @@
     <div class="summary-grid">
       <div class="sum-card">
         <div class="sum-card-label">Blood Group</div>
-        <div class="sum-card-value" style="color: var(--red-primary);" id="sumBlood">O+</div>
+        <div class="sum-card-value" style="color: var(--red-primary);" id="sumBlood">--</div>
       </div>
 
       <div class="sum-card">
@@ -723,7 +723,7 @@
 
       <div class="sum-card">
         <div class="sum-card-label">Location</div>
-        <div class="sum-card-value" id="sumLoc">Hosur</div>
+        <div class="sum-card-value" id="sumLoc">--</div>
       </div>
 
       <div class="sum-card">
@@ -744,30 +744,30 @@
 
         <div class="form-group">
           <label class="form-label" for="profName">Full Name *</label>
-          <input type="text" id="profName" class="form-input" value="Arun Kumar" required oninput="syncFormToDisplay()">
+          <input type="text" id="profName" class="form-input" value="" placeholder="Full Name" required oninput="syncFormToDisplay()">
         </div>
 
         <div class="form-grid-2">
           <div class="form-group">
             <label class="form-label">Blood Group</label>
-            <input type="text" id="profBlood" class="form-input" value="O+" readonly>
+            <input type="text" id="profBlood" class="form-input" value="" placeholder="Blood Group" readonly>
           </div>
 
           <div class="form-group">
             <label class="form-label" for="profPhone">Mobile Number *</label>
-            <input type="tel" id="profPhone" class="form-input" value="+91 98765 43210" required>
+            <input type="tel" id="profPhone" class="form-input" value="" placeholder="Mobile Number" required>
           </div>
         </div>
 
         <div class="form-grid-2">
           <div class="form-group">
             <label class="form-label" for="profEmail">Email Address *</label>
-            <input type="email" id="profEmail" class="form-input" value="arun.kumar@example.com" required>
+            <input type="email" id="profEmail" class="form-input" value="" placeholder="Email Address" required>
           </div>
 
           <div class="form-group">
             <label class="form-label" for="profCity">City / District *</label>
-            <input type="text" id="profCity" class="form-input" value="Hosur" required oninput="syncFormToDisplay()">
+            <input type="text" id="profCity" class="form-input" value="" placeholder="City" required oninput="syncFormToDisplay()">
           </div>
         </div>
       </div>
@@ -852,7 +852,7 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; background: #F8FAFC; padding: 1rem; border-radius: 10px; border: 1px solid var(--slate-border);">
           <div>
             <div style="font-size: 0.72rem; color: var(--slate-muted); font-weight: 700; text-transform: uppercase;">Registered Mobile</div>
-            <div style="font-weight: 700; color: var(--navy-dark); font-size: 0.92rem;" id="secPhoneTxt">+91 98765 43210</div>
+            <div style="font-weight: 700; color: var(--navy-dark); font-size: 0.92rem;" id="secPhoneTxt"></div>
           </div>
 
           <div>
@@ -929,39 +929,41 @@
       loadUserProfile();
     });
 
-    function loadUserProfile() {
-      const user = MockAuth.getCurrentUser() || {
-        name: 'Arun Kumar',
-        bloodGroup: 'O+',
-        phone: '+91 98765 43210',
-        email: 'arun.kumar@example.com',
-        city: 'Hosur',
-        isAvailable: true,
-        radius: '8'
-      };
+    async function loadUserProfile() {
+      try {
+        const res = await fetch('/api/auth/me', { headers: MockAuth.getAuthHeaders() });
+        const data = await res.json();
+        
+        if (data.success && data.user) {
+          const user = data.user;
+          const profile = data.profile || {};
 
-      document.getElementById('profName').value = user.name || 'Arun Kumar';
-      document.getElementById('profBlood').value = user.bloodGroup || 'O+';
-      document.getElementById('profPhone').value = user.phone || '+91 98765 43210';
-      document.getElementById('profEmail').value = user.email || 'arun.kumar@example.com';
-      document.getElementById('profCity').value = user.city || 'Hosur';
-      
-      if (user.radius) {
-        document.getElementById('profRadiusSelect').value = user.radius;
+          document.getElementById('profName').value = user.name || '';
+          document.getElementById('profBlood').value = profile.bloodGroup || user.bloodGroup || 'O+';
+          document.getElementById('profPhone').value = user.phone || '';
+          document.getElementById('profEmail').value = user.email || '';
+          document.getElementById('profCity').value = profile.city || user.city || 'Hosur';
+          
+          if (profile.donationRadiusKm) {
+            document.getElementById('profRadiusSelect').value = profile.donationRadiusKm;
+          }
+
+          currentIsAvailable = profile.isAvailable !== false;
+          setAvailability(currentIsAvailable);
+
+          const savedAvatar = localStorage.getItem('lifelink_user_avatar');
+          if (savedAvatar) {
+            setAvatarImage(savedAvatar);
+          } else {
+            updateInitialsAvatar(user.name || 'User');
+          }
+
+          syncFormToDisplay();
+          MockAuth.setCurrentUser(user, MockAuth.getToken(), profile, null);
+        }
+      } catch (err) {
+        console.error('Error loading profile:', err);
       }
-
-      currentIsAvailable = user.isAvailable !== false;
-      setAvailability(currentIsAvailable);
-
-      // Load Avatar if saved locally
-      const savedAvatar = localStorage.getItem('lifelink_user_avatar');
-      if (savedAvatar) {
-        setAvatarImage(savedAvatar);
-      } else {
-        updateInitialsAvatar(user.name);
-      }
-
-      syncFormToDisplay();
     }
 
     function setAvailability(isAvail) {
@@ -989,15 +991,15 @@
     }
 
     function syncFormToDisplay() {
-      const name = document.getElementById('profName').value || 'Arun Kumar';
+      const name = document.getElementById('profName').value || 'Donor';
       const city = document.getElementById('profCity').value || 'Hosur';
       const blood = document.getElementById('profBlood').value || 'O+';
       const radius = document.getElementById('profRadiusSelect').value || '8';
-      const phone = document.getElementById('profPhone').value || '+91 98765 43210';
+      const phone = document.getElementById('profPhone').value || '';
 
       document.getElementById('displayHeroName').textContent = name;
       document.getElementById('displayHeroGroup').innerHTML = `<i class="fa-solid fa-droplet"></i> ${blood} Blood Donor`;
-      document.getElementById('displayHeroLoc').innerHTML = `<i class="fa-solid fa-location-dot" style="color: var(--red-primary);"></i> ${city}, Tamil Nadu`;
+      document.getElementById('displayHeroLoc').innerHTML = `<i class="fa-solid fa-location-dot" style="color: var(--red-primary);"></i> ${city}`;
 
       document.getElementById('sumBlood').textContent = blood;
       document.getElementById('sumLoc').textContent = city;
@@ -1011,10 +1013,10 @@
 
     function updateInitialsAvatar(name) {
       const parts = name.trim().split(' ');
-      let initials = 'AK';
+      let initials = 'D';
       if (parts.length >= 2) {
         initials = (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-      } else if (parts.length === 1 && parts[0].length >= 2) {
+      } else if (parts.length === 1 && parts[0].length >= 1) {
         initials = parts[0].substring(0, 2).toUpperCase();
       }
       document.getElementById('heroInitials').textContent = initials;
@@ -1075,19 +1077,43 @@
       showToast('Profile photo removed.');
     }
 
-    /* SAVE PROFILE HANDLER */
-    function handleSaveProfile(e) {
+    /* SAVE PROFILE HANDLER (PERSISTS TO MONGO DB) */
+    async function handleSaveProfile(e) {
       e.preventDefault();
-      const user = MockAuth.getCurrentUser() || {};
-      user.name = document.getElementById('profName').value;
-      user.phone = document.getElementById('profPhone').value;
-      user.email = document.getElementById('profEmail').value;
-      user.city = document.getElementById('profCity').value;
-      user.radius = document.getElementById('profRadiusSelect').value;
-      user.isAvailable = currentIsAvailable;
+      const name = document.getElementById('profName').value.trim();
+      const phone = document.getElementById('profPhone').value.trim();
+      const city = document.getElementById('profCity').value.trim();
+      const radiusKm = parseFloat(document.getElementById('profRadiusSelect').value) || 8;
 
-      MockAuth.setCurrentUser(user);
-      showToast('Profile updated successfully.');
+      try {
+        const pRes = await fetch('/api/donors/profile', {
+          method: 'PATCH',
+          headers: MockAuth.getAuthHeaders(),
+          body: JSON.stringify({ name, phone, city })
+        });
+        const pData = await pRes.json();
+
+        await fetch('/api/donors/radius', {
+          method: 'PATCH',
+          headers: MockAuth.getAuthHeaders(),
+          body: JSON.stringify({ radiusKm })
+        });
+
+        await fetch('/api/donors/availability', {
+          method: 'PATCH',
+          headers: MockAuth.getAuthHeaders(),
+          body: JSON.stringify({ isAvailable: currentIsAvailable })
+        });
+
+        if (pData.success) {
+          showToast('✓ Profile updated successfully in MongoDB!');
+          await loadUserProfile();
+        } else {
+          showToast(pData.message || 'Failed to update profile');
+        }
+      } catch (err) {
+        showToast('Error saving profile changes to server');
+      }
     }
 
     function showToast(msg) {

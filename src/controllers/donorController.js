@@ -1,7 +1,6 @@
 const User = require('../models/User');
 const DonorProfile = require('../models/DonorProfile');
 const DonationHistory = require('../models/DonationHistory');
-const { mockUsers } = require('../utils/mockStore');
 const { getCompatibleDonors } = require('../utils/compatibility');
 const { calculateEligibility } = require('../utils/eligibility');
 const { matchDonorsForRequest } = require('../utils/matching');
@@ -13,27 +12,28 @@ const getDonors = async (req, res, next) => {
   try {
     const { bloodGroup, city, availableOnly, compatibleWith, search } = req.query;
 
-    if (User.db && User.db.readyState === 1) {
-      let donorFilter = {};
+    let donorFilter = {};
 
-      if (bloodGroup && bloodGroup !== 'All') {
-        donorFilter.bloodGroup = bloodGroup;
-      } else if (compatibleWith) {
-        const compatibleGroups = getCompatibleDonors(compatibleWith);
-        donorFilter.bloodGroup = { $in: compatibleGroups };
-      }
+    if (bloodGroup && bloodGroup !== 'All') {
+      donorFilter.bloodGroup = bloodGroup;
+    } else if (compatibleWith) {
+      const compatibleGroups = getCompatibleDonors(compatibleWith);
+      donorFilter.bloodGroup = { $in: compatibleGroups };
+    }
 
-      if (city && city.trim() !== '') {
-        donorFilter.city = { $regex: city.trim(), $options: 'i' };
-      }
+    if (city && city.trim() !== '') {
+      donorFilter.city = { $regex: city.trim(), $options: 'i' };
+    }
 
-      if (availableOnly === 'true') {
-        donorFilter.isAvailable = true;
-      }
+    if (availableOnly === 'true') {
+      donorFilter.isAvailable = true;
+    }
 
-      const profiles = await DonorProfile.find(donorFilter).populate('userId', 'name email phone role');
+    const profiles = await DonorProfile.find(donorFilter).populate('userId', 'name email phone role status');
 
-      const donors = profiles.map(p => {
+    const donors = profiles
+      .filter(p => p.userId && p.userId.status !== 'SUSPENDED')
+      .map(p => {
         const eligibility = calculateEligibility(p.lastDonationDate);
         return {
           id: p._id,
@@ -44,10 +44,10 @@ const getDonors = async (req, res, next) => {
           bloodGroup: p.bloodGroup,
           city: p.city,
           district: p.district,
-          // Privacy rule: Expose approximate distance, do not expose exact street address
-          approxDistance: `~${(Math.random() * 4 + 1.2).toFixed(1)} km`,
+          approxDistance: `~3.0 km`,
           isAvailable: p.isAvailable,
           totalDonations: p.totalDonations,
+          livesHelped: p.livesHelped || 0,
           lastDonationDate: p.lastDonationDate,
           isEligible: eligibility.isEligible,
           eligibilityStatus: eligibility.statusText,
@@ -55,65 +55,21 @@ const getDonors = async (req, res, next) => {
         };
       });
 
-      // Search text filter
-      let filteredDonors = donors;
-      if (search && search.trim() !== '') {
-        const s = search.trim().toLowerCase();
-        filteredDonors = donors.filter(d =>
-          d.name.toLowerCase().includes(s) ||
-          d.city.toLowerCase().includes(s) ||
-          d.bloodGroup.toLowerCase().includes(s)
-        );
-      }
-
-      return res.json({
-        success: true,
-        count: filteredDonors.length,
-        donors: filteredDonors
-      });
-    } else {
-      let results = mockUsers.filter(u => u.role === 'Donor' || !u.role);
-
-      if (bloodGroup && bloodGroup !== 'All') {
-        results = results.filter(u => u.bloodGroup === bloodGroup);
-      } else if (compatibleWith) {
-        const compatibleGroups = getCompatibleDonors(compatibleWith);
-        results = results.filter(u => compatibleGroups.includes(u.bloodGroup));
-      }
-
-      if (city && city.trim() !== '') {
-        results = results.filter(u => u.city.toLowerCase().includes(city.trim().toLowerCase()));
-      }
-
-      if (availableOnly === 'true') {
-        results = results.filter(u => u.isAvailable === true);
-      }
-
-      const donors = results.map(u => {
-        const eligibility = calculateEligibility(u.lastDonationDate);
-        return {
-          id: u._id,
-          name: u.name,
-          phone: u.phone,
-          email: u.email,
-          bloodGroup: u.bloodGroup,
-          city: u.city,
-          approxDistance: u.distanceKm ? `~${u.distanceKm} km` : `~${(Math.random() * 4 + 1.2).toFixed(1)} km`,
-          isAvailable: u.isAvailable !== false,
-          totalDonations: u.totalDonations || 0,
-          lastDonationDate: u.lastDonationDate || null,
-          isEligible: eligibility.isEligible,
-          eligibilityStatus: eligibility.statusText,
-          nextEligibleFormatted: eligibility.nextEligibleFormatted
-        };
-      });
-
-      return res.json({
-        success: true,
-        count: donors.length,
-        donors
-      });
+    let filteredDonors = donors;
+    if (search && search.trim() !== '') {
+      const s = search.trim().toLowerCase();
+      filteredDonors = donors.filter(d =>
+        d.name.toLowerCase().includes(s) ||
+        d.city.toLowerCase().includes(s) ||
+        d.bloodGroup.toLowerCase().includes(s)
+      );
     }
+
+    return res.json({
+      success: true,
+      count: filteredDonors.length,
+      donors: filteredDonors
+    });
   } catch (error) {
     next(error);
   }
@@ -125,12 +81,12 @@ const getDonors = async (req, res, next) => {
 const matchDonors = async (req, res, next) => {
   try {
     const { bloodGroup, city, searchRadiusKm } = req.query;
-    const reqObj = { bloodGroup: bloodGroup || 'O+', city: city || 'Mumbai', searchRadiusKm: searchRadiusKm || 8 };
+    const reqObj = { bloodGroup: bloodGroup || 'O+', city: city || '', searchRadiusKm: searchRadiusKm || 8 };
 
-    let rawDonors = [];
-    if (User.db && User.db.readyState === 1) {
-      const profiles = await DonorProfile.find().populate('userId', 'name email phone role');
-      rawDonors = profiles.map(p => ({
+    const profiles = await DonorProfile.find({ isAvailable: true }).populate('userId', 'name email phone role status');
+    const rawDonors = profiles
+      .filter(p => p.userId && p.userId.status !== 'SUSPENDED')
+      .map(p => ({
         id: p._id,
         name: p.userId ? p.userId.name : 'Voluntary Donor',
         bloodGroup: p.bloodGroup,
@@ -140,9 +96,6 @@ const matchDonors = async (req, res, next) => {
         lastDonationDate: p.lastDonationDate,
         phone: p.userId ? p.userId.phone : ''
       }));
-    } else {
-      rawDonors = mockUsers.filter(u => u.role === 'Donor' || !u.role);
-    }
 
     const matchedList = matchDonorsForRequest(reqObj, rawDonors);
 
@@ -163,32 +116,19 @@ const toggleAvailability = async (req, res, next) => {
   try {
     const userId = req.user.id || req.user._id;
 
-    if (User.db && User.db.readyState === 1) {
-      let profile = await DonorProfile.findOne({ userId });
-      if (!profile) {
-        profile = await DonorProfile.create({ userId, bloodGroup: req.user.bloodGroup || 'O+', city: 'Mumbai' });
-      }
-
-      profile.isAvailable = !profile.isAvailable;
-      await profile.save();
-
-      return res.json({
-        success: true,
-        message: `Availability updated to ${profile.isAvailable ? 'Available' : 'Unavailable'}`,
-        isAvailable: profile.isAvailable
-      });
-    } else {
-      const donor = mockUsers.find(u => u._id.toString() === userId.toString());
-      if (donor) {
-        donor.isAvailable = !donor.isAvailable;
-        return res.json({
-          success: true,
-          message: `Availability updated to ${donor.isAvailable ? 'Available' : 'Unavailable'} (Demo)`,
-          isAvailable: donor.isAvailable
-        });
-      }
-      return res.json({ success: true, message: 'Status updated', isAvailable: true });
+    let profile = await DonorProfile.findOne({ userId });
+    if (!profile) {
+      profile = await DonorProfile.create({ userId, bloodGroup: req.user.bloodGroup || 'O+', city: req.user.city || 'Hosur' });
     }
+
+    profile.isAvailable = !profile.isAvailable;
+    await profile.save();
+
+    return res.json({
+      success: true,
+      message: `Availability updated to ${profile.isAvailable ? 'Available' : 'Unavailable'}`,
+      isAvailable: profile.isAvailable
+    });
   } catch (error) {
     next(error);
   }
@@ -201,31 +141,9 @@ const getDonationHistory = async (req, res, next) => {
   try {
     const userId = req.user.id || req.user._id;
 
-    let historyList = [];
-    let lastDate = null;
-
-    if (DonationHistory.db && DonationHistory.db.readyState === 1) {
-      historyList = await DonationHistory.find({ donorId: userId }).sort({ donationDate: -1 });
-      const profile = await DonorProfile.findOne({ userId });
-      if (profile && profile.lastDonationDate) {
-        lastDate = profile.lastDonationDate;
-      } else if (historyList.length > 0) {
-        lastDate = historyList[0].donationDate;
-      }
-    } else {
-      const donor = mockUsers.find(u => u._id.toString() === userId.toString());
-      lastDate = donor ? donor.lastDonationDate : new Date('2025-11-10');
-
-      historyList = [
-        {
-          _id: 'dh_1',
-          bloodGroup: req.user.bloodGroup || 'O+',
-          unitsDonated: 1,
-          donationDate: lastDate || new Date('2025-11-10'),
-          location: 'XYZ Government Hospital, Mumbai'
-        }
-      ];
-    }
+    const historyList = await DonationHistory.find({ donorId: userId }).sort({ donationDate: -1 });
+    const profile = await DonorProfile.findOne({ userId });
+    const lastDate = (profile && profile.lastDonationDate) ? profile.lastDonationDate : (historyList.length > 0 ? historyList[0].donationDate : null);
 
     const eligibility = calculateEligibility(lastDate);
 
@@ -247,12 +165,10 @@ const updateRadius = async (req, res, next) => {
     const userId = req.user.id || req.user._id;
     const { radiusKm } = req.body;
 
-    if (DonorProfile.db && DonorProfile.db.readyState === 1) {
-      let profile = await DonorProfile.findOne({ userId });
-      if (profile) {
-        profile.donationRadiusKm = parseFloat(radiusKm) || 10;
-        await profile.save();
-      }
+    let profile = await DonorProfile.findOne({ userId });
+    if (profile) {
+      profile.donationRadiusKm = parseFloat(radiusKm) || 10;
+      await profile.save();
     }
     return res.json({ success: true, message: `Donation radius updated to ${radiusKm} km`, radiusKm });
   } catch (error) {
@@ -268,34 +184,33 @@ const updateProfile = async (req, res, next) => {
     const userId = req.user.id || req.user._id;
     const { name, bloodGroup, city, district, address, phone } = req.body;
 
-    if (User.db && User.db.readyState === 1) {
-      if (name || phone) {
-        await User.findByIdAndUpdate(userId, {
-          ...(name && { name: name.trim() }),
-          ...(phone && { phone: phone.trim() })
-        });
-      }
-
-      let profile = await DonorProfile.findOne({ userId });
-      if (!profile) {
-        profile = new DonorProfile({ userId, bloodGroup: bloodGroup || 'O+', city: city || 'Mumbai' });
-      }
-
-      if (bloodGroup) profile.bloodGroup = bloodGroup;
-      if (city) profile.city = city.trim();
-      if (district !== undefined) profile.district = district.trim();
-      if (address !== undefined) profile.address = address.trim();
-
-      await profile.save();
-
-      return res.json({
-        success: true,
-        message: 'Profile updated successfully!',
-        profile
+    if (name || phone) {
+      await User.findByIdAndUpdate(userId, {
+        ...(name && { name: name.trim() }),
+        ...(phone && { phone: phone.trim() })
       });
-    } else {
-      return res.json({ success: true, message: 'Profile updated' });
     }
+
+    let profile = await DonorProfile.findOne({ userId });
+    if (!profile) {
+      profile = new DonorProfile({ userId, bloodGroup: bloodGroup || req.user.bloodGroup || 'O+', city: city || req.user.city || 'Hosur' });
+    }
+
+    if (bloodGroup) profile.bloodGroup = bloodGroup;
+    if (city) profile.city = city.trim();
+    if (district !== undefined) profile.district = district.trim();
+    if (address !== undefined) profile.address = address.trim();
+
+    await profile.save();
+
+    const updatedUser = await User.findById(userId).select('-password');
+
+    return res.json({
+      success: true,
+      message: 'Profile updated successfully!',
+      user: updatedUser,
+      profile
+    });
   } catch (error) {
     next(error);
   }
@@ -309,4 +224,3 @@ module.exports = {
   updateRadius,
   updateProfile
 };
-

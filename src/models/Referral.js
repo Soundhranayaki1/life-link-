@@ -21,9 +21,24 @@ const referralSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
+  requestId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'BloodRequest',
+    default: null
+  },
+  organizationId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Organization',
+    default: null
+  },
+  hospitalUserId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    default: null
+  },
   status: {
     type: String,
-    enum: ['Sent', 'Verified', 'Registered', 'Matched', 'Responded', 'Donation Completed'],
+    enum: ['Sent', 'Contacted', 'Verified', 'Registered', 'Matched', 'Responded', 'Donation Completed'],
     default: 'Sent'
   },
   refereeId: {

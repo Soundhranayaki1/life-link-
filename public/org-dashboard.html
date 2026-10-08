@@ -1312,7 +1312,15 @@
               <i class="fa-solid fa-user-check"></i> 
               <span class="nav-text-long">Donor Responses</span>
               <span class="nav-text-short">Responses</span>
-              <span class="nav-badge-pill" id="donorResponseBadge" style="font-size: 0.65rem; padding: 0.1rem 0.4rem; border-radius: 9999px; background: var(--red-primary); color: white;">5</span>
+              <span class="nav-badge-pill" id="donorResponseBadge" style="font-size: 0.65rem; padding: 0.1rem 0.4rem; border-radius: 9999px; background: var(--red-primary); color: white;">0</span>
+            </button>
+          </li>
+          <li>
+            <button onclick="switchView('donor-referrals')" class="top-nav-btn" id="nav-donor-referrals">
+              <i class="fa-solid fa-user-plus"></i> 
+              <span class="nav-text-long">Donor Referrals</span>
+              <span class="nav-text-short">Referrals</span>
+              <span class="nav-badge-pill" id="donorReferralBadge" style="font-size: 0.65rem; padding: 0.1rem 0.4rem; border-radius: 9999px; background: #10B981; color: white;">0</span>
             </button>
           </li>
           <li>
@@ -1377,7 +1385,7 @@
             <div class="user-avatar-mini">
               <i class="fa-solid fa-hospital"></i>
             </div>
-            <span class="user-name-label" id="headerOrgName">Govt General Hospital</span>
+            <span class="user-name-label" id="headerOrgName">--</span>
             <i class="fa-solid fa-chevron-down" style="font-size: 0.65rem; color: var(--slate-muted);"></i>
           </button>
           
@@ -1387,9 +1395,9 @@
                 <i class="fa-solid fa-hospital"></i>
               </div>
               <div>
-                <div style="font-weight: 800; font-size: 0.88rem; color: var(--navy-dark);" id="dropdownOrgName">Govt General Hospital</div>
-                <div style="font-size: 0.72rem; color: var(--green-success); font-weight: 700; display: flex; align-items: center; gap: 0.25rem;">
-                  <i class="fa-solid fa-circle-check"></i> Verified Hospital
+                <div style="font-weight: 800; font-size: 0.88rem; color: var(--navy-dark);" id="dropdownOrgName">--</div>
+                <div style="font-size: 0.72rem; color: var(--green-success); font-weight: 700; display: flex; align-items: center; gap: 0.25rem;" id="dropdownOrgTypeStatus">
+                  <i class="fa-solid fa-circle-check"></i> Verified Organization
                 </div>
               </div>
             </div>
@@ -1454,7 +1462,7 @@
   <div class="main-wrapper">
     <div class="top-sub-header">
       <h2 class="page-title-text" id="topPageTitle">Organization Dashboard</h2>
-      <span class="verified-org-chip">
+      <span class="verified-org-chip" id="topOrgTypeBadge">
         <i class="fa-solid fa-shield-check"></i> VERIFIED HEALTHCARE ORGANIZATION
       </span>
     </div>
@@ -1473,17 +1481,17 @@
             <div style="font-size: 0.8rem; font-weight: 800; color: var(--red-primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.35rem;">
               DISPATCH CONTROL CENTER
             </div>
-            <h1 id="dashGreeting">Good morning, Government General Hospital</h1>
+            <h1 id="dashGreeting">Good morning</h1>
             <p>Manage emergency blood requirements and monitor donor response in real time across adaptive geographic radius waves.</p>
 
             <div class="org-identity-badges">
-              <span class="id-tag-chip">
-                <i class="fa-solid fa-hashtag" style="color: var(--blue-accent);"></i> LL-GH-2026-001
+              <span class="id-tag-chip" id="dashOrgId">
+                <i class="fa-solid fa-hashtag" style="color: var(--blue-accent);"></i> --
               </span>
-              <span class="id-tag-chip">
-                <i class="fa-solid fa-location-dot" style="color: var(--red-primary);"></i> Hosur, Tamil Nadu
+              <span class="id-tag-chip" id="dashOrgLocation">
+                <i class="fa-solid fa-location-dot" style="color: var(--red-primary);"></i> --
               </span>
-              <span class="id-tag-chip" style="background: var(--green-soft); color: #047857; border-color: #A7F3D0;">
+              <span class="id-tag-chip" style="background: var(--green-soft); color: #047857; border-color: #A7F3D0;" id="dashOrgStatusChip">
                 <i class="fa-solid fa-circle-check"></i> VERIFIED ORGANIZATION
               </span>
             </div>
@@ -1547,8 +1555,8 @@
               <span class="stat-label-text">Active Requests</span>
               <div class="stat-icon-circle icon-red"><i class="fa-solid fa-truck-medical"></i></div>
             </div>
-            <div class="stat-counter-number" id="statActiveReqs">3</div>
-            <div class="stat-sub-trend"><i class="fa-solid fa-triangle-exclamation" style="color: var(--red-primary);"></i> 1 Critical requirement</div>
+            <div class="stat-counter-number" id="statActiveReqs">0</div>
+            <div class="stat-sub-trend"><i class="fa-solid fa-triangle-exclamation" style="color: var(--red-primary);"></i> Real-time active requests</div>
           </div>
 
           <div class="stat-card-item">
@@ -1556,8 +1564,8 @@
               <span class="stat-label-text">Donors Notified</span>
               <div class="stat-icon-circle icon-blue"><i class="fa-solid fa-paper-plane"></i></div>
             </div>
-            <div class="stat-counter-number" id="statDonorsNotified">42</div>
-            <div class="stat-sub-trend"><i class="fa-solid fa-circle-nodes" style="color: var(--blue-accent);"></i> Across 3 active rounds</div>
+            <div class="stat-counter-number" id="statDonorsNotified">0</div>
+            <div class="stat-sub-trend"><i class="fa-solid fa-circle-nodes" style="color: var(--blue-accent);"></i> Across active wave rounds</div>
           </div>
 
           <div class="stat-card-item">
@@ -1565,7 +1573,7 @@
               <span class="stat-label-text">Confirmed Donors</span>
               <div class="stat-icon-circle icon-green"><i class="fa-solid fa-user-check"></i></div>
             </div>
-            <div class="stat-counter-number" id="statConfirmedDonors">8</div>
+            <div class="stat-counter-number" id="statConfirmedDonors">0</div>
             <div class="stat-sub-trend"><i class="fa-solid fa-check" style="color: var(--green-success);"></i> En-route to hospital</div>
           </div>
 
@@ -1574,8 +1582,8 @@
               <span class="stat-label-text">Fulfillment Rate</span>
               <div class="stat-icon-circle icon-amber"><i class="fa-solid fa-chart-line"></i></div>
             </div>
-            <div class="stat-counter-number" id="statFulfillmentRate">92%</div>
-            <div class="stat-sub-trend"><i class="fa-solid fa-clock" style="color: var(--amber-warn);"></i> Avg response: 4.2 mins</div>
+            <div class="stat-counter-number" id="statFulfillmentRate">100%</div>
+            <div class="stat-sub-trend"><i class="fa-solid fa-clock" style="color: var(--amber-warn);"></i> Real-time fulfillment rate</div>
           </div>
         </div>
 
@@ -1600,23 +1608,23 @@
           <div class="stages-horizontal-wrapper">
             <!-- ROUND 1 -->
             <div class="stage-card-box completed-stage">
-              <span class="stage-top-pill pill-done">ROUND 1 — COMPLETED</span>
+              <span class="stage-top-pill pill-done">ROUND 1 — INITIALIZED</span>
               <div class="stage-radius-title">0 – 3 KM Radius</div>
               <div class="stage-stats-list">
-                • <strong>12</strong> donors notified<br>
-                • <strong>2</strong> responses received<br>
-                • <strong>1</strong> donor confirmed
+                • <strong>Immediate</strong> wave dispatch<br>
+                • <strong>Targeted</strong> blood group match<br>
+                • <strong>Verified</strong> donor proximity
               </div>
             </div>
 
             <!-- ROUND 2 (CURRENTLY ACTIVE) -->
             <div class="stage-card-box active-stage">
-              <span class="stage-top-pill pill-active"><i class="fa-solid fa-wifi"></i> ROUND 2 — ACTIVE NOW</span>
+              <span class="stage-top-pill pill-active"><i class="fa-solid fa-wifi"></i> ROUND 2 — AUTOMATIC</span>
               <div class="stage-radius-title">3 – 5 KM Radius</div>
               <div class="stage-stats-list">
-                • <strong>18</strong> donors available<br>
-                • <strong>5</strong> responses received<br>
-                • <strong>1</strong> additional confirmed
+                • <strong>Extended</strong> radial coverage<br>
+                • <strong>Dynamic</strong> timer escalation<br>
+                • <strong>Standby</strong> response tracking
               </div>
             </div>
 
@@ -1625,9 +1633,9 @@
               <span class="stage-top-pill pill-queued">ROUND 3 — QUEUED</span>
               <div class="stage-radius-title">5 – 8 KM Radius</div>
               <div class="stage-stats-list">
-                • <strong>27</strong> donors queued<br>
-                • Standby evaluation<br>
-                • Not started yet
+                • <strong>Regional</strong> dispatch wave<br>
+                • <strong>Standby</strong> evaluation<br>
+                • <strong>Emergency</strong> backup pool
               </div>
             </div>
           </div>
@@ -1635,7 +1643,7 @@
           <!-- Status Message Bar -->
           <div class="adaptive-status-banner">
             <i class="fa-solid fa-circle-info" style="font-size: 1.2rem; color: var(--red-primary);"></i>
-            <span>"Round 2 activated because Round 1 did not reach the required confirmation count."</span>
+            <span>"Adaptive geographic dispatch engine is active and monitoring donor responses in real time."</span>
           </div>
         </div>
 
@@ -1643,67 +1651,8 @@
         <div class="dashboard-2col-grid">
 
           <!-- LEFT: EMERGENCY OVERVIEW & LIVE REQUEST CARD -->
-          <div class="emergency-overview-card">
-            <div class="card-header-flex">
-              <div class="card-heading-title">
-                <i class="fa-solid fa-kit-medical" style="color: var(--red-primary);"></i> Emergency Request Overview
-              </div>
-              <span class="badge-critical-pulse">
-                <i class="fa-solid fa-bell"></i> CRITICAL
-              </span>
-            </div>
-
-            <div style="font-size: 1.1rem; font-weight: 800; font-family: var(--font-main); color: var(--navy-dark); margin-bottom: 1rem;">
-              Emergency O+ Blood Requirement (REQ-1042)
-            </div>
-
-            <div class="emergency-details-grid">
-              <div class="detail-item-box">
-                <div class="lbl">Blood Group</div>
-                <div class="val" style="color: var(--red-primary);">O+</div>
-              </div>
-              <div class="detail-item-box">
-                <div class="lbl">Units Required</div>
-                <div class="val">3 Units</div>
-              </div>
-              <div class="detail-item-box">
-                <div class="lbl">Status</div>
-                <div class="val" style="font-size: 0.95rem; color: #D97706;">ACTIVE — SEARCHING</div>
-              </div>
-              <div class="detail-item-box">
-                <div class="lbl">Urgency</div>
-                <div class="val" style="color: var(--red-primary);">CRITICAL</div>
-              </div>
-              <div class="detail-item-box">
-                <div class="lbl">Location</div>
-                <div class="val" style="font-size: 0.9rem;">Govt General Hospital, Hosur</div>
-              </div>
-              <div class="detail-item-box">
-                <div class="lbl">Created Time</div>
-                <div class="val" style="font-size: 0.9rem;">10:42 AM</div>
-              </div>
-            </div>
-
-            <!-- Progress Bar -->
-            <div class="progress-bar-container">
-              <div class="progress-bar-labels">
-                <span>2 / 3 DONORS CONFIRMED</span>
-                <span>66% FULFILLED</span>
-              </div>
-              <div class="progress-track">
-                <div class="progress-fill" style="width: 66%;"></div>
-              </div>
-            </div>
-
-            <!-- Buttons -->
-            <div style="display: flex; gap: 0.75rem;">
-              <button onclick="switchView('active-requests')" class="btn-primary-red">
-                <i class="fa-solid fa-eye"></i> VIEW REQUEST
-              </button>
-              <button onclick="switchView('fulfillment-tracking')" class="btn-secondary-outline">
-                <i class="fa-solid fa-sliders"></i> MANAGE DISPATCH
-              </button>
-            </div>
+          <div class="emergency-overview-card" id="emergencyOverviewCardContainer">
+            <!-- Rendered dynamically by renderEmergencyOverviewCard() -->
           </div>
 
           <!-- RIGHT: DONOR RESPONSE SNAPSHOT -->
@@ -1717,23 +1666,23 @@
 
             <div class="funnel-container">
               <div class="funnel-step-box">
-                <div class="funnel-num" style="color: var(--blue-accent);">42</div>
+                <div class="funnel-num" style="color: var(--blue-accent);" id="funnelNotifiedCount">0</div>
                 <div class="funnel-lbl">NOTIFIED</div>
               </div>
               <div class="funnel-step-box">
-                <div class="funnel-num">11</div>
+                <div class="funnel-num" id="funnelViewedCount">0</div>
                 <div class="funnel-lbl">VIEWED</div>
               </div>
               <div class="funnel-step-box">
-                <div class="funnel-num" style="color: var(--amber-warn);">5</div>
+                <div class="funnel-num" style="color: var(--amber-warn);" id="funnelRespondedCount">0</div>
                 <div class="funnel-lbl">RESPONDED</div>
               </div>
               <div class="funnel-step-box">
-                <div class="funnel-num" style="color: var(--slate-muted);">2</div>
+                <div class="funnel-num" style="color: var(--slate-muted);" id="funnelDeclinedCount">0</div>
                 <div class="funnel-lbl">DECLINED</div>
               </div>
               <div class="funnel-step-box" style="background: var(--green-soft); border-color: #A7F3D0;">
-                <div class="funnel-num" style="color: var(--green-success);">2</div>
+                <div class="funnel-num" style="color: var(--green-success);" id="funnelConfirmedCount">0</div>
                 <div class="funnel-lbl" style="color: var(--green-success);">CONFIRMED</div>
               </div>
             </div>
@@ -1753,8 +1702,8 @@
               <div class="card-heading-title">
                 <i class="fa-solid fa-map-location-dot" style="color: var(--red-primary);"></i> Geographic Zone Donor Clusters
               </div>
-              <div style="font-size: 0.85rem; color: var(--slate-muted); margin-top: 0.2rem;">
-                Approximate donor distribution around Government General Hospital, Hosur
+              <div style="font-size: 0.85rem; color: var(--slate-muted); margin-top: 0.2rem;" id="dashMapSubtitle">
+                Approximate donor distribution around <strong id="dashMapOrgName">Organization</strong>, <span id="dashMapOrgCity">Location</span>
               </div>
             </div>
 
@@ -1769,26 +1718,25 @@
               <!-- Radial Zones -->
               <!-- 8 KM Zone -->
               <circle cx="350" cy="130" r="115" fill="rgba(37, 99, 235, 0.03)" stroke="#93C5FD" stroke-width="1.5" stroke-dasharray="5 5" />
-              <text x="350" y="24" fill="#3B82F6" font-size="10" font-weight="bold" text-anchor="middle">8 KM RADIUS ZONE (27 Donors)</text>
+              <text x="350" y="24" fill="#3B82F6" font-size="10" font-weight="bold" text-anchor="middle">8 KM RADIUS ZONE</text>
 
               <!-- 5 KM Zone -->
               <circle cx="350" cy="130" r="75" fill="rgba(230, 0, 46, 0.04)" stroke="#FCA5A5" stroke-width="1.5" stroke-dasharray="4 4" />
-              <text x="350" y="62" fill="#E6002E" font-size="10" font-weight="bold" text-anchor="middle">5 KM RADIUS ZONE (18 Donors)</text>
+              <text x="350" y="62" fill="#E6002E" font-size="10" font-weight="bold" text-anchor="middle">5 KM RADIUS ZONE</text>
 
               <!-- 3 KM Zone -->
               <circle cx="350" cy="130" r="42" fill="rgba(16, 185, 129, 0.08)" stroke="#6EE7B7" stroke-width="2" />
-              <text x="350" y="94" fill="#059669" font-size="10" font-weight="bold" text-anchor="middle">3 KM ZONE (12 Donors)</text>
+              <text x="350" y="94" fill="#059669" font-size="10" font-weight="bold" text-anchor="middle">3 KM ZONE</text>
 
               <!-- Center Hospital -->
               <circle cx="350" cy="130" r="14" fill="#E6002E" />
               <path d="M346 130 H354 M350 126 V134" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-              <text x="350" y="156" fill="#0F172A" font-size="11" font-weight="800" text-anchor="middle">Govt General Hospital</text>
+              <text x="350" y="156" fill="#0F172A" font-size="11" font-weight="800" text-anchor="middle" id="dashMapCenterLabel">Organization</text>
 
               <!-- Cluster Nodes (Approximate) -->
-              <!-- Cluster 1 (0-3km) -->
               <g transform="translate(320, 110)">
                 <circle cx="0" cy="0" r="10" fill="#10B981" opacity="0.8"/>
-                <text x="0" y="3" fill="white" font-size="9" font-weight="bold" text-anchor="middle">6</text>
+                <text x="0" y="3" fill="white" font-size="9" font-weight="bold" text-anchor="middle">•</text>
               </g>
               <g transform="translate(375, 140)">
                 <circle cx="0" cy="0" r="10" fill="#10B981" opacity="0.8"/>
@@ -1983,6 +1931,33 @@
           </div>
 
           <div id="donorResponsesListGrid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem;">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- 4.5. DONOR REFERRALS VIEW -->
+      <!-- ================================================================= -->
+      <div id="view-donor-referrals" class="view-pane">
+        <div class="card-white">
+          <div class="card-header-flex">
+            <div>
+              <h2 style="font-family: var(--font-main); font-size: 1.4rem; font-weight: 800;">Donor Referrals Received</h2>
+              <p style="font-size: 0.88rem; color: var(--slate-muted);">Friends & family members referred by registered donors for blood donation.</p>
+            </div>
+
+            <span class="verified-org-chip" style="background: #ECFDF5; border-color: #A7F3D0; color: #047857;">
+              <i class="fa-solid fa-users"></i> Network Referrals Active
+            </span>
+          </div>
+
+          <div style="background: #F8FAFC; border: 1px solid var(--slate-border); border-radius: 16px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: var(--slate-muted);">
+            <i class="fa-solid fa-circle-info" style="color: var(--blue-accent);"></i>
+            Referrals are generated by donors inviting their family/friends. Contact referred donors directly to coordinate donation appointments.
+          </div>
+
+          <div id="donorReferralsListGrid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem;">
             <!-- Populated via JS -->
           </div>
         </div>
@@ -2644,14 +2619,13 @@
   <script>
     // State management
     let activeView = 'dashboard';
-    let confirmedCountState = 2;
-    let requiredCountState = 3;
+    let currentOrgData = null;
 
-    document.addEventListener('DOMContentLoaded', () => {
-      // Ensure user preset
+    document.addEventListener('DOMContentLoaded', async () => {
       const user = MockAuth.getCurrentUser();
-      if (user && user.role !== 'Organization') {
-        MockAuth.quickDemoLogin('Organization');
+      if (!user || (user.role !== 'Organization' && user.role !== 'Admin')) {
+        window.location.href = 'login.html';
+        return;
       }
 
       // Check URL hash
@@ -2670,11 +2644,9 @@
         reqTimeInput.value = now.toISOString().slice(0, 16);
       }
 
-      renderActiveRequestsTable();
-      renderDonorResponsesGrid();
-      renderFulfillmentTimeline();
-      loadOrgProfileUI();
-      renderOrgSupportTable();
+      await loadOrgProfileUI();
+      await renderActiveRequestsTable();
+      await renderOrgSupportTable();
     });
 
     function switchView(viewId) {
@@ -2689,7 +2661,6 @@
       if (targetNav) targetNav.classList.add('active');
       if (mobNav) mobNav.classList.add('active');
 
-      // Check if active view belongs to the "More" dropdown
       const moreNavIds = ['dashboard', 'request-history', 'notifications', 'org-profile', 'help-support'];
       const moreToggle = document.getElementById('moreDropdownToggle');
       if (moreToggle) {
@@ -2708,6 +2679,7 @@
         'create-request': 'Create Emergency Blood Request',
         'active-requests': 'Active Emergency Requests',
         'donor-responses': 'Donor Response Monitor',
+        'donor-referrals': 'Donor Referrals Monitor',
         'fulfillment-tracking': 'Fulfillment Lifecycle Tracking',
         'request-history': 'Request Audit History',
         'notifications': 'Notification Center',
@@ -2719,6 +2691,10 @@
       };
       const titleEl = document.getElementById('topPageTitle');
       if (titleEl) titleEl.textContent = titleMap[viewId] || 'Organization Portal';
+
+      if (viewId === 'donor-referrals') {
+        renderDonorReferralsGrid();
+      }
 
       if (viewId === 'create-org-support') {
         renderEligibleOrgCards();
@@ -2791,7 +2767,6 @@
       document.getElementById('reqBloodGroup').value = group;
     }
 
-    // Modal Handlers
     function handleRequestSubmit(e) {
       e.preventDefault();
       const group = document.getElementById('reqBloodGroup').value;
@@ -2811,16 +2786,48 @@
       document.getElementById('confirmRequestModal').style.display = 'none';
     }
 
-    function executeRequestBroadcast() {
+    async function executeRequestBroadcast() {
       closeConfirmModal();
 
       const group = document.getElementById('reqBloodGroup').value;
       const units = document.getElementById('reqUnits').value;
+      const urgency = document.getElementById('reqUrgency').value;
+      const radius = document.getElementById('reqRadius').value;
+      const patientName = document.getElementById('reqPatientName')?.value || 'Emergency Patient';
+      const city = document.getElementById('reqCity')?.value || (currentOrgData ? currentOrgData.city : 'Hosur');
+      const phone = document.getElementById('reqContactPhone')?.value || (currentOrgData ? currentOrgData.phone : '9876543210');
+      const requiredBy = document.getElementById('reqTime')?.value || 'Within 2 Hours';
+      const notes = document.getElementById('reqNotes')?.value || '';
 
-      document.getElementById('succGroup').textContent = group;
-      document.getElementById('succUnits').textContent = units;
+      try {
+        const res = await fetch('/api/requests', {
+          method: 'POST',
+          headers: MockAuth.getAuthHeaders(),
+          body: JSON.stringify({
+            patientName,
+            hospitalName: currentOrgData ? currentOrgData.orgName : 'Healthcare Facility',
+            bloodGroup: group,
+            unitsNeeded: parseInt(units),
+            city,
+            contactPhone: phone,
+            urgency,
+            additionalNotes: notes,
+            requiredBy
+          })
+        });
 
-      document.getElementById('successRequestModal').style.display = 'flex';
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('succGroup').textContent = group;
+          document.getElementById('succUnits').textContent = units;
+          document.getElementById('successRequestModal').style.display = 'flex';
+          await renderActiveRequestsTable();
+        } else {
+          alert(`Error creating request: ${data.message}`);
+        }
+      } catch (err) {
+        alert('Failed to connect to backend server');
+      }
     }
 
     function goToFulfillmentFromSuccess() {
@@ -2828,181 +2835,695 @@
       switchView('fulfillment-tracking');
     }
 
-    // ----------------------------------------------------
     // 1. ORGANIZATION PROFILE & FACILITY IMAGE HANDLERS
-    // ----------------------------------------------------
-    function loadOrgProfileUI() {
-      if (typeof MockData === 'undefined' || typeof MockData.getOrgProfile !== 'function') return;
-      const profile = MockData.getOrgProfile();
+    function applyOrgDataToUI(org, u) {
+      if (!org) return;
+
+      const orgName = org.orgName || (u ? u.name : '') || 'Organization';
+      const orgType = org.orgType || 'GovtHospital';
+      const orgTypeLabel = orgType === 'GovtHospital' ? 'Government Hospital' : orgType === 'CertifiedBloodBank' ? 'Government Blood Bank' : 'Authorized Healthcare Organization';
+      const city = org.city || 'Hosur';
+      const district = org.district || '';
+      const locationStr = city + (district && district !== city ? `, ${district}` : '');
+      const address = org.address || locationStr;
+      const rawId = org._id || (org.userId ? (typeof org.userId === 'object' ? org.userId._id : org.userId) : '');
+      const certNo = org.certificationNumber || (rawId ? ('LL-ORG-' + rawId.toString().slice(-6).toUpperCase()) : 'LL-ORG-001');
+      const status = org.verificationStatus || 'VERIFIED';
+      const phone = org.officialPhone || (u ? u.phone : '') || '';
+      const email = org.officialEmail || (u ? u.email : '') || '';
+      const representative = org.representativeName || (u ? u.name : '') || '';
+      const hotline = org.emergencyHotline || phone;
+
+      // 1. Header & Dropdown
+      const headerOrg = document.getElementById('headerOrgName');
+      if (headerOrg) headerOrg.textContent = orgName;
+
+      const dropdownOrg = document.getElementById('dropdownOrgName');
+      if (dropdownOrg) dropdownOrg.textContent = orgName;
+
+      const dropdownStatus = document.getElementById('dropdownOrgTypeStatus');
+      if (dropdownStatus) {
+        dropdownStatus.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${status === 'VERIFIED' ? 'Verified Organization' : status}`;
+      }
+
+      const topOrgTypeBadge = document.getElementById('topOrgTypeBadge');
+      if (topOrgTypeBadge) {
+        topOrgTypeBadge.innerHTML = `<i class="fa-solid fa-shield-check"></i> ${status === 'VERIFIED' ? orgTypeLabel.toUpperCase() : status}`;
+      }
+
+      // 2. Dashboard Greeting & Hero Identity Badges
+      const greetingEl = document.getElementById('dashGreeting');
+      if (greetingEl) greetingEl.textContent = `Good morning, ${orgName}`;
+
+      const dashIdEl = document.getElementById('dashOrgId');
+      if (dashIdEl) dashIdEl.innerHTML = `<i class="fa-solid fa-hashtag" style="color: var(--blue-accent);"></i> ${certNo}`;
+
+      const dashLocEl = document.getElementById('dashOrgLocation');
+      if (dashLocEl) dashLocEl.innerHTML = `<i class="fa-solid fa-location-dot" style="color: var(--red-primary);"></i> ${locationStr}`;
+
+      const dashStatusEl = document.getElementById('dashOrgStatusChip');
+      if (dashStatusEl) {
+        dashStatusEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${status === 'VERIFIED' ? 'VERIFIED ORGANIZATION' : status}`;
+      }
+
+      // 3. Create Request Form Defaults
+      const reqFacilityName = document.getElementById('reqFacilityName');
+      if (reqFacilityName) reqFacilityName.value = orgName;
+
+      const reqFacilityLocation = document.getElementById('reqFacilityLocation');
+      if (reqFacilityLocation) reqFacilityLocation.value = locationStr;
+
+      // 4. Facility Profile View
+      const titleEl = document.getElementById('orgProfileDisplayTitle');
+      if (titleEl) titleEl.textContent = orgName;
 
       const nameEl = document.getElementById('profOrgName');
+      if (nameEl) nameEl.value = orgName;
+
       const typeEl = document.getElementById('profOrgType');
+      if (typeEl) typeEl.value = orgType;
+
       const certEl = document.getElementById('profCertNo');
+      if (certEl) certEl.value = certNo;
+
       const personEl = document.getElementById('profContactPerson');
+      if (personEl) personEl.value = representative;
+
       const addrEl = document.getElementById('profAddress');
+      if (addrEl) addrEl.value = address;
+
       const emailEl = document.getElementById('profEmail');
+      if (emailEl) emailEl.value = email;
+
       const deskEl = document.getElementById('profDeskPhone');
+      if (deskEl) deskEl.value = phone;
+
       const hotEl = document.getElementById('profEmergencyHotline');
-      const imgPreview = document.getElementById('orgFacilityImagePreview');
-      const titleEl = document.getElementById('orgProfileDisplayTitle');
-      const headerOrg = document.getElementById('headerOrgName');
-      const dropdownOrg = document.getElementById('dropdownOrgName');
-      if (nameEl) nameEl.value = profile.name;
-      if (typeEl) typeEl.value = profile.type;
-      if (certEl) certEl.value = profile.certificationNo;
-      if (personEl) personEl.value = profile.contactPerson;
-      if (addrEl) addrEl.value = profile.address;
-      if (emailEl) emailEl.value = profile.email;
-      if (deskEl) deskEl.value = profile.deskPhone;
-      if (hotEl) hotEl.value = profile.emergencyHotline;
-      if (imgPreview && profile.imageUrl) imgPreview.src = profile.imageUrl;
-      if (titleEl) titleEl.textContent = profile.name;
-      if (headerOrg) headerOrg.textContent = profile.name;
-      if (dropdownOrg) dropdownOrg.textContent = profile.name;
+      if (hotEl) hotEl.value = hotline;
+
+      const profHeaderSubtext = document.getElementById('profHeaderSubtext');
+      if (profHeaderSubtext) {
+        profHeaderSubtext.textContent = `${orgName} (${certNo}) verified.`;
+      }
+
+      // 5. Org Support Section Defaults
+      const suppReqOrg = document.getElementById('suppRequestingOrgName');
+      if (suppReqOrg) suppReqOrg.textContent = orgName;
+
+      const detailReqOrg = document.getElementById('detailRequestingOrg');
+      if (detailReqOrg) detailReqOrg.textContent = orgName;
+
+      // 6. Map Section
+      const mapName = document.getElementById('dashMapOrgName');
+      if (mapName) mapName.textContent = orgName;
+
+      const mapCity = document.getElementById('dashMapOrgCity');
+      if (mapCity) mapCity.textContent = city;
+
+      const mapCenterLabel = document.getElementById('dashMapCenterLabel');
+      if (mapCenterLabel) mapCenterLabel.textContent = orgName;
+
+      // 7. Modals
+      const confirmFacilityText = document.getElementById('confirmFacilityText');
+      if (confirmFacilityText) confirmFacilityText.textContent = `Facility: ${orgName}, ${city}`;
+
+      const successVerifiedOrgText = document.getElementById('successVerifiedOrgText');
+      if (successVerifiedOrgText) successVerifiedOrgText.innerHTML = `<i class="fa-solid fa-circle-check"></i> Organization verified: ${orgName}`;
     }
 
-    function previewFacilityImage(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          const imgPreview = document.getElementById('orgFacilityImagePreview');
-          if (imgPreview) imgPreview.src = evt.target.result;
-        };
-        reader.readAsDataURL(file);
+    async function loadOrgProfileUI() {
+      try {
+        const res = await fetch('/api/auth/me', { headers: MockAuth.getAuthHeaders() });
+        const data = await res.json();
+        if (data.success) {
+          const u = data.user;
+          const o = data.organization || {};
+          currentOrgData = { ...u, ...o, orgName: o.orgName || u.name };
+          applyOrgDataToUI(currentOrgData, u);
+        }
+      } catch (err) {
+        console.error('Error loading org profile:', err);
       }
     }
 
-    function removeFacilityImage() {
-      const imgPreview = document.getElementById('orgFacilityImagePreview');
-      if (imgPreview) imgPreview.src = 'assets/images/lifelink-logo.png';
-      const fileInput = document.getElementById('orgImgFileInput');
-      if (fileInput) fileInput.value = '';
-    }
-
-    function handleSaveOrgProfile(e) {
+    async function handleSaveOrgProfile(e) {
       e.preventDefault();
-      const imgPreview = document.getElementById('orgFacilityImagePreview');
-
-      const updated = MockData.saveOrgProfile({
-        name: document.getElementById('profOrgName').value,
-        type: document.getElementById('profOrgType').value,
-        contactPerson: document.getElementById('profContactPerson').value,
-        address: document.getElementById('profAddress').value,
-        email: document.getElementById('profEmail').value,
-        deskPhone: document.getElementById('profDeskPhone').value,
-        emergencyHotline: document.getElementById('profEmergencyHotline').value,
-        imageUrl: imgPreview ? imgPreview.src : 'assets/images/lifelink-logo.png'
-      });
-
-      loadOrgProfileUI();
-      alert('✓ Organization Profile Updated Successfully!');
+      try {
+        const res = await fetch('/api/auth/update-profile', {
+          method: 'POST',
+          headers: MockAuth.getAuthHeaders(),
+          body: JSON.stringify({
+            name: document.getElementById('profOrgName').value,
+            address: document.getElementById('profAddress').value,
+            phone: document.getElementById('profDeskPhone').value
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert('✓ Organization Profile Updated Successfully!');
+          await loadOrgProfileUI();
+        } else {
+          alert(data.message);
+        }
+      } catch (err) {
+        alert('Failed to update organization profile.');
+      }
     }
 
-    // ----------------------------------------------------
-    // 2. DONOR RESPONSE & CALL WORKFLOW
-    // ----------------------------------------------------
-    let currentContactDonorId = null;
+    // 2. DONOR RESPONSE & ACTIVE REQUESTS MONITORS
+    let currentOrgRequests = [];
+
+    function renderEmergencyOverviewCard() {
+      const container = document.getElementById('emergencyOverviewCardContainer');
+      if (!container) return;
+
+      const activeReqs = (currentOrgRequests || []).filter(r => r.status !== 'Fulfilled' && r.status !== 'CANCELLED');
+      if (activeReqs.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 1.5rem 1rem;">
+            <div style="width: 46px; height: 46px; border-radius: 50%; background: var(--green-soft); color: var(--green-success); display: inline-flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 0.65rem;">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div style="font-family: var(--font-main); font-weight: 800; font-size: 1.15rem; color: var(--navy-dark); margin-bottom: 0.35rem;">
+              No Active Emergency Requests
+            </div>
+            <p style="font-size: 0.84rem; color: var(--slate-muted); max-width: 380px; margin: 0 auto 1.25rem auto;">
+              Your facility currently has no open emergency blood requirements. Click below to create a new request and trigger donor wave dispatch.
+            </p>
+            <button onclick="switchView('create-request')" class="btn-primary-red" style="font-size: 0.84rem; padding: 0.55rem 1.25rem;">
+              <i class="fa-solid fa-plus"></i> Create Emergency Request
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      const req = activeReqs[0];
+      const reqIdStr = req._id ? req._id.toString().slice(-6).toUpperCase() : 'REQ';
+      const responders = req.respondedDonors || req.responders || [];
+      const confirmedCount = responders.filter(resp => ['Confirmed', 'CONFIRMED', 'Arrived', 'ARRIVED', 'Completed', 'COMPLETED'].includes(resp.status)).length;
+      const pct = Math.min(100, Math.round((confirmedCount / (req.unitsNeeded || 1)) * 100));
+      const createdTime = req.createdAt ? new Date(req.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Recently';
+      const orgName = req.hospitalName || (currentOrgData ? currentOrgData.orgName : 'Healthcare Facility');
+      const city = req.city || (currentOrgData ? currentOrgData.city : '');
+
+      container.innerHTML = `
+        <div class="card-header-flex">
+          <div class="card-heading-title">
+            <i class="fa-solid fa-kit-medical" style="color: var(--red-primary);"></i> Emergency Request Overview
+          </div>
+          <span class="badge-critical-pulse">
+            <i class="fa-solid fa-bell"></i> ${req.urgency || 'CRITICAL'}
+          </span>
+        </div>
+
+        <div style="font-size: 1.1rem; font-weight: 800; font-family: var(--font-main); color: var(--navy-dark); margin-bottom: 1rem;">
+          Emergency ${req.bloodGroup} Blood Requirement (REQ-${reqIdStr})
+        </div>
+
+        <div class="emergency-details-grid">
+          <div class="detail-item-box">
+            <div class="lbl">Blood Group</div>
+            <div class="val" style="color: var(--red-primary);">${req.bloodGroup}</div>
+          </div>
+          <div class="detail-item-box">
+            <div class="lbl">Units Required</div>
+            <div class="val">${req.unitsNeeded} Units</div>
+          </div>
+          <div class="detail-item-box">
+            <div class="lbl">Status</div>
+            <div class="val" style="font-size: 0.95rem; color: #D97706;">${req.status || 'ACTIVE — SEARCHING'}</div>
+          </div>
+          <div class="detail-item-box">
+            <div class="lbl">Urgency</div>
+            <div class="val" style="color: var(--red-primary);">${req.urgency || 'CRITICAL'}</div>
+          </div>
+          <div class="detail-item-box">
+            <div class="lbl">Location</div>
+            <div class="val" style="font-size: 0.9rem;">${orgName}${city ? ', ' + city : ''}</div>
+          </div>
+          <div class="detail-item-box">
+            <div class="lbl">Created Time</div>
+            <div class="val" style="font-size: 0.9rem;">${createdTime}</div>
+          </div>
+        </div>
+
+        <div class="progress-bar-container">
+          <div class="progress-bar-labels">
+            <span>${confirmedCount} / ${req.unitsNeeded} DONORS CONFIRMED</span>
+            <span>${pct}% FULFILLED</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" style="width: ${pct}%;"></div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem;">
+          <button onclick="switchView('active-requests')" class="btn-primary-red">
+            <i class="fa-solid fa-eye"></i> VIEW REQUEST
+          </button>
+          <button onclick="switchView('fulfillment-tracking')" class="btn-secondary-outline">
+            <i class="fa-solid fa-sliders"></i> MANAGE DISPATCH
+          </button>
+        </div>
+      `;
+    }
+
+    async function renderActiveRequestsTable() {
+      try {
+        const res = await fetch('/api/requests/org', { headers: MockAuth.getAuthHeaders() });
+        const data = await res.json();
+        if (data.success) {
+          currentOrgRequests = data.requests || [];
+          
+          // Update stat counters
+          const activeCount = currentOrgRequests.filter(r => r.status !== 'Fulfilled' && r.status !== 'CANCELLED').length;
+          const fulfilledCount = currentOrgRequests.filter(r => r.status === 'Fulfilled').length;
+          const totalRequests = currentOrgRequests.length;
+          let totalConfirmedDonors = 0;
+          let totalDonorResponses = 0;
+          let totalNotified = 0;
+          let totalDeclined = 0;
+
+          currentOrgRequests.forEach(r => {
+            totalNotified += (r.donorsNotifiedCount || 0);
+            const responders = r.respondedDonors || r.responders || [];
+            totalDonorResponses += responders.length;
+            totalConfirmedDonors += responders.filter(resp => ['Confirmed', 'CONFIRMED', 'Arrived', 'ARRIVED', 'Completed', 'COMPLETED'].includes(resp.status)).length;
+            totalDeclined += responders.filter(resp => ['Unable', 'UNABLE', 'Declined', 'DECLINED', 'Cancelled', 'CANCELLED'].includes(resp.status)).length;
+          });
+
+          const statActiveEl = document.getElementById('statActiveReqs');
+          if (statActiveEl) statActiveEl.textContent = activeCount;
+          const statNotifiedEl = document.getElementById('statDonorsNotified');
+          if (statNotifiedEl) statNotifiedEl.textContent = totalNotified;
+          const statConfirmedEl = document.getElementById('statConfirmedDonors');
+          if (statConfirmedEl) statConfirmedEl.textContent = totalConfirmedDonors;
+          const statRateEl = document.getElementById('statFulfillmentRate');
+          if (statRateEl) {
+            statRateEl.textContent = totalRequests > 0 ? (Math.round((fulfilledCount / totalRequests) * 100) + '%') : '100%';
+          }
+
+          // Update funnel elements
+          const fnNotified = document.getElementById('funnelNotifiedCount');
+          if (fnNotified) fnNotified.textContent = totalNotified;
+          const fnViewed = document.getElementById('funnelViewedCount');
+          if (fnViewed) fnViewed.textContent = totalDonorResponses;
+          const fnResponded = document.getElementById('funnelRespondedCount');
+          if (fnResponded) fnResponded.textContent = totalDonorResponses;
+          const fnDeclined = document.getElementById('funnelDeclinedCount');
+          if (fnDeclined) fnDeclined.textContent = totalDeclined;
+          const fnConfirmed = document.getElementById('funnelConfirmedCount');
+          if (fnConfirmed) fnConfirmed.textContent = totalConfirmedDonors;
+
+          const activeBadgeEl = document.getElementById('activeReqBadge');
+          if (activeBadgeEl) activeBadgeEl.textContent = activeCount;
+          const donorBadgeEl = document.getElementById('donorResponseBadge');
+          if (donorBadgeEl) donorBadgeEl.textContent = totalDonorResponses;
+
+          renderEmergencyOverviewCard();
+
+          const tbody = document.getElementById('activeRequestsTableBody');
+          if (tbody) {
+            const pendingRequests = currentOrgRequests.filter(r => r.status !== 'Fulfilled');
+            tbody.innerHTML = pendingRequests.map(r => {
+              const responders = r.respondedDonors || r.responders || [];
+              const confirmedInReq = responders.filter(resp => ['Confirmed', 'CONFIRMED', 'Arrived', 'ARRIVED', 'Completed', 'COMPLETED'].includes(resp.status)).length;
+              return `
+              <tr>
+                <td><strong>${r._id ? r._id.toString().slice(-6).toUpperCase() : 'REQ'}</strong></td>
+                <td><span class="badge-status status-critical">${r.bloodGroup}</span></td>
+                <td><strong>${r.unitsNeeded} Units</strong></td>
+                <td><span class="badge-status status-critical">${r.urgency || 'CRITICAL'}</span></td>
+                <td>${r.dispatchWave || 'Round 1 (0–3 km)'}</td>
+                <td>${r.donorsNotifiedCount || 0} donors</td>
+                <td><strong>${confirmedInReq} / ${r.unitsNeeded}</strong></td>
+                <td><span class="badge-status ${r.status === 'Fulfilled' ? 'status-fulfilled' : 'status-active'}">${r.status}</span></td>
+                <td>${r.createdAt ? new Date(r.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Today'}</td>
+                <td>
+                  <div style="display: flex; gap: 0.35rem;">
+                    <button onclick="markRequestFulfilledAction('${r._id}')" class="btn-primary-red" style="padding: 0.25rem 0.55rem; font-size: 0.72rem; background: #16A34A;">Fulfill</button>
+                  </div>
+                </td>
+              </tr>
+            `}).join('') || `<tr><td colspan="10" style="text-align: center; color: var(--slate-muted); padding: 1.5rem;">No active requests. Create a request to dispatch.</td></tr>`;
+          }
+
+          renderDonorResponsesGrid();
+          renderDonorReferralsGrid();
+          renderFulfillmentTimeline();
+        }
+      } catch (err) {
+        console.error('Failed to load active requests:', err);
+      }
+    }
 
     function renderDonorResponsesGrid() {
       const container = document.getElementById('donorResponsesListGrid');
       if (!container) return;
 
-      const responders = MockData.getRespondersForRequest('REQ-1042');
+      const allResponders = [];
+      currentOrgRequests.forEach(req => {
+        const responders = req.respondedDonors || req.responders || [];
+        if (responders.length > 0) {
+          responders.forEach(resp => {
+            const donorObj = (resp.donorId && typeof resp.donorId === 'object') ? resp.donorId : {};
+            const dName = resp.donorName || donorObj.name || 'Voluntary Donor';
+            const dPhone = resp.donorPhone || donorObj.phone || '';
+            const dBlood = resp.bloodGroup || donorObj.bloodGroup || req.bloodGroup;
+            const dist = resp.approxDistance || (resp.distanceKm ? `~${resp.distanceKm} km` : '~2.5 km');
+            const rawId = donorObj._id || resp.donorId || 'DN-101';
+            const dId = rawId.toString();
 
-      container.innerHTML = responders.map(d => {
-        let statusBadgeClass = 'status-active';
-        if (d.status === 'CONFIRMED' || d.status === 'ARRIVED') statusBadgeClass = 'status-fulfilled';
-        else if (d.status === 'NO_LONGER_REQUIRED' || d.status === 'UNABLE') statusBadgeClass = 'status-expired';
-        else if (d.status === 'STANDBY') statusBadgeClass = 'status-active';
+            allResponders.push({
+              requestId: req._id,
+              reqBloodGroup: req.bloodGroup,
+              donorId: dId,
+              name: dName,
+              phone: dPhone,
+              bloodGroup: dBlood,
+              distanceKm: dist,
+              status: resp.status || 'Confirmed',
+              confirmedAt: resp.confirmedAt,
+              withdrawnAt: resp.withdrawnAt,
+              respondedAt: resp.respondedAt
+            });
+          });
+        }
+      });
+
+      if (allResponders.length === 0) {
+        container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: var(--slate-muted); padding: 2rem; background: white; border-radius: 14px; border: 1px solid var(--slate-border);">No donor responses yet. Responses will appear here in real-time when donors confirm emergency requests.</div>`;
+        return;
+      }
+
+      container.innerHTML = allResponders.map(d => {
+        const isConfirmed = ['Confirmed', 'CONFIRMED', 'Accepted'].includes(d.status);
+        const isWithdrawn = ['Withdrawn', 'WITHDRAWN', 'Unable', 'UNABLE', 'Cancelled', 'DECLINED'].includes(d.status);
+        const isArrived = ['Arrived', 'ARRIVED', 'Completed', 'COMPLETED'].includes(d.status);
+
+        let statusText = 'Confirmed — Will Donate';
+        let statusBadgeClass = 'status-fulfilled';
+        let phoneText = (d.phone && d.phone !== '(Contact Hidden Until Confirmed)') ? `📱 Phone: <strong style="color: #2563EB;">${d.phone}</strong>` : '📱 Phone: <span style="color: #64748B;">(Contact Hidden Until Confirmed)</span>';
+        let arrivalNotice = '🟢 Expected to arrive at hospital';
+
+        if (isWithdrawn) {
+          statusText = 'Withdrawn / Unable to Help';
+          statusBadgeClass = 'status-expired';
+          phoneText = '📱 Phone: <span style="color: #94A3B8;">(Confirmation Withdrawn)</span>';
+          arrivalNotice = '🔴 Confirmation Withdrawn — Not Arriving';
+        } else if (isArrived) {
+          statusText = 'Arrived & Donated';
+          statusBadgeClass = 'status-fulfilled';
+          phoneText = `📱 Phone: <strong style="color: #2563EB;">${d.phone}</strong>`;
+          arrivalNotice = '✓ Arrived at facility';
+        }
+
+        let timeStr = 'Recently';
+        if (d.confirmedAt) timeStr = `Confirmed: ${new Date(d.confirmedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+        else if (d.withdrawnAt) timeStr = `Withdrawn: ${new Date(d.withdrawnAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+        else if (d.respondedAt) timeStr = `Responded: ${new Date(d.respondedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
 
         return `
           <div style="background: #FFFFFF; border: 1px solid var(--slate-border); border-radius: 18px; padding: 1.25rem;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
               <div>
-                <div style="font-family: var(--font-main); font-weight: 800; font-size: 1.05rem; color: var(--navy-dark);">${d.name} (${d.id})</div>
-                <div style="font-size: 0.8rem; color: var(--slate-muted);">Blood Group: <strong style="color: var(--red-primary);">${d.bloodGroup}</strong> • Dist: <strong>~${d.distanceKm} km</strong></div>
+                <div style="font-family: var(--font-main); font-weight: 800; font-size: 1.05rem; color: var(--navy-dark);">${d.name}</div>
+                <div style="font-size: 0.8rem; color: var(--slate-muted);">Donor Group: <strong style="color: var(--red-primary);">${d.bloodGroup}</strong> • Dist: <strong>${d.distanceKm}</strong></div>
               </div>
-              <span class="badge-status ${statusBadgeClass}">${d.status}</span>
+              <span class="badge-status ${statusBadgeClass}">${statusText}</span>
             </div>
 
-            <div style="font-size: 0.82rem; color: var(--slate-muted); background: #F8FAFC; padding: 0.6rem 0.85rem; border-radius: 12px; margin-bottom: 1rem; display: flex; justify-content: space-between;">
-              <span>📱 Phone: <strong>${d.maskedPhone}</strong></span>
-              <span>Time: <strong>${d.responseTime}</strong></span>
+            <div style="font-size: 0.82rem; background: #F8FAFC; padding: 0.65rem 0.85rem; border-radius: 12px; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.25rem;">
+              <div style="display: flex; justify-content: space-between;">
+                ${phoneText}
+                <span style="font-size: 0.78rem; color: var(--slate-muted);">${timeStr}</span>
+              </div>
+              <div style="font-size: 0.78rem; font-weight: 700; margin-top: 0.2rem;">
+                ${arrivalNotice}
+              </div>
             </div>
 
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-              <button onclick="openCallDonorModal('${d.id}')" class="btn-secondary-outline" style="flex: 1; padding: 0.4rem; font-size: 0.78rem;">
-                <i class="fa-solid fa-phone"></i> Call Donor
-              </button>
-              ${d.status === 'CONFIRMED' ? `
-                <button onclick="markDonorArrivedAction('${d.id}')" class="btn-primary-red" style="padding: 0.4rem 0.75rem; font-size: 0.78rem; background: #16A34A;">
+              ${isConfirmed ? `
+                <button onclick="openCallDonorModal('${d.requestId}', '${d.donorId}', '${d.name}', '${d.phone}')" class="btn-secondary-outline" style="flex: 1; padding: 0.4rem; font-size: 0.78rem;">
+                  <i class="fa-solid fa-phone"></i> Call Donor
+                </button>
+                <button onclick="markDonorArrivedAction('${d.requestId}', '${d.donorId}')" class="btn-primary-red" style="padding: 0.4rem 0.75rem; font-size: 0.78rem; background: #16A34A;">
                   <i class="fa-solid fa-person-walking-arrow-right"></i> Mark Arrived
                 </button>
-              ` : ''}
+              ` : `
+                <button disabled class="btn-secondary-outline" style="flex: 1; padding: 0.4rem; font-size: 0.78rem; opacity: 0.6; cursor: not-allowed;">
+                  ${isWithdrawn ? 'Confirmation Withdrawn' : 'Awaiting Confirmation'}
+                </button>
+              `}
             </div>
           </div>
         `;
       }).join('');
     }
 
-    function openCallDonorModal(donorId) {
-      currentContactDonorId = donorId;
-      const responders = MockData.getRespondersForRequest('REQ-1042');
-      const donor = responders.find(r => r.id === donorId);
-      if (!donor) return;
+    async function openCallDonorModal(requestId, donorId, name, phone) {
+      alert(`CALLING DONOR PROTOCOL:\n\nDonor: ${name}\nPhone Line: ${phone || 'Masked Token'}\n\nPlease dial and verify donor arrival confirmation.`);
+      const confirmed = confirm(`Did donor ${name} confirm they are en route / arriving at hospital?\n\n[OK] = Confirmed\n[Cancel] = Unable`);
+      const newStatus = confirmed ? 'CONFIRMED' : 'UNABLE';
 
-      alert(`CALLING DONOR PROTOCOL:\n\nDonor: ${donor.name}\nMasked Line: ${donor.phone}\nDistance: ~${donor.distanceKm} km\n\nPlease dial the proxy hotline and select donor availability outcome.`);
-
-      const result = confirm(`Did donor ${donor.name} confirm they will arrive at the hospital?\n\n[OK] = Confirmed - Will Arrive\n[Cancel] = Unable to Arrive / Could Not Reach`);
-      if (result) {
-        MockData.updateResponderStatus('REQ-1042', donorId, 'CONFIRMED');
-      } else {
-        MockData.updateResponderStatus('REQ-1042', donorId, 'UNABLE');
+      try {
+        const res = await fetch(`/api/requests/${requestId}/responders/${donorId}`, {
+          method: 'PATCH',
+          headers: MockAuth.getAuthHeaders(),
+          body: JSON.stringify({ status: newStatus })
+        });
+        const data = await res.json();
+        if (data.success) {
+          await renderActiveRequestsTable();
+        } else {
+          alert(data.message);
+        }
+      } catch (err) {
+        alert('Error updating responder status');
       }
-      renderDonorResponsesGrid();
     }
 
-    function markDonorArrivedAction(donorId) {
-      MockData.markDonorArrived('REQ-1042', donorId);
-      alert(`✓ Donor ${donorId} marked as ARRIVED at hospital!`);
-      renderDonorResponsesGrid();
+    async function markDonorArrivedAction(requestId, donorId) {
+      try {
+        const res = await fetch(`/api/requests/${requestId}/responders/${donorId}`, {
+          method: 'PATCH',
+          headers: MockAuth.getAuthHeaders(),
+          body: JSON.stringify({ status: 'ARRIVED' })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert('✓ Donor marked as ARRIVED at facility!');
+          await renderActiveRequestsTable();
+        } else {
+          alert(data.message);
+        }
+      } catch (err) {
+        alert('Error marking donor arrived');
+      }
     }
 
-    // ----------------------------------------------------
+    async function markRequestFulfilledAction(requestId) {
+      try {
+        const res = await fetch(`/api/requests/${requestId}/fulfill`, {
+          method: 'PATCH',
+          headers: MockAuth.getAuthHeaders()
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert('✓ Emergency blood request marked as FULFILLED!');
+          await renderActiveRequestsTable();
+        } else {
+          alert(data.message);
+        }
+      } catch (err) {
+        alert('Error fulfilling request');
+      }
+    }
+
+    function renderFulfillmentTimeline() {
+      const container = document.getElementById('fulfillmentTimelineBox');
+      if (!container) return;
+
+      if (currentOrgRequests.length === 0) {
+        container.innerHTML = `<div style="color: var(--slate-muted); text-align: center; padding: 1rem;">No recent dispatch timeline events.</div>`;
+        return;
+      }
+
+      const events = [];
+      currentOrgRequests.forEach(req => {
+        events.push({
+          title: `Request Created: ${req.bloodGroup} (${req.unitsNeeded} Units)`,
+          desc: `Emergency dispatch initiated at ${req.hospitalName || req.orgName || 'Hospital'}. Notified ${req.donorsNotifiedCount || 0} donors in ${req.dispatchWave || 'Round 1'}.`,
+          time: req.createdAt ? new Date(req.createdAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : 'Recently'
+        });
+        const responders = req.respondedDonors || req.responders || [];
+        responders.forEach(resp => {
+          const donorObj = (resp.donorId && typeof resp.donorId === 'object') ? resp.donorId : {};
+          const donorName = resp.donorName || donorObj.name || 'Donor';
+          events.push({
+            title: `Donor Responded: ${donorName} (${resp.status})`,
+            desc: `Distance ${resp.approxDistance || (resp.distanceKm ? `~${resp.distanceKm} km` : '~2.5 km')}. Status: ${resp.status}`,
+            time: resp.respondedAt ? new Date(resp.respondedAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : 'Recently'
+          });
+        });
+      });
+
+      container.innerHTML = events.reverse().slice(0, 5).map(e => `
+        <div style="margin-bottom: 1rem; position: relative;">
+          <div style="font-family: var(--font-main); font-weight: 800; font-size: 0.9rem; color: var(--navy-dark);">${e.title}</div>
+          <div style="font-size: 0.8rem; color: var(--slate-muted); margin-top: 0.15rem;">${e.desc}</div>
+          <div style="font-size: 0.72rem; color: var(--slate-muted); font-weight: 600; margin-top: 0.25rem;">${e.time}</div>
+        </div>
+      `).join('');
+    }
+
+    async function renderDonorReferralsGrid() {
+      const container = document.getElementById('donorReferralsListGrid');
+      if (!container) return;
+
+      try {
+        const res = await fetch('/api/referrals/org', { headers: MockAuth.getAuthHeaders() });
+        const data = await res.json();
+        let referrals = (data.success && data.referrals) ? data.referrals : [];
+
+        currentOrgRequests.forEach(req => {
+          if (req.referrals && req.referrals.length > 0) {
+            req.referrals.forEach(ref => {
+              if (!referrals.some(r => r._id === ref._id || r.refereePhone === ref.referredPhone)) {
+                referrals.push({
+                  _id: ref._id || 'REF-' + Math.random().toString(36).substring(7),
+                  refereeName: ref.referredName || 'Referred Friend',
+                  refereePhone: ref.referredPhone,
+                  referrerId: { name: ref.referringDonorName || 'Donor' },
+                  referrerPhone: ref.referringDonorPhone,
+                  status: ref.status || 'Referred',
+                  requestId: { bloodGroup: req.bloodGroup, patientName: req.patientName || 'Emergency Patient' },
+                  createdAt: ref.referredAt || req.createdAt
+                });
+              }
+            });
+          }
+        });
+          
+        const badgeEl = document.getElementById('donorReferralBadge');
+        if (badgeEl) badgeEl.textContent = referrals.length;
+
+        if (referrals.length === 0) {
+          container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: var(--slate-muted); padding: 2rem; background: white; border-radius: 14px; border: 1px solid var(--slate-border);">No donor referrals received yet. When donors refer friends using the "Refer a Donor" feature, their invitations will appear here in real-time.</div>`;
+          return;
+        }
+
+        container.innerHTML = referrals.map(r => {
+          const referrerName = (r.referrerId && r.referrerId.name) ? r.referrerId.name : (r.referringDonorName || 'Registered Donor');
+          const referrerPhone = r.referrerPhone || (r.referrerId && r.referrerId.phone) ? ` (${r.referrerPhone || r.referrerId.phone})` : '';
+          const reqInfo = r.requestId ? `For Request: <strong>${r.requestId.bloodGroup || 'Blood Request'} (${r.requestId.patientName || 'Emergency Patient'})</strong>` : 'General Hospital Referral';
+          
+          let statusBadgeClass = 'status-active';
+          if (['Donation Completed', 'Registered', 'Verified'].includes(r.status)) statusBadgeClass = 'status-fulfilled';
+
+          return `
+            <div style="background: #FFFFFF; border: 1px solid var(--slate-border); border-radius: 18px; padding: 1.25rem; box-shadow: 0 4px 14px rgba(15,23,42,0.02);">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                <div>
+                  <div style="font-family: var(--font-main); font-weight: 800; font-size: 1.05rem; color: var(--navy-dark);">${r.refereeName || 'Referred Friend'}</div>
+                  <div style="font-size: 0.8rem; color: var(--slate-muted); margin-top: 0.15rem;">📱 Contact: <strong style="color: #2563EB;">${r.refereePhone || r.referredPhone}</strong></div>
+                </div>
+                <span class="badge-status ${statusBadgeClass}">${r.status || 'Referred'}</span>
+              </div>
+
+              <div style="font-size: 0.82rem; color: var(--slate-muted); background: #F8FAFC; padding: 0.65rem 0.85rem; border-radius: 12px; margin-bottom: 1rem; line-height: 1.45;">
+                <div>🤝 Referred by: <strong style="color: var(--navy-dark);">${referrerName}${referrerPhone}</strong></div>
+                <div style="margin-top: 0.2rem; font-size: 0.78rem;">${reqInfo}</div>
+                <div style="margin-top: 0.2rem; font-size: 0.75rem; color: #94A3B8;">Referred at: ${r.createdAt ? new Date(r.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Recently'}</div>
+              </div>
+
+              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button onclick="openContactRefereeModal('${r._id}', '${r.refereeName || 'Friend'}', '${r.refereePhone || r.referredPhone}', '${referrerName}')" class="btn-secondary-outline" style="flex: 1; padding: 0.4rem; font-size: 0.78rem;">
+                  <i class="fa-solid fa-phone"></i> Contact Referred Person
+                </button>
+                ${r.status !== 'Donation Completed' ? `
+                  <button onclick="updateReferralStatusAction('${r._id}', 'Donation Completed')" class="btn-primary-red" style="padding: 0.4rem 0.75rem; font-size: 0.78rem; background: #16A34A;">
+                    <i class="fa-solid fa-circle-check"></i> Mark Verified
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+      } catch (err) {
+        console.error('Error fetching org referrals:', err);
+      }
+    }
+
+    function openContactRefereeModal(id, refereeName, refereePhone, referrerName) {
+      alert(`CONTACT REFERRED DONOR:\n\nReferred Friend: ${refereeName}\nPhone: ${refereePhone}\nReferred By: ${referrerName}\n\nPlease contact to coordinate donation appointment.`);
+      const contacted = confirm(`Mark status as Contacted for ${refereeName}?`);
+      if (contacted) {
+        updateReferralStatusAction(id, 'Contacted');
+      }
+    }
+
+    async function updateReferralStatusAction(referralId, status) {
+      try {
+        const res = await fetch(`/api/referrals/${referralId}/status`, {
+          method: 'PATCH',
+          headers: MockAuth.getAuthHeaders(),
+          body: JSON.stringify({ status })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert(`✓ Referral status updated to ${status}!`);
+          await renderDonorReferralsGrid();
+        } else {
+          alert(data.message);
+        }
+      } catch (err) {
+        alert('Failed to update referral status');
+      }
+    }
+
     // 3. ORGANIZATION-TO-ORGANIZATION SUPPORT HANDLERS
-    // ----------------------------------------------------
-    function renderOrgSupportTable() {
+    async function renderOrgSupportTable() {
       const tbody = document.getElementById('orgSupportTableBody');
       if (!tbody) return;
 
-      const requests = MockData.getOrgSupportRequests();
+      try {
+        const res = await fetch('/api/org-support', { headers: MockAuth.getAuthHeaders() });
+        const data = await res.json();
+        if (data.success) {
+          const requests = data.requests || [];
+          tbody.innerHTML = requests.map(s => {
+            let badgeClass = 'status-active';
+            if (s.status === 'Accepted' || s.status === 'Fulfilled') badgeClass = 'status-fulfilled';
+            else if (s.status === 'Declined') badgeClass = 'status-critical';
 
-      tbody.innerHTML = requests.map(s => {
-        let badgeClass = 'status-active';
-        if (s.status === 'Accepted') badgeClass = 'status-fulfilled';
-        else if (s.status === 'Declined') badgeClass = 'status-critical';
-
-        return `
-          <tr>
-            <td><strong>${s.id}</strong></td>
-            <td>${s.requestingOrg}</td>
-            <td><strong>${s.receivingOrg}</strong></td>
-            <td><span class="badge-status status-critical">${s.bloodGroup} (${s.component})</span></td>
-            <td><strong>${s.unitsRequired} Units</strong></td>
-            <td><span class="badge-status status-critical">${s.urgency}</span></td>
-            <td><span class="badge-status ${badgeClass}">${s.status}</span></td>
-            <td>
-              ${s.status === 'Support Requested' ? `
-                <div style="display: flex; gap: 0.35rem;">
-                  <button onclick="respondOrgSupport('${s.id}', 'Accepted')" class="btn-primary-red" style="padding: 0.25rem 0.55rem; font-size: 0.72rem; background: #16A34A;">Accept</button>
-                  <button onclick="respondOrgSupport('${s.id}', 'Declined')" class="btn-secondary-outline" style="padding: 0.25rem 0.55rem; font-size: 0.72rem; color: var(--red-primary);">Decline</button>
-                </div>
-              ` : `<span style="font-size: 0.78rem; color: var(--slate-muted); font-weight: 600;">Completed</span>`}
-            </td>
-          </tr>
-        `;
-      }).join('');
+            return `
+              <tr>
+                <td><strong>${s._id ? s._id.toString().slice(-6).toUpperCase() : 'SUPP'}</strong></td>
+                <td>${s.requestingOrgName}</td>
+                <td><strong>${s.receivingOrgName}</strong></td>
+                <td><span class="badge-status status-critical">${s.bloodGroup} (${s.component})</span></td>
+                <td><strong>${s.unitsRequired} Units</strong></td>
+                <td><span class="badge-status status-critical">${s.urgency}</span></td>
+                <td><span class="badge-status ${badgeClass}">${s.status}</span></td>
+                <td>
+                  ${s.status === 'Support Requested' ? `
+                    <div style="display: flex; gap: 0.35rem;">
+                      <button onclick="respondOrgSupport('${s._id}', 'Accepted')" class="btn-primary-red" style="padding: 0.25rem 0.55rem; font-size: 0.72rem; background: #16A34A;">Accept</button>
+                      <button onclick="respondOrgSupport('${s._id}', 'Declined')" class="btn-secondary-outline" style="padding: 0.25rem 0.55rem; font-size: 0.72rem; color: var(--red-primary);">Decline</button>
+                    </div>
+                  ` : `<span style="font-size: 0.78rem; color: var(--slate-muted); font-weight: 600;">Completed</span>`}
+                </td>
+              </tr>
+            `;
+          }).join('') || `<tr><td colspan="8" style="text-align: center; color: var(--slate-muted); padding: 1.5rem;">No organization support requests found.</td></tr>`;
+        }
+      } catch (err) {
+        console.error('Failed to load org support table:', err);
+      }
     }
 
     const eligibleOrgsList = [
@@ -3075,7 +3596,7 @@
       }
     }
 
-    function handleOrgSupportFormSubmit(e) {
+    async function handleOrgSupportFormSubmit(e) {
       e.preventDefault();
 
       const typeRadios = document.getElementsByName('suppType');
@@ -3089,103 +3610,51 @@
       const requiredBy = document.getElementById('suppRequiredBy')?.value || 'Within 3 Hours';
       const receivingOrg = document.getElementById('suppReceivingOrg')?.value || 'City Blood Bank';
       const notes = document.getElementById('suppNotes')?.value || '';
-      const requestingOrg = 'Government General Hospital';
 
-      const newSupport = MockData.createOrgSupportRequest({
-        requestingOrg,
-        receivingOrg,
-        bloodGroup: suppType === 'Operational Support' ? 'N/A' : bloodGroup,
-        component,
-        unitsRequired: units,
-        urgency,
-        requiredBy,
-        notes
-      });
+      try {
+        const res = await fetch('/api/org-support', {
+          method: 'POST',
+          headers: MockAuth.getAuthHeaders(),
+          body: JSON.stringify({
+            receivingOrg,
+            bloodGroup: suppType === 'Operational Support' ? 'N/A' : bloodGroup,
+            component,
+            unitsRequired: units,
+            urgency,
+            requiredBy,
+            notes
+          })
+        });
 
-      // Update detail page view
-      const detailId = document.getElementById('detailSupportId');
-      if (detailId) detailId.textContent = newSupport.id;
-      const detailStatus = document.getElementById('detailStatus');
-      if (detailStatus) detailStatus.textContent = newSupport.status;
-      const detailUrgency = document.getElementById('detailUrgency');
-      if (detailUrgency) detailUrgency.textContent = urgency;
-      const detailReqOrg = document.getElementById('detailRequestingOrg');
-      if (detailReqOrg) detailReqOrg.textContent = requestingOrg;
-      const detailRecOrg = document.getElementById('detailReceivingOrg');
-      if (detailRecOrg) detailRecOrg.textContent = receivingOrg;
-      const detailComp = document.getElementById('detailComponent');
-      if (detailComp) detailComp.textContent = suppType === 'Operational Support' ? 'Operational Assistance' : `${bloodGroup} (${component})`;
-      const detailUnits = document.getElementById('detailUnits');
-      if (detailUnits) detailUnits.textContent = `${units} Units`;
-      const detailReqBy = document.getElementById('detailRequiredBy');
-      if (detailReqBy) detailReqBy.textContent = requiredBy;
-      const detailTime = document.getElementById('detailTimestamp');
-      if (detailTime) detailTime.textContent = newSupport.timestamp;
-
-      renderOrgSupportTable();
-      switchView('org-support-detail');
+        const data = await res.json();
+        if (data.success) {
+          alert('✓ Organization Support Request Broadcasted to MongoDB!');
+          await renderOrgSupportTable();
+          switchView('org-support');
+        } else {
+          alert(data.message);
+        }
+      } catch (err) {
+        alert('Failed to submit organization support request.');
+      }
     }
 
-    function respondOrgSupport(supportId, action) {
-      MockData.updateOrgSupportStatus(supportId, action);
-      renderOrgSupportTable();
-    }
-
-    function renderActiveRequestsTable() {
-      const tbody = document.getElementById('activeRequestsTableBody');
-      if (!tbody) return;
-
-      const requests = MockData.emergencyRequests ? MockData.emergencyRequests.filter(r => r.status !== 'CLOSED') : [];
-
-      tbody.innerHTML = requests.map(r => `
-        <tr>
-          <td><strong>${r.id}</strong></td>
-          <td><span class="badge-status status-critical">${r.bloodGroup}</span></td>
-          <td><strong>${r.unitsNeeded} Units</strong></td>
-          <td><span class="badge-status status-critical">${r.urgency || 'CRITICAL'}</span></td>
-          <td>${r.currentWave || 'Round 1 (0–3 km)'}</td>
-          <td>${r.donorsNotified || 30} donors</td>
-          <td><strong>${r.confirmedCount || 2} / ${r.unitsNeeded}</strong></td>
-          <td><span class="badge-status ${r.status === 'FULFILLED' ? 'status-fulfilled' : 'status-active'}">${r.status}</span></td>
-          <td>${r.createdTime || 'Today'}</td>
-          <td>
-            <div style="display: flex; gap: 0.35rem;">
-              <button onclick="switchView('fulfillment-tracking')" class="btn-primary-red" style="padding: 0.25rem 0.55rem; font-size: 0.72rem;">Track</button>
-              <button onclick="switchView('org-support')" class="btn-secondary-outline" style="padding: 0.25rem 0.55rem; font-size: 0.72rem;">Support</button>
-            </div>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    function renderFulfillmentTimeline() {
-      const container = document.getElementById('fulfillmentTimelineBox');
-      if (!container) return;
-
-      const logs = MockData.getAuditTrail ? MockData.getAuditTrail() : [];
-      const relevant = logs.slice(-5).reverse();
-
-      container.innerHTML = relevant.map(l => `
-        <div style="margin-bottom: 1rem; position: relative;">
-          <div style="font-family: var(--font-main); font-weight: 800; font-size: 0.9rem; color: var(--navy-dark);">${l.action || l.event}</div>
-          <div style="font-size: 0.8rem; color: var(--slate-muted); margin-top: 0.15rem;">${l.details || l.description}</div>
-          <div style="font-size: 0.72rem; color: var(--slate-muted); font-weight: 600; margin-top: 0.25rem;">${l.timestamp || 'Just now'} • User: ${l.user || 'Organization Admin'}</div>
-        </div>
-      `).join('') || `
-        <div style="margin-bottom: 1rem; position: relative;">
-          <div style="font-family: var(--font-main); font-weight: 800; font-size: 0.9rem; color: var(--navy-dark);">Donor Responded</div>
-          <div style="font-size: 0.8rem; color: var(--slate-muted); margin-top: 0.15rem;">Donor LL-D-1024 accepted dispatch for REQ-1042</div>
-          <div style="font-size: 0.72rem; color: var(--slate-muted); font-weight: 600; margin-top: 0.25rem;">10 mins ago • User: Arun Kumar</div>
-        </div>
-      `;
-    }
-
-    function markRequestFulfilledAction(requestId = 'REQ-1042') {
-      MockData.markRequestFulfilled(requestId);
-      alert(`✓ Request ${requestId} Marked as FULFILLED!\n\nDonor dispatch has been stopped.\n\nNotification dispatched to remaining responders:\n"Thank you for responding. The organization has received enough donor confirmations for this emergency request, so your response is no longer required."`);
-      renderDonorResponsesGrid();
-      renderFulfillmentTimeline();
-      renderActiveRequestsTable();
+    async function respondOrgSupport(supportId, action) {
+      try {
+        const res = await fetch(`/api/org-support/${supportId}/status`, {
+          method: 'PATCH',
+          headers: MockAuth.getAuthHeaders(),
+          body: JSON.stringify({ status: action })
+        });
+        const data = await res.json();
+        if (data.success) {
+          await renderOrgSupportTable();
+        } else {
+          alert(data.message);
+        }
+      } catch (err) {
+        alert('Failed to update support request status');
+      }
     }
   </script>
 </body>

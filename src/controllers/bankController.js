@@ -1,48 +1,30 @@
+const Organization = require('../models/Organization');
 const BloodBank = require('../models/BloodBank');
-const BloodStock = require('../models/BloodStock');
-const User = require('../models/User');
 
-// @desc    Get all verified blood banks
+// @desc    Get all verified blood banks & healthcare facilities
 // @route   GET /api/blood-banks
 // @access  Public
 const getBloodBanks = async (req, res, next) => {
   try {
     const { city } = req.query;
-
-    if (BloodBank.db && BloodBank.db.readyState === 1) {
-      let query = { verificationStatus: 'Approved' };
-      if (city && city.trim() !== '') {
-        query.city = { $regex: city.trim(), $options: 'i' };
-      }
-
-      const banks = await BloodBank.find(query).populate('userId', 'email phone');
-      return res.json({ success: true, count: banks.length, bloodBanks: banks });
-    } else {
-      return res.json({
-        success: true,
-        count: 2,
-        bloodBanks: [
-          {
-            _id: 'bb_1',
-            bankName: 'City Central Blood Bank',
-            licenseNumber: 'LIC-MH-9921',
-            city: 'Mumbai',
-            address: 'Dr. E Moses Rd, Worli',
-            contactPhone: '+91 22 2493 0000',
-            verificationStatus: 'Approved'
-          },
-          {
-            _id: 'bb_2',
-            bankName: 'Red Cross Regional Blood Center',
-            licenseNumber: 'LIC-DL-4482',
-            city: 'Delhi',
-            address: '1 Red Cross Rd, Connaught Place',
-            contactPhone: '+91 11 2371 6441',
-            verificationStatus: 'Approved'
-          }
-        ]
-      });
+    let query = {};
+    if (city && city.trim() !== '') {
+      query.city = { $regex: city.trim(), $options: 'i' };
     }
+
+    const orgs = await Organization.find(query).sort({ createdAt: -1 });
+    const banks = orgs.map(o => ({
+      _id: o._id,
+      bankName: o.orgName,
+      licenseNumber: o.certificationNumber || 'GOVT-TN-LIC-2026',
+      city: o.city,
+      address: o.address,
+      contactPhone: o.officialPhone || o.emergencyHotline,
+      verificationStatus: o.verificationStatus === 'VERIFIED' ? 'Approved' : 'Pending',
+      operatingHours: '24/7 Emergency Service'
+    }));
+
+    return res.json({ success: true, count: banks.length, bloodBanks: banks });
   } catch (error) {
     next(error);
   }

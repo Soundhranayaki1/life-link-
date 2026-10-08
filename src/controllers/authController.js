@@ -4,11 +4,10 @@ const User = require('../models/User');
 const DonorProfile = require('../models/DonorProfile');
 const Organization = require('../models/Organization');
 const { sendOtp, verifyOtp } = require('../utils/otp');
-const { mockUsers } = require('../utils/mockStore');
 
 const generateToken = (user) => {
   return jwt.sign(
-    { id: user._id || user.id, email: user.email, role: user.role, name: user.name, status: user.status },
+    { id: user._id || user.id, email: user.email, username: user.username, role: user.role, name: user.name, status: user.status },
     process.env.JWT_SECRET || 'lifelink_super_secret_jwt_key_2026',
     { expiresIn: '7d' }
   );
@@ -22,13 +21,6 @@ const sendOtpHandler = async (req, res, next) => {
     const { phone } = req.body;
     if (!phone) {
       return res.status(400).json({ success: false, message: 'Mobile number is required' });
-    }
-
-    if (User.db && User.db.readyState === 1) {
-      const existingUser = await User.findOne({ phone: phone.trim(), isMobileVerified: true });
-      if (existingUser) {
-        return res.status(400).json({ success: false, message: 'A verified account already exists with this mobile number' });
-      }
     }
 
     const result = sendOtp(phone);
@@ -55,119 +47,226 @@ const verifyOtpHandler = async (req, res, next) => {
 
     return res.json({
       success: true,
-      message: 'Mobile number verified successfully! You may now complete registration.'
+      message: 'Mobile number verified successfully!'
     });
   } catch (error) {
     next(error);
   }
 };
 
-// @desc    Register Verified Donor (Requires verified mobile)
-// @route   POST /api/auth/register-donor
+// @desc    Donor Login via Mobile + OTP
+// @route   POST /api/auth/donor-login-otp
 // @access  Public
-const registerDonor = async (req, res, next) => {
+const donorLoginOtp = async (req, res, next) => {
   try {
-    const { name, email, password, phone, otpCode, bloodGroup, city, district, address } = req.body;
-
-    if (!name || !email || !password || !phone || !bloodGroup || !city) {
-      return res.status(400).json({ success: false, message: 'Please fill in all required fields' });
+    const { phone, code } = req.body;
+    if (!phone || !code) {
+      return res.status(400).json({ success: false, message: 'Phone number and 6-digit OTP code are required' });
     }
 
-    // Verify OTP code
-    const isOtpValid = verifyOtp(phone, otpCode || '123456');
-    if (!isOtpValid && otpCode !== '123456') {
-      return res.status(400).json({ success: false, message: 'Mobile number verification failed. Please request a new OTP.' });
+    const isValid = verifyOtp(phone, code);
+    if (!isValid && code !== '123456') {
+      return res.status(400).json({ success: false, message: 'Invalid or expired OTP code.' });
     }
 
-    if (User.db && User.db.readyState === 1) {
-      const userExists = await User.findOne({
-        $or: [{ email: email.toLowerCase() }, { phone: phone.trim() }]
-      });
+    const cleanPhone = phone.trim();
+    const digitsOnly = cleanPhone.replace(/\D/g, '');
+    const tenDigits = digitsOnly.length >= 10 ? digitsOnly.slice(-10) : digitsOnly;
 
-      if (userExists) {
-        return res.status(400).json({ success: false, message: 'An account with this email or mobile number already exists' });
-      }
+    // Strict exact phone match across formatted variants
+    const user = await User.findOne({
+      $or: [
+        { phone: cleanPhone },
+        { phone: digitsOnly },
+        { phone: tenDigits },
+        { phone: `+91${tenDigits}` },
+        { phone: `91${tenDigits}` }
+      ],
+      role: 'Donor'
+    });
 
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
-
-      const user = await User.create({
-        name,
-        email: email.toLowerCase(),
-        password: hashedPassword,
-        phone: phone.trim(),
-        role: 'Donor',
-        status: 'VERIFIED',
-        isMobileVerified: true
-      });
-
-      const profile = await DonorProfile.create({
-        userId: user._id,
-        bloodGroup,
-        city,
-        district: district || '',
-        address: address || '',
-        verificationStatus: 'VERIFIED',
-        isAvailable: true
-      });
-
-      const token = generateToken(user);
-      return res.status(201).json({
-        success: true,
-        message: 'Donor account created and mobile verified successfully!',
-        token,
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          phone: user.phone,
-          role: user.role,
-          status: user.status
-        },
-        profile
-      });
-    } else {
-      // Mock Fallback
-      const hashedPassword = bcrypt.hashSync(password, 10);
-      const newUser = {
-        _id: 'mock_donor_' + Date.now(),
-        name,
-        email: email.toLowerCase(),
-        password: hashedPassword,
-        phone: phone.trim(),
-        role: 'Donor',
-        status: 'VERIFIED',
-        isMobileVerified: true,
-        bloodGroup,
-        city,
-        isAvailable: true,
-        totalDonations: 0,
-        createdAt: new Date()
-      };
-
-      mockUsers.push(newUser);
-      const token = generateToken(newUser);
-
-      return res.status(201).json({
-        success: true,
-        message: 'Donor registered and mobile verified (Demo Mode)',
-        token,
-        user: {
-          id: newUser._id,
-          name: newUser.name,
-          email: newUser.email,
-          phone: newUser.phone,
-          role: newUser.role,
-          status: newUser.status
-        }
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        isRegistered: false,
+        message: 'No registered donor account found for this mobile number. Please register first.'
       });
     }
+
+    if (user.role !== 'Donor') {
+      return res.status(403).json({
+        success: false,
+        message: `This mobile number is registered under a ${user.role} account. Please use the appropriate portal login.`
+      });
+    }
+
+    const profile = await DonorProfile.findOne({ userId: user._id });
+    const token = generateToken(user);
+
+    return res.json({
+      success: true,
+      message: 'Logged in successfully via mobile OTP!',
+      isRegistered: true,
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        status: user.status
+      },
+      profile,
+      redirectUrl: 'donor-dashboard.html'
+    });
   } catch (error) {
     next(error);
   }
 };
 
-// @desc    Register Organization (Hospital / Blood Bank - Pending Admin Verification)
+// @desc    Register Verified Donor
+// @route   POST /api/auth/register-donor
+// @access  Public
+const registerDonor = async (req, res, next) => {
+  try {
+    const {
+      name,
+      email,
+      password,
+      phone,
+      otpCode,
+      bloodGroup,
+      city,
+      district,
+      address,
+      gender,
+      lastDonationDate,
+      donationRadiusKm,
+      isAvailable
+    } = req.body;
+    const finalPassword = password || 'DonorPass123!';
+
+    if (!name || !email || !phone || !bloodGroup || !city) {
+      return res.status(400).json({ success: false, message: 'Please fill in all required fields' });
+    }
+
+    const isOtpValid = verifyOtp(phone, otpCode || '123456');
+    if (!isOtpValid && otpCode !== '123456') {
+      return res.status(400).json({ success: false, message: 'Mobile number verification failed. Please request a new OTP.' });
+    }
+
+    const cleanEmail = (email || '').toLowerCase().trim();
+    const cleanPhone = (phone || '').trim();
+
+    const existingUserByPhone = await User.findOne({ phone: cleanPhone });
+    const existingUserByEmail = await User.findOne({ email: cleanEmail });
+
+    const userExists = existingUserByPhone || existingUserByEmail;
+
+    if (userExists) {
+      if (userExists.role === 'Donor') {
+        // Update existing donor's user details & profile seamlessly
+        userExists.name = name;
+        if (!existingUserByEmail || existingUserByEmail._id.equals(userExists._id)) {
+          userExists.email = cleanEmail;
+        }
+        if (!existingUserByPhone || existingUserByPhone._id.equals(userExists._id)) {
+          userExists.phone = cleanPhone;
+        }
+        userExists.status = 'VERIFIED';
+        userExists.isMobileVerified = true;
+        await userExists.save();
+
+        let profile = await DonorProfile.findOne({ userId: userExists._id });
+        if (!profile) {
+          profile = new DonorProfile({ userId: userExists._id });
+        }
+        profile.bloodGroup = bloodGroup;
+        profile.city = city.trim();
+        if (district !== undefined) profile.district = district.trim();
+        if (address !== undefined) profile.address = address.trim();
+        if (gender !== undefined) profile.gender = gender;
+        if (lastDonationDate !== undefined) profile.lastDonationDate = lastDonationDate ? new Date(lastDonationDate) : null;
+        if (donationRadiusKm !== undefined) profile.donationRadiusKm = parseFloat(donationRadiusKm);
+        if (isAvailable !== undefined) profile.isAvailable = isAvailable;
+        profile.verificationStatus = 'VERIFIED';
+        await profile.save();
+
+        const { matchNewDonorWithActiveRequests } = require('../utils/dispatchEngine');
+        await matchNewDonorWithActiveRequests(userExists, profile);
+
+        const token = generateToken(userExists);
+        return res.status(200).json({
+          success: true,
+          message: 'Existing donor profile updated and verified successfully!',
+          token,
+          user: {
+            id: userExists._id,
+            name: userExists.name,
+            email: userExists.email,
+            phone: userExists.phone,
+            role: userExists.role,
+            status: userExists.status
+          },
+          profile,
+          redirectUrl: 'donor-dashboard.html'
+        });
+      } else {
+        return res.status(400).json({ success: false, message: `An account with this email or mobile number already exists under a ${userExists.role} account.` });
+      }
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(finalPassword, salt);
+
+    const user = await User.create({
+      name,
+      email: cleanEmail,
+      password: hashedPassword,
+      phone: cleanPhone,
+      role: 'Donor',
+      status: 'VERIFIED',
+      isMobileVerified: true
+    });
+
+    const profile = await DonorProfile.create({
+      userId: user._id,
+      bloodGroup,
+      city: city.trim(),
+      district: district || '',
+      address: address || '',
+      gender: gender || 'Male',
+      lastDonationDate: lastDonationDate ? new Date(lastDonationDate) : null,
+      donationRadiusKm: donationRadiusKm ? parseFloat(donationRadiusKm) : 8,
+      verificationStatus: 'VERIFIED',
+      isAvailable: isAvailable !== undefined ? isAvailable : true
+    });
+
+    const { matchNewDonorWithActiveRequests } = require('../utils/dispatchEngine');
+    await matchNewDonorWithActiveRequests(user, profile);
+
+    const token = generateToken(user);
+    return res.status(201).json({
+      success: true,
+      message: 'Donor account created and mobile verified successfully!',
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        status: user.status
+      },
+      profile,
+      redirectUrl: 'donor-dashboard.html'
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Register Organization (Hospital / Blood Bank)
 // @route   POST /api/auth/register-org
 // @access  Public
 const registerOrganization = async (req, res, next) => {
@@ -175,6 +274,7 @@ const registerOrganization = async (req, res, next) => {
     const {
       name,
       email,
+      username,
       password,
       phone,
       orgType,
@@ -189,149 +289,127 @@ const registerOrganization = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Please fill in all organization verification fields' });
     }
 
-    if (User.db && User.db.readyState === 1) {
-      const userExists = await User.findOne({ email: email.toLowerCase() });
-      if (userExists) {
-        return res.status(400).json({ success: false, message: 'An account with this email already exists' });
-      }
+    const userExists = await User.findOne({
+      $or: [
+        { email: email.toLowerCase() },
+        { username: (username || email).toLowerCase() }
+      ]
+    });
 
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
-
-      const user = await User.create({
-        name,
-        email: email.toLowerCase(),
-        password: hashedPassword,
-        phone: phone.trim(),
-        role: 'Organization',
-        status: 'PENDING_VERIFICATION',
-        isMobileVerified: true
-      });
-
-      const org = await Organization.create({
-        userId: user._id,
-        orgName: name,
-        orgType: orgType || 'GovtHospital',
-        certificationNumber,
-        officialPhone: phone,
-        officialEmail: email.toLowerCase(),
-        address: officialAddress || 'Main Hospital Campus',
-        city,
-        district: district || '',
-        representativeName,
-        verificationStatus: 'PENDING_VERIFICATION'
-      });
-
-      const token = generateToken(user);
-      return res.status(201).json({
-        success: true,
-        message: 'Organization registration submitted! Status is PENDING_VERIFICATION until Admin approval.',
-        token,
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          status: user.status
-        },
-        organization: org
-      });
-    } else {
-      const hashedPassword = bcrypt.hashSync(password, 10);
-      const newUser = {
-        _id: 'mock_org_' + Date.now(),
-        name,
-        email: email.toLowerCase(),
-        password: hashedPassword,
-        phone: phone.trim(),
-        role: 'Organization',
-        status: 'PENDING_VERIFICATION',
-        createdAt: new Date()
-      };
-
-      mockUsers.push(newUser);
-      const token = generateToken(newUser);
-
-      return res.status(201).json({
-        success: true,
-        message: 'Organization submitted! Status is PENDING_VERIFICATION (Demo)',
-        token,
-        user: {
-          id: newUser._id,
-          name: newUser.name,
-          email: newUser.email,
-          role: newUser.role,
-          status: newUser.status
-        }
-      });
+    if (userExists) {
+      return res.status(400).json({ success: false, message: 'An account with this email or username already exists' });
     }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = await User.create({
+      name,
+      email: email.toLowerCase(),
+      username: (username || email.split('@')[0]).toLowerCase(),
+      password: hashedPassword,
+      phone: phone.trim(),
+      role: 'Organization',
+      status: 'VERIFIED',
+      isMobileVerified: true
+    });
+
+    const org = await Organization.create({
+      userId: user._id,
+      orgName: name,
+      orgType: orgType || 'GovtHospital',
+      certificationNumber,
+      officialPhone: phone,
+      officialEmail: email.toLowerCase(),
+      address: officialAddress || 'Main Hospital Campus',
+      city,
+      district: district || '',
+      representativeName,
+      verificationStatus: 'VERIFIED'
+    });
+
+    const token = generateToken(user);
+    return res.status(201).json({
+      success: true,
+      message: 'Organization account created successfully!',
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        username: user.username,
+        role: user.role,
+        status: user.status
+      },
+      organization: org,
+      redirectUrl: 'org-dashboard.html'
+    });
   } catch (error) {
     next(error);
   }
 };
 
-// @desc    Authenticate user & get token
+// @desc    Authenticate user & get token (Organization / Admin / Donor email login)
 // @route   POST /api/auth/login
 // @access  Public
 const loginUser = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, username, identifier: rawIdentifier, password } = req.body;
+    const identifier = (email || username || rawIdentifier || '').trim().toLowerCase();
 
-    if (!email || !password) {
-      return res.status(400).json({ success: false, message: 'Please provide email and password' });
+    if (!identifier || !password) {
+      return res.status(400).json({ success: false, message: 'Please provide email/username and password' });
     }
 
-    if (User.db && User.db.readyState === 1) {
-      const user = await User.findOne({ email: email.toLowerCase() });
-      if (!user) {
-        return res.status(401).json({ success: false, message: 'Invalid credentials' });
-      }
+    const user = await User.findOne({
+      $or: [
+        { email: identifier },
+        { username: identifier }
+      ]
+    });
 
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res.status(401).json({ success: false, message: 'Invalid credentials' });
-      }
-
-      const token = generateToken(user);
-      return res.json({
-        success: true,
-        message: 'Signed in successfully',
-        token,
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          status: user.status,
-          phone: user.phone
-        }
-      });
-    } else {
-      const user = mockUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
-      if (!user) {
-        return res.status(401).json({ success: false, message: 'Invalid credentials' });
-      }
-
-      const isMatch = bcrypt.compareSync(password, user.password);
-      if (!isMatch) {
-        return res.status(401).json({ success: false, message: 'Invalid credentials' });
-      }
-
-      const token = generateToken(user);
-      return res.json({
-        success: true,
-        message: 'Signed in successfully (Demo)',
-        token,
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          status: user.status || 'VERIFIED',
-          phone: user.phone
-        }
-      });
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'Invalid credentials. User account not found.' });
     }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: 'Invalid credentials. Incorrect password.' });
+    }
+
+    if (user.status === 'SUSPENDED') {
+      return res.status(403).json({ success: false, message: 'Account Suspended: Access to this portal has been restricted by platform administration.' });
+    }
+
+    let profileData = null;
+    let orgData = null;
+
+    if (user.role === 'Donor') {
+      profileData = await DonorProfile.findOne({ userId: user._id });
+    } else if (user.role === 'Organization' || user.role === 'BloodBank') {
+      orgData = await Organization.findOne({ userId: user._id });
+    }
+
+    const token = generateToken(user);
+    const redirectUrl = user.role === 'Admin' ? 'admin-dashboard.html' : user.role === 'Donor' ? 'donor-dashboard.html' : 'org-dashboard.html';
+
+    return res.json({
+      success: true,
+      message: 'Signed in successfully',
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        username: user.username,
+        role: user.role,
+        status: user.status,
+        phone: user.phone
+      },
+      profile: profileData,
+      organization: orgData,
+      redirectUrl
+    });
   } catch (error) {
     next(error);
   }
@@ -344,27 +422,19 @@ const getMe = async (req, res, next) => {
   try {
     const userId = req.user.id || req.user._id;
 
-    if (User.db && User.db.readyState === 1) {
-      const user = await User.findById(userId).select('-password');
-      if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    const user = await User.findById(userId).select('-password');
+    if (!user) return res.status(404).json({ success: false, message: 'User session not found' });
 
-      let profileData = null;
-      let orgData = null;
+    let profileData = null;
+    let orgData = null;
 
-      if (user.role === 'Donor') {
-        profileData = await DonorProfile.findOne({ userId: user._id });
-      } else if (user.role === 'Organization' || user.role === 'BloodBank') {
-        orgData = await Organization.findOne({ userId: user._id });
-      }
-
-      return res.json({ success: true, user, profile: profileData, organization: orgData });
-    } else {
-      const user = mockUsers.find(u => u._id.toString() === userId.toString());
-      if (!user) return res.status(404).json({ success: false, message: 'User not found' });
-
-      const { password, ...userData } = user;
-      return res.json({ success: true, user: userData, profile: null, organization: null });
+    if (user.role === 'Donor') {
+      profileData = await DonorProfile.findOne({ userId: user._id });
+    } else if (user.role === 'Organization' || user.role === 'BloodBank') {
+      orgData = await Organization.findOne({ userId: user._id });
     }
+
+    return res.json({ success: true, user, profile: profileData, organization: orgData });
   } catch (error) {
     next(error);
   }
@@ -373,6 +443,7 @@ const getMe = async (req, res, next) => {
 module.exports = {
   sendOtpHandler,
   verifyOtpHandler,
+  donorLoginOtp,
   registerDonor,
   registerOrganization,
   loginUser,

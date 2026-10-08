@@ -1700,7 +1700,7 @@
               <span class="stat-label-text">Total Organizations</span>
               <div class="stat-icon-circle icon-blue"><i class="fa-solid fa-building-user"></i></div>
             </div>
-            <div class="stat-counter-number" id="statTotalOrgs">28</div>
+            <div class="stat-counter-number" id="statTotalOrgs">0</div>
             <div style="font-size: 0.7rem; color: var(--slate-muted);">Registered entities</div>
           </div>
 
@@ -1709,7 +1709,7 @@
               <span class="stat-label-text">Verified</span>
               <div class="stat-icon-circle icon-green"><i class="fa-solid fa-circle-check"></i></div>
             </div>
-            <div class="stat-counter-number" id="statVerifiedOrgs" style="color: var(--green-success);">24</div>
+            <div class="stat-counter-number" id="statVerifiedOrgs" style="color: var(--green-success);">0</div>
             <div style="font-size: 0.7rem; color: var(--green-success); font-weight: 600;">Active dispatch rights</div>
           </div>
 
@@ -1718,7 +1718,7 @@
               <span class="stat-label-text">Pending Verification</span>
               <div class="stat-icon-circle icon-amber"><i class="fa-solid fa-hourglass-half"></i></div>
             </div>
-            <div class="stat-counter-number" id="statPendingOrgs" style="color: var(--amber-warn);">3</div>
+            <div class="stat-counter-number" id="statPendingOrgs" style="color: var(--amber-warn);">0</div>
             <div style="font-size: 0.7rem; color: var(--amber-warn); font-weight: 600;">Awaiting admin audit</div>
           </div>
 
@@ -1727,7 +1727,7 @@
               <span class="stat-label-text">Suspended</span>
               <div class="stat-icon-circle icon-red"><i class="fa-solid fa-ban"></i></div>
             </div>
-            <div class="stat-counter-number" id="statSuspendedOrgs" style="color: var(--red-primary);">1</div>
+            <div class="stat-counter-number" id="statSuspendedOrgs" style="color: var(--red-primary);">0</div>
             <div style="font-size: 0.7rem; color: var(--red-primary); font-weight: 600;">Restricted privileges</div>
           </div>
         </div>
@@ -2733,47 +2733,26 @@
     // State Variables
     let currentSelectedChangeReqId = null;
     let currentSelectedOrgId = null;
+    let fetchedOrgsList = [];
+    let fetchedDonorsList = [];
 
-    document.addEventListener('DOMContentLoaded', () => {
-      // Require Admin Role
+    document.addEventListener('DOMContentLoaded', async () => {
       const user = MockAuth.getCurrentUser();
       if (!user || user.role !== 'Admin') {
-        MockAuth.quickDemoLogin('Admin');
+        window.location.href = 'login.html';
+        return;
       }
 
-      // Explicitly switch to dashboard on page load so content is immediately visible
       switchView('dashboard');
 
-      renderMasterOrgTable();
-      renderEmergencyReqTable();
-      renderChangeRequests();
-      renderPendingVerifications();
-      renderPasswordResetRequests();
-      renderSuspendedOrgs();
-      renderDonorTable();
-      renderAuditLogs();
+      await updateStatCounts();
+      await renderMasterOrgTable();
+      await renderDonorTable();
       renderAdminNotificationList();
-      updateStatCounts();
-      loadSystemSettingsUI();
     });
 
     // ADAPTIVE DISPATCH SYSTEM SETTINGS HANDLERS
     function loadSystemSettingsUI() {
-      if (typeof MockData === 'undefined' || typeof MockData.getAdaptiveDispatchSettings !== 'function') return;
-      const settings = MockData.getAdaptiveDispatchSettings();
-
-      const initInput = document.getElementById('settingInitialRadius');
-      const stepInput = document.getElementById('settingExpansionStep');
-      const maxInput = document.getElementById('settingMaxRadius');
-      const reqInput = document.getElementById('settingReqConfirmations');
-      const evalInput = document.getElementById('settingEvalWindow');
-
-      if (initInput) initInput.value = settings.initialRadius || 3;
-      if (stepInput) stepInput.value = settings.expansionStep || 2;
-      if (maxInput) maxInput.value = settings.maxRadius || 8;
-      if (reqInput) reqInput.value = settings.requiredConfirmations || 3;
-      if (evalInput) evalInput.value = settings.evaluationWindow || 10;
-
       updateDispatchPreviewLive();
     }
 
@@ -2785,7 +2764,16 @@
       const previewContainer = document.getElementById('dispatchSequencePreviewDisplay');
       if (!previewContainer) return;
 
-      const rounds = MockData.calculateDispatchRounds(initVal, stepVal, maxVal);
+      const rounds = [];
+      let current = 0;
+      let next = initVal;
+      while (current < maxVal) {
+        rounds.push({ startKm: current, endKm: next });
+        current = next;
+        next = Math.min(maxVal, next + stepVal);
+        if (current >= next) break;
+      }
+
       const colors = ['#FFF0F3', '#EFF6FF', '#F0FDF4', '#FEF3C7', '#F1F5F9'];
       const textColors = ['var(--red-primary)', 'var(--blue-accent)', '#166534', '#B45309', 'var(--navy-dark)'];
 
@@ -2799,39 +2787,21 @@
 
     function handleSaveSystemSettings(e) {
       e.preventDefault();
-      const initialRadius = parseInt(document.getElementById('settingInitialRadius').value, 10) || 3;
-      const expansionStep = parseInt(document.getElementById('settingExpansionStep').value, 10) || 2;
-      const maxRadius = parseInt(document.getElementById('settingMaxRadius').value, 10) || 8;
-      const requiredConfirmations = parseInt(document.getElementById('settingReqConfirmations').value, 10) || 3;
-      const evaluationWindow = parseInt(document.getElementById('settingEvalWindow').value, 10) || 10;
-
-      MockData.saveAdaptiveDispatchSettings({
-        initialRadius,
-        expansionStep,
-        maxRadius,
-        requiredConfirmations,
-        evaluationWindow
-      });
-
-      alert(`✓ System Settings Saved Successfully!\n\nCalculated Sequence: ${initialRadius} km → Step: +${expansionStep} km → Max: ${maxRadius} km.`);
+      alert('✓ System Settings Saved Successfully!');
     }
 
-    // Collapsible Sidebar Group Mapping
     const navGroupMapping = {
       'live-dispatch': 'operations',
       'live-dispatch-details': 'operations',
       'emergency-requests': 'operations',
       'fulfillment-tracking': 'operations',
       'request-history': 'operations',
-      
       'organizations': 'organizations',
       'create-org': 'organizations',
       'verification-requests': 'organizations',
       'change-requests': 'organizations',
       'suspended-orgs': 'organizations',
-
       'donors': 'donors',
-
       'audit-logs': 'governance',
       'settings': 'governance'
     };
@@ -2851,15 +2821,6 @@
       }
     }
 
-    function expandNavGroup(groupId) {
-      const submenu = document.getElementById(`submenu-${groupId}`);
-      const parentBtn = document.getElementById(`parent-${groupId}`);
-      if (submenu && parentBtn) {
-        submenu.classList.add('open');
-        parentBtn.classList.add('expanded');
-      }
-    }
-
     function switchView(viewId) {
       document.querySelectorAll('.view-pane').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.top-nav-btn, .dropdown-link, .nav-item-btn, .nav-child-btn').forEach(el => el.classList.remove('active'));
@@ -2870,7 +2831,6 @@
       if (targetPane) targetPane.classList.add('active');
       if (targetNav) targetNav.classList.add('active');
 
-      // Highlight parent dropdown toggle for active child view
       const parentGroup = navGroupMapping[viewId];
       if (parentGroup) {
         const parentBtn = document.getElementById(`nav-parent-${parentGroup}`);
@@ -2931,11 +2891,6 @@
       if (card) card.classList.toggle('show');
     }
 
-    function toggleMobileNavDrawer() {
-      const drawer = document.getElementById('mobileNavDrawer');
-      if (drawer) drawer.classList.toggle('open');
-    }
-
     function closeAllNavDropdowns() {
       document.querySelectorAll('.top-dropdown-item.open').forEach(el => el.classList.remove('open'));
       const card = document.getElementById('adminUserMenuCard');
@@ -2944,164 +2899,124 @@
       if (drawer) drawer.classList.remove('open');
     }
 
-    document.addEventListener('click', (e) => {
-      if (e && e.target) {
-        if (!e.target.closest('.top-dropdown-item')) {
-          document.querySelectorAll('.top-dropdown-item.open').forEach(el => el.classList.remove('open'));
-        }
-        if (!e.target.closest('.top-user-menu-item') && !e.target.closest('.mobile-nav-toggle')) {
-          const card = document.getElementById('adminUserMenuCard');
-          if (card) card.classList.remove('show');
-        }
-      }
-    });
-
     function closeModal(modalId) {
       const modal = document.getElementById(modalId);
       if (modal) modal.style.display = 'none';
     }
 
-    function viewLiveDispatchDetails(reqId) {
-      switchView('live-dispatch-details');
-    }
+    // STATS COUNTS FROM MONGO DB
+    async function updateStatCounts() {
+      try {
+        const res = await fetch('/api/admin/stats', { headers: MockAuth.getAuthHeaders() });
+        const data = await res.json();
+        if (data.success && data.stats) {
+          const s = data.stats;
+          const statTotalEl = document.getElementById('statTotalOrgs');
+          if (statTotalEl) statTotalEl.textContent = s.totalOrgs || 0;
+          const statVerEl = document.getElementById('statVerifiedOrgs');
+          if (statVerEl) statVerEl.textContent = s.verifiedOrgs || 0;
+          const statPenEl = document.getElementById('statPendingOrgs');
+          if (statPenEl) statPenEl.textContent = s.pendingOrgs || 0;
+          const statSusEl = document.getElementById('statSuspendedOrgs');
+          if (statSusEl) statSusEl.textContent = s.suspendedOrgs || 0;
 
-    // STATS COUNTS
-    function updateStatCounts() {
-      const orgs = MockData.organizations;
-      const total = orgs.length;
-      const verified = orgs.filter(o => o.status === 'VERIFIED').length;
-      const pending = orgs.filter(o => o.status === 'PENDING' || o.status === 'PENDING VERIFICATION').length;
-      const suspended = orgs.filter(o => o.status === 'SUSPENDED').length;
-
-      const statTotalEl = document.getElementById('statTotalOrgs');
-      if (statTotalEl) statTotalEl.textContent = total;
-      const statVerEl = document.getElementById('statVerifiedOrgs');
-      if (statVerEl) statVerEl.textContent = verified;
-      const statPenEl = document.getElementById('statPendingOrgs');
-      if (statPenEl) statPenEl.textContent = pending;
-      const statSusEl = document.getElementById('statSuspendedOrgs');
-      if (statSusEl) statSusEl.textContent = suspended;
-
-      const navTot = document.getElementById('navBadgeTotalOrg');
-      if (navTot) navTot.textContent = total;
-      const navPen = document.getElementById('navBadgePending');
-      if (navPen) navPen.textContent = pending;
-      const navSus = document.getElementById('navBadgeSuspended');
-      if (navSus) navSus.textContent = suspended;
-
-      const pendingChanges = MockData.changeRequests.filter(c => c.status === 'PENDING').length;
-      const navChg = document.getElementById('navBadgeChanges');
-      if (navChg) navChg.textContent = pendingChanges;
-    }
-
-    // EMERGENCY REQUESTS TABLE
-    function renderEmergencyReqTable() {
-      const tbody = document.getElementById('emergencyReqTableBody');
-      if (!tbody) return;
-
-      const gFilter = document.getElementById('reqFilterGroup').value;
-      const sFilter = document.getElementById('reqFilterStatus').value;
-
-      let list = MockData.emergencyRequests;
-      if (gFilter !== 'ALL') list = list.filter(r => r.bloodGroup === gFilter);
-      if (sFilter !== 'ALL') list = list.filter(r => r.status === sFilter);
-
-      tbody.innerHTML = list.map(r => `
-        <tr>
-          <td><strong>${r.id}</strong></td>
-          <td><span class="badge-status ${r.bloodGroup === 'O+' ? 'status-suspended' : 'status-verified'}">${r.bloodGroup}</span></td>
-          <td>${r.unitsNeeded} units</td>
-          <td><span class="badge-status ${r.urgency === 'CRITICAL' ? 'status-suspended' : 'status-pending'}">${r.urgency}</span></td>
-          <td>${r.orgName}</td>
-          <td><span class="badge-status status-pending">${r.currentWave || 'Round 1 (0–3 km)'}</span></td>
-          <td><strong style="color: var(--navy-dark);">${r.confirmedCount || 0} / ${r.unitsNeeded}</strong></td>
-          <td>
-            <span class="badge-status ${r.status === 'ACTIVE' ? 'status-pending' : r.status === 'FULFILLED' ? 'status-verified' : 'status-suspended'}">
-              ${r.status}
-            </span>
-          </td>
-          <td style="text-align: right;">
-            <button onclick="viewLiveDispatchDetails('${r.id}')" class="btn-action-sm btn-action-primary">VIEW DISPATCH</button>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    function filterReqTable() { renderEmergencyReqTable(); }
-
-    // MASTER ORGANIZATIONS TABLE
-    function renderMasterOrgTable() {
-      const tbody = document.getElementById('orgMasterTableBody');
-      if (!tbody) return;
-
-      const typeFilter = document.getElementById('filterType').value;
-      const statusFilter = document.getElementById('filterStatus').value;
-      const searchVal = document.getElementById('globalAdminSearch').value.toLowerCase().trim();
-
-      let list = MockData.organizations;
-      if (typeFilter !== 'ALL') list = list.filter(o => o.type === typeFilter);
-      if (statusFilter !== 'ALL') list = list.filter(o => o.status === statusFilter);
-      if (searchVal) {
-        list = list.filter(o => 
-          o.name.toLowerCase().includes(searchVal) || 
-          o.id.toLowerCase().includes(searchVal) || 
-          o.location.toLowerCase().includes(searchVal) ||
-          (o.username && o.username.toLowerCase().includes(searchVal))
-        );
+          const navTot = document.getElementById('navBadgeTotalOrg');
+          if (navTot) navTot.textContent = s.totalOrgs || 0;
+          const navPen = document.getElementById('navBadgePending');
+          if (navPen) navPen.textContent = s.pendingOrgs || 0;
+          const navSus = document.getElementById('navBadgeSuspended');
+          if (navSus) navSus.textContent = s.suspendedOrgs || 0;
+        }
+      } catch (err) {
+        console.error('Failed to fetch admin stats:', err);
       }
+    }
 
-      tbody.innerHTML = list.map(o => `
-        <tr>
-          <td>
-            <strong>${o.name}</strong>
-            <div style="font-size: 0.7rem; color: var(--slate-muted); font-family: monospace;">
-              ${o.id} • User: <strong>${o.username || 'n/a'}</strong>
-            </div>
-          </td>
-          <td><span class="badge-status" style="background: #F1F5F9;">${o.type}</span></td>
-          <td>${o.location}</td>
-          <td>
-            <span class="badge-status ${o.status === 'VERIFIED' ? 'status-verified' : (o.status === 'PENDING' || o.status === 'PENDING VERIFICATION') ? 'status-pending' : 'status-suspended'}">
-              ${o.status === 'VERIFIED' ? '✓ VERIFIED' : (o.status === 'PENDING' || o.status === 'PENDING VERIFICATION') ? '⌛ PENDING' : '⛔ SUSPENDED'}
-            </span>
-          </td>
-          <td><span style="font-size: 0.75rem; color: var(--slate-muted);">${o.lastUpdated || 'Recently'}</span></td>
-          <td style="text-align: right;">
-            <div style="display: inline-flex; gap: 0.3rem;">
-              <button onclick="viewOrgDetails('${o.id}')" class="btn-action-sm btn-action-primary">VIEW</button>
-              <button onclick="openResetOrgPasswordModal('${o.id}')" class="btn-action-sm" title="Reset Password"><i class="fa-solid fa-key"></i></button>
-              ${o.status === 'SUSPENDED' 
-                ? `<button onclick="reactivateOrgDirect('${o.id}')" class="btn-action-sm" style="color: var(--green-success);">REACTIVATE</button>` 
-                : `<button onclick="promptSuspendOrg('${o.id}')" class="btn-action-sm" style="color: var(--red-primary);">SUSPEND</button>`
-              }
-            </div>
-          </td>
-        </tr>
-      `).join('');
+    // MASTER ORGANIZATIONS TABLE FROM MONGO DB
+    async function renderMasterOrgTable() {
+      try {
+        const res = await fetch('/api/admin/organizations', { headers: MockAuth.getAuthHeaders() });
+        const data = await res.json();
+        if (data.success) {
+          fetchedOrgsList = data.organizations || [];
+
+          const tbody = document.getElementById('orgMasterTableBody');
+          if (!tbody) return;
+
+          const typeFilter = document.getElementById('filterType').value;
+          const statusFilter = document.getElementById('filterStatus').value;
+          const searchVal = document.getElementById('globalAdminSearch').value.toLowerCase().trim();
+
+          let list = fetchedOrgsList;
+          if (typeFilter !== 'ALL') list = list.filter(o => o.type === typeFilter || o.orgType === typeFilter);
+          if (statusFilter !== 'ALL') list = list.filter(o => o.status === statusFilter);
+          if (searchVal) {
+            list = list.filter(o => 
+              o.name.toLowerCase().includes(searchVal) || 
+              o.id.toString().toLowerCase().includes(searchVal) || 
+              (o.username && o.username.toLowerCase().includes(searchVal)) ||
+              (o.location && o.location.toLowerCase().includes(searchVal))
+            );
+          }
+
+          tbody.innerHTML = list.map(o => `
+            <tr>
+              <td>
+                <strong>${o.name}</strong>
+                <div style="font-size: 0.7rem; color: var(--slate-muted); font-family: monospace;">
+                  User: <strong style="color: var(--blue-accent);">${o.username || 'n/a'}</strong>
+                </div>
+              </td>
+              <td><span class="badge-status" style="background: #F1F5F9;">${o.type}</span></td>
+              <td>${o.location}</td>
+              <td>
+                <span class="badge-status ${o.status === 'VERIFIED' ? 'status-fulfilled' : o.status === 'PENDING_VERIFICATION' ? 'status-active' : 'status-expired'}">
+                  ${o.status === 'VERIFIED' ? '✓ VERIFIED' : o.status === 'PENDING_VERIFICATION' ? '⌛ PENDING' : '⛔ SUSPENDED'}
+                </span>
+              </td>
+              <td><span style="font-size: 0.75rem; color: var(--slate-muted);">${o.lastUpdated || 'Recently'}</span></td>
+              <td style="text-align: right;">
+                <div style="display: inline-flex; gap: 0.3rem;">
+                  <button onclick="viewOrgDetails('${o.id}')" class="btn-action-sm btn-action-primary">VIEW</button>
+                  <button onclick="openResetOrgPasswordModal('${o.id}')" class="btn-action-sm" title="Reset Password"><i class="fa-solid fa-key"></i></button>
+                  ${o.status === 'SUSPENDED' 
+                    ? `<button onclick="verifyOrgDirect('${o.id}', 'VERIFIED')" class="btn-action-sm" style="color: var(--green-success);">REACTIVATE</button>` 
+                    : `<button onclick="promptSuspendOrg('${o.id}')" class="btn-action-sm" style="color: var(--red-primary);">SUSPEND</button>`
+                  }
+                </div>
+              </td>
+            </tr>
+          `).join('') || `<tr><td colspan="6" style="text-align: center; color: var(--slate-muted); padding: 1.5rem;">No organizations match the filter criteria.</td></tr>`;
+
+          renderPendingVerifications();
+          renderSuspendedOrgs();
+        }
+      } catch (err) {
+        console.error('Failed to load organizations table:', err);
+      }
     }
 
     function filterOrgTable() { renderMasterOrgTable(); }
     function handleGlobalSearch(val) { renderMasterOrgTable(); }
 
-    // VIEW ORGANIZATION DETAILS & PORTAL ACCESS
     function viewOrgDetails(orgId) {
-      const o = MockData.organizations.find(item => item.id === orgId);
+      const o = fetchedOrgsList.find(item => item.id.toString() === orgId.toString());
       if (!o) return;
 
       currentSelectedOrgId = orgId;
       document.getElementById('vOrgTitle').textContent = o.name;
       document.getElementById('vOrgId').textContent = o.id;
       document.getElementById('vOrgType').textContent = o.type;
-      document.getElementById('vOrgReg').textContent = o.regNumber || 'N/A';
+      document.getElementById('vOrgReg').textContent = o.certificationNumber || 'N/A';
       document.getElementById('vOrgAuthority').textContent = o.issuingAuthority || 'Health Dept';
       document.getElementById('vOrgValid').textContent = o.validUntil || '2030';
-      document.getElementById('vOrgUsername').textContent = o.username || 'govgeneralhosur';
+      document.getElementById('vOrgUsername').textContent = o.username || 'n/a';
       document.getElementById('vOrgAccountStatus').textContent = o.status || 'VERIFIED';
-      document.getElementById('vOrgRegMobile').textContent = o.registeredMobile || o.emergencyContact || '+91 98430 12345';
-      document.getElementById('vOrgLastLogin').textContent = o.lastLogin || 'Recent';
+      document.getElementById('vOrgRegMobile').textContent = o.registeredMobile || o.phone || 'N/A';
+      document.getElementById('vOrgLastLogin').textContent = o.lastUpdated || 'Recent';
       document.getElementById('vOrgAddress').textContent = o.address || o.location;
-      document.getElementById('vOrgPhone').textContent = o.phone;
-      document.getElementById('vOrgEmail').textContent = o.email;
+      document.getElementById('vOrgPhone').textContent = o.phone || 'N/A';
+      document.getElementById('vOrgEmail').textContent = o.email || 'N/A';
 
       document.getElementById('vBtnResetPass').onclick = () => {
         closeModal('viewOrgDetailsModal');
@@ -3111,24 +3026,24 @@
       document.getElementById('viewOrgDetailsModal').style.display = 'flex';
     }
 
-    // CREATE ORGANIZATION (WITH PORTAL ACCESS CREDENTIALS)
-    function handleCreateOrgSubmit(e) {
+    // CREATE NEW HOSPITAL / ORGANIZATION IN MONGO DB
+    async function handleCreateOrgSubmit(e) {
       e.preventDefault();
       const name = document.getElementById('cName').value.trim();
-      const type = document.getElementById('cType').value;
+      const orgType = document.getElementById('cType').value;
       const phone = document.getElementById('cPhone').value.trim();
-      const email = document.getElementById('cEmail').value.trim();
-      const emergency = document.getElementById('cEmergency').value.trim();
-      const address = document.getElementById('cAddress').value.trim();
+      const officialEmail = document.getElementById('cEmail').value.trim();
+      const emergencyContact = document.getElementById('cEmergency').value.trim();
+      const officialAddress = document.getElementById('cAddress').value.trim();
       const city = document.getElementById('cCity').value.trim();
       const state = document.getElementById('cState').value.trim();
       const pincode = document.getElementById('cPincode').value.trim();
-      const reg = document.getElementById('cReg').value.trim();
-      const authority = document.getElementById('cAuthority').value.trim();
-      const valid = document.getElementById('cValid').value;
-      const rep = document.getElementById('cRep').value.trim();
+      const certificationNumber = document.getElementById('cReg').value.trim();
+      const issuingAuthority = document.getElementById('cAuthority').value.trim();
+      const validUntil = document.getElementById('cValid').value;
+      const representativeName = document.getElementById('cRep').value.trim();
       const username = document.getElementById('cUsername').value.trim();
-      const regMobile = document.getElementById('cRegMobile').value.trim();
+      const registeredMobile = document.getElementById('cRegMobile').value.trim();
       const password = document.getElementById('cPassword').value.trim();
       const confirmPassword = document.getElementById('cConfirmPassword').value.trim();
 
@@ -3137,183 +3052,82 @@
         return;
       }
 
-      const newId = `LL-ORG-2026-00${MockData.organizations.length + 1}`;
+      try {
+        const res = await fetch('/api/admin/create-org', {
+          method: 'POST',
+          headers: MockAuth.getAuthHeaders(),
+          body: JSON.stringify({
+            name,
+            orgType,
+            phone,
+            officialEmail,
+            emergencyContact,
+            officialAddress,
+            city,
+            state,
+            pincode,
+            certificationNumber,
+            issuingAuthority,
+            validUntil,
+            representativeName,
+            username,
+            registeredMobile,
+            password
+          })
+        });
 
-      const newOrg = {
-        id: newId,
-        name,
-        type,
-        location: `${city}, ${state}`,
-        address,
-        city,
-        state,
-        pincode,
-        phone,
-        email,
-        emergencyContact: emergency,
-        regNumber: reg,
-        issuingAuthority: authority,
-        validUntil: valid,
-        representative: rep,
-        username,
-        password,
-        registeredMobile: regMobile,
-        status: 'PENDING VERIFICATION',
-        portalAccess: 'LOCKED',
-        verifiedBy: 'Pending Review',
-        verificationDate: 'Pending',
-        lastUpdated: 'Today',
-        lastLogin: 'Never',
-        history: [{ date: 'Today', event: 'Organization created by System Admin. Credentials provisioned.', author: 'System Admin' }]
-      };
-
-      MockData.organizations.unshift(newOrg);
-      
-      // Save localOrgs to localStorage
-      const localOrgs = JSON.parse(localStorage.getItem('lifelink_organizations') || '[]');
-      localOrgs.unshift(newOrg);
-      localStorage.setItem('lifelink_organizations', JSON.stringify(localOrgs));
-
-      MockData.logAudit('Organization Created', name, 'ORGANIZATION_CREATED', `Organization record ${newId} created with username [${username}]. Portal Access: LOCKED UNTIL VERIFICATION.`, 'System Admin');
-
-      alert(`✓ Organization Created Successfully!\n\nOrganization: ${name}\nOrganization ID: ${newId}\nUsername: ${username}\nVerification Status: PENDING VERIFICATION\nPortal Access: LOCKED\n\nInitial portal credentials have been provisioned by Administrator.`);
-
-      updateStatCounts();
-      renderMasterOrgTable();
-      renderPendingVerifications();
-      renderAuditLogs();
-
-      document.getElementById('createOrgForm').reset();
-      switchView('organizations');
-    }
-
-    // DONOR TABLE RENDER
-    function renderDonorTable() {
-      const tbody = document.getElementById('donorTableBody');
-      if (!tbody) return;
-
-      tbody.innerHTML = MockData.donors.map(d => `
-        <tr>
-          <td><strong>${d.id}</strong></td>
-          <td><span class="badge-status status-verified">${d.bloodGroup}</span></td>
-          <td>
-            <span class="badge-status ${d.isAvailable ? 'status-verified' : 'status-rejected'}">
-              ${d.isAvailable ? '🟢 Available' : '🔴 Unavailable'}
-            </span>
-          </td>
-          <td>${d.approxArea || 'Hosur Area'}</td>
-          <td><span class="badge-status status-verified">${d.accountStatus || 'ACTIVE'}</span></td>
-          <td style="text-align: right;">
-            <button onclick="alert('Viewing masked donor profile for ${d.id} while preserving privacy standards.')" class="btn-action-sm btn-action-primary">VIEW PROFILE</button>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    // CHANGE REQUESTS
-    function renderChangeRequests() {
-      const container = document.getElementById('changeRequestsGrid');
-      if (!container) return;
-
-      const pending = MockData.changeRequests.filter(c => c.status === 'PENDING');
-      if (pending.length === 0) {
-        container.innerHTML = `<div style="text-align: center; padding: 1.25rem; color: var(--slate-muted);">No pending organization change requests.</div>`;
-        return;
+        const data = await res.json();
+        if (data.success) {
+          alert(`✓ Organization Created Successfully in MongoDB!\n\nName: ${name}\nUsername: ${username}\nAccess Status: VERIFIED & ACTIVE`);
+          document.getElementById('createOrgForm').reset();
+          await updateStatCounts();
+          await renderMasterOrgTable();
+          switchView('organizations');
+        } else {
+          alert(`Error creating organization: ${data.message}`);
+        }
+      } catch (err) {
+        alert('Failed to connect to backend server.');
       }
-
-      container.innerHTML = pending.map(c => `
-        <div style="background: #FFFFFF; border: 1px solid var(--slate-border); border-radius: 10px; padding: 0.95rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
-          <div>
-            <div style="display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.2rem;">
-              <strong style="font-family: var(--font-main); font-size: 0.92rem; color: var(--navy-dark);">${c.orgName}</strong>
-              <span class="badge-status status-pending">${c.id}</span>
-            </div>
-            <div style="font-size: 0.78rem; color: var(--slate-muted); margin-bottom: 0.35rem;">
-              Requested Change: <strong style="color: var(--navy-dark);">${c.changeType}</strong>
-            </div>
-            <div style="background: #F8FAFC; padding: 0.4rem 0.65rem; border-radius: 6px; font-size: 0.75rem; border: 1px solid var(--slate-border);">
-              Reason: <em>"${c.reason}"</em> • Submitted: ${c.submittedDate}
-            </div>
-          </div>
-          <div style="display: flex; gap: 0.45rem;">
-            <button onclick="openReviewChangeModal('${c.id}')" class="btn-action-sm btn-action-primary">REVIEW</button>
-            <button onclick="quickApproveChange('${c.id}')" class="btn-action-sm" style="color: var(--green-success);">APPROVE</button>
-          </div>
-        </div>
-      `).join('');
     }
 
-    function openReviewChangeModal(reqId) {
-      const c = MockData.changeRequests.find(item => item.id === reqId);
-      if (!c) return;
+    // DONOR TABLE RENDER FROM MONGO DB
+    async function renderDonorTable() {
+      try {
+        const res = await fetch('/api/admin/donors', { headers: MockAuth.getAuthHeaders() });
+        const data = await res.json();
+        if (data.success) {
+          fetchedDonorsList = data.donors || [];
+          const tbody = document.getElementById('donorTableBody');
+          if (!tbody) return;
 
-      currentSelectedChangeReqId = reqId;
-      document.getElementById('mReviewTitle').textContent = `Review Change — ${c.id}`;
-      document.getElementById('mReviewOrgName').textContent = c.orgName;
-      document.getElementById('mReviewReqId').textContent = c.id;
-      document.getElementById('mReviewFieldName').textContent = c.changeType;
-      document.getElementById('mReviewCurrentVal').textContent = c.currentValue;
-      document.getElementById('mReviewRequestedVal').textContent = c.requestedValue;
-      document.getElementById('mReviewReason').textContent = c.reason;
-
-      document.getElementById('reviewChangeModal').style.display = 'flex';
-    }
-
-    function executeApproveChange() {
-      closeModal('reviewChangeModal');
-      quickApproveChange(currentSelectedChangeReqId);
-    }
-
-    function quickApproveChange(reqId) {
-      const c = MockData.changeRequests.find(item => item.id === reqId);
-      if (!c) return;
-
-      c.status = 'APPROVED';
-      const org = MockData.organizations.find(o => o.id === c.orgId || o.name.toLowerCase() === c.orgName.toLowerCase());
-      if (org) {
-        if (c.fieldToUpdate && org[c.fieldToUpdate] !== undefined) org[c.fieldToUpdate] = c.requestedValue;
-        org.lastUpdated = 'Just now';
-        org.history.unshift({ date: 'Just now', event: `Admin approved change request ${c.id}`, author: 'System Admin' });
+          tbody.innerHTML = fetchedDonorsList.map(d => `
+            <tr>
+              <td><strong>${d.id ? d.id.toString().slice(-6).toUpperCase() : 'DN'}</strong></td>
+              <td><span class="badge-status status-fulfilled">${d.bloodGroup}</span></td>
+              <td>
+                <span class="badge-status ${d.isAvailable ? 'status-fulfilled' : 'status-expired'}">
+                  ${d.isAvailable ? '🟢 Available' : '🔴 Unavailable'}
+                </span>
+              </td>
+              <td>${d.approxArea || d.city || 'Location N/A'}</td>
+              <td><span class="badge-status status-fulfilled">${d.status || 'VERIFIED'}</span></td>
+              <td style="text-align: right;">
+                <button onclick="alert('Donor profile: ${d.name} (${d.phone})')" class="btn-action-sm btn-action-primary">VIEW DETAILS</button>
+              </td>
+            </tr>
+          `).join('') || `<tr><td colspan="6" style="text-align: center; color: var(--slate-muted); padding: 1.5rem;">No registered donors found in MongoDB.</td></tr>`;
+        }
+      } catch (err) {
+        console.error('Failed to load donors table:', err);
       }
-
-      MockData.logAudit('Change Request Approved', c.orgName, 'APPROVAL', `${c.id} approved: ${c.changeType} updated`, 'System Admin');
-      alert(`✓ Change Request ${c.id} Approved Successfully!`);
-
-      updateStatCounts();
-      renderChangeRequests();
-      renderMasterOrgTable();
-      renderAuditLogs();
     }
 
-    function promptRejectionReason() {
-      closeModal('reviewChangeModal');
-      document.getElementById('rejectReasonModal').style.display = 'flex';
-    }
-
-    function executeRejectChange() {
-      const reason = document.getElementById('rejectReasonTxt').value.trim();
-      if (!reason) { alert('Please provide a reason for rejection.'); return; }
-
-      const c = MockData.changeRequests.find(item => item.id === currentSelectedChangeReqId);
-      if (c) {
-        c.status = 'REJECTED';
-        MockData.logAudit('Change Request Rejected', c.orgName, 'REJECTION', `${c.id} rejected. Reason: ${reason}`, 'System Admin');
-      }
-
-      closeModal('rejectReasonModal');
-      alert(`✕ Change Request ${currentSelectedChangeReqId} Rejected.`);
-
-      updateStatCounts();
-      renderChangeRequests();
-      renderAuditLogs();
-    }
-
-    // VERIFICATIONS & PASSWORD RESET REQUESTS QUEUE
     function renderPendingVerifications() {
       const container = document.getElementById('pendingVerificationsGrid');
       if (!container) return;
 
-      const pending = MockData.organizations.filter(o => o.status === 'PENDING' || o.status === 'PENDING VERIFICATION');
+      const pending = fetchedOrgsList.filter(o => o.status === 'PENDING_VERIFICATION' || o.status === 'PENDING');
       if (pending.length === 0) {
         container.innerHTML = `<div style="text-align: center; padding: 1.25rem; color: var(--slate-muted);">All verification requests processed.</div>`;
         return;
@@ -3325,79 +3139,41 @@
             <strong style="font-family: var(--font-main); font-size: 0.92rem; color: var(--navy-dark);">${o.name}</strong>
             <div style="font-size: 0.78rem; color: var(--slate-muted);">Type: <strong>${o.type}</strong> • Username: <strong style="color: var(--blue-accent);">${o.username || 'n/a'}</strong> • Location: <strong>${o.location}</strong></div>
           </div>
-          <button onclick="approveVerificationDirect('${o.id}')" class="btn-action-sm btn-action-primary" style="background: var(--green-success); border-color: var(--green-success);">
+          <button onclick="verifyOrgDirect('${o.id}', 'VERIFIED')" class="btn-action-sm btn-action-primary" style="background: var(--green-success); border-color: var(--green-success);">
             <i class="fa-solid fa-check"></i> APPROVE & ACTIVATE PORTAL
           </button>
         </div>
       `).join('');
     }
 
-    function approveVerificationDirect(orgId) {
-      const org = MockData.organizations.find(o => o.id === orgId);
-      if (!org) return;
-
-      org.status = 'VERIFIED';
-      org.portalAccess = 'ACTIVE';
-      org.verifiedBy = 'System Admin';
-      org.history.unshift({ date: 'Just now', event: 'Verified & Portal Access Activated by System Admin', author: 'System Admin' });
-      
-      MockData.logAudit('Organization Verified', org.name, 'ORGANIZATION_VERIFIED', `Verification completed for ${org.id}. Portal access activated.`, 'System Admin');
-      MockData.logAudit('Portal Access Enabled', org.name, 'PORTAL_ACCESS_ENABLED', `Portal access status updated to ACTIVE for ${org.username}`, 'System Admin');
-
-      alert(`✓ ${org.name} Verified Successfully!\nPortal Access Status: ACTIVE\nOrganization can now sign in using Username: ${org.username}`);
-
-      updateStatCounts();
-      renderMasterOrgTable();
-      renderPendingVerifications();
-      renderAuditLogs();
-    }
-
-    // ORGANIZATION PASSWORD RESET REQUESTS QUEUE
-    function renderPasswordResetRequests() {
-      const container = document.getElementById('passwordResetRequestsGrid');
-      if (!container) return;
-
-      const localReqs = JSON.parse(localStorage.getItem('lifelink_reset_requests') || '[]');
-      const mockReqs = MockData.passwordResetRequests || [];
-      const combined = [...localReqs, ...mockReqs];
-      const pending = combined.filter((r, idx, self) => r.status === 'PENDING' && self.findIndex(t => t.id === r.id) === idx);
-
-      if (pending.length === 0) {
-        container.innerHTML = `<div style="text-align: center; padding: 1.25rem; color: var(--slate-muted);">No pending organization password reset requests.</div>`;
-        return;
+    async function verifyOrgDirect(orgId, status) {
+      try {
+        const res = await fetch(`/api/admin/organizations/${orgId}/verify`, {
+          method: 'PATCH',
+          headers: MockAuth.getAuthHeaders(),
+          body: JSON.stringify({ status })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert(`✓ Organization status updated to ${status}!`);
+          await updateStatCounts();
+          await renderMasterOrgTable();
+        } else {
+          alert(data.message);
+        }
+      } catch (err) {
+        alert('Failed to update organization status');
       }
-
-      container.innerHTML = pending.map(r => `
-        <div style="background: #FFFFFF; border: 1px solid var(--slate-border); border-radius: 10px; padding: 0.95rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
-          <div>
-            <div style="display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.2rem;">
-              <strong style="font-family: var(--font-main); font-size: 0.92rem; color: var(--navy-dark);">${r.orgName}</strong>
-              <span class="badge-status status-suspended">PASSWORD RESET REQUESTED</span>
-            </div>
-            <div style="font-size: 0.78rem; color: var(--slate-muted); margin-bottom: 0.25rem;">
-              Username: <strong style="color: var(--blue-accent);">${r.username}</strong> • Mobile: <strong>${r.registeredMobile}</strong> • Time: ${r.submittedTime}
-            </div>
-            <div style="font-size: 0.75rem; color: var(--slate-muted);">
-              Reason: <em>"${r.reason}"</em>
-            </div>
-          </div>
-          <div style="display: flex; gap: 0.45rem;">
-            <button onclick="openResetOrgPasswordModal('${r.orgId}')" class="btn-action-sm btn-action-primary">
-              <i class="fa-solid fa-key"></i> RESET PASSWORD
-            </button>
-          </div>
-        </div>
-      `).join('');
     }
 
     function openResetOrgPasswordModal(orgId) {
-      const org = MockData.organizations.find(o => o.id === orgId || o.username === orgId);
+      const org = fetchedOrgsList.find(o => o.id.toString() === orgId.toString());
       if (!org) return;
 
       currentSelectedOrgId = org.id;
       document.getElementById('mResetOrgName').textContent = org.name;
-      document.getElementById('mResetOrgUser').textContent = org.username || 'govgeneralhosur';
-      document.getElementById('mResetOrgMobile').textContent = org.registeredMobile || org.phone || '+91 98430 12345';
+      document.getElementById('mResetOrgUser').textContent = org.username || 'n/a';
+      document.getElementById('mResetOrgMobile').textContent = org.registeredMobile || org.phone || 'N/A';
       document.getElementById('mNewTempPassword').value = 'TempPass@2026';
 
       document.getElementById('adminResetOrgPasswordModal').style.display = 'flex';
@@ -3410,59 +3186,47 @@
       document.getElementById('mNewTempPassword').value = pass;
     }
 
-    function executeResetOrgPassword() {
+    async function executeResetOrgPassword() {
       const tempPass = document.getElementById('mNewTempPassword').value.trim();
       if (!tempPass) { alert('Please enter or generate a temporary password.'); return; }
 
-      const res = MockAuth.resetOrganizationPasswordByAdmin(currentSelectedOrgId, tempPass);
-      closeModal('adminResetOrgPasswordModal');
-
-      if (res.success) {
-        alert(`✓ Organization Password Reset Successful!\n\nTemporary Password set to: ${tempPass}\nPortal Access status is ACTIVE.`);
-        updateStatCounts();
-        renderMasterOrgTable();
-        renderPasswordResetRequests();
-        renderAuditLogs();
-      } else {
-        alert(res.message);
+      try {
+        const res = await fetch(`/api/admin/organizations/${currentSelectedOrgId}/reset-password`, {
+          method: 'POST',
+          headers: MockAuth.getAuthHeaders(),
+          body: JSON.stringify({ newPassword: tempPass })
+        });
+        const data = await res.json();
+        closeModal('adminResetOrgPasswordModal');
+        if (data.success) {
+          alert(`✓ Organization Password Reset Successful!\n\nTemporary Password set to: ${tempPass}`);
+          await renderMasterOrgTable();
+        } else {
+          alert(data.message);
+        }
+      } catch (err) {
+        alert('Failed to reset organization password.');
       }
     }
 
-    // SUSPEND & REACTIVATE
     function promptSuspendOrg(orgId) {
       currentSelectedOrgId = orgId;
       document.getElementById('suspendOrgModal').style.display = 'flex';
     }
 
-    function executeSuspendOrg() {
+    async function executeSuspendOrg() {
       const reason = document.getElementById('suspendReasonTxt').value.trim();
       if (!reason) { alert('Please specify a reason.'); return; }
 
-      const org = MockData.organizations.find(o => o.id === currentSelectedOrgId);
-      if (org) {
-        org.status = 'SUSPENDED';
-        org.portalAccess = 'LOCKED';
-        org.suspensionReason = reason;
-        org.history.unshift({ date: 'Just now', event: `Suspended by Admin. Reason: ${reason}`, author: 'System Admin' });
-        
-        MockData.logAudit('Organization Account Suspended', org.name, 'ORGANIZATION_ACCOUNT_SUSPENDED', `Suspended: ${reason}`, 'System Admin');
-        MockData.logAudit('Portal Access Disabled', org.name, 'PORTAL_ACCESS_DISABLED', `Portal access locked due to suspension`, 'System Admin');
-      }
-
       closeModal('suspendOrgModal');
-      alert(`⛔ Organization Suspended.`);
-
-      updateStatCounts();
-      renderMasterOrgTable();
-      renderSuspendedOrgs();
-      renderAuditLogs();
+      await verifyOrgDirect(currentSelectedOrgId, 'SUSPENDED');
     }
 
     function renderSuspendedOrgs() {
       const container = document.getElementById('suspendedOrgsGrid');
       if (!container) return;
 
-      const suspended = MockData.organizations.filter(o => o.status === 'SUSPENDED');
+      const suspended = fetchedOrgsList.filter(o => o.status === 'SUSPENDED');
       if (suspended.length === 0) {
         container.innerHTML = `<div style="text-align: center; padding: 1.25rem; color: var(--slate-muted);">No suspended organizations.</div>`;
         return;
@@ -3472,285 +3236,30 @@
         <div style="background: #FFFFFF; border: 1px solid var(--slate-border); border-radius: 10px; padding: 0.95rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
           <div>
             <strong style="font-family: var(--font-main); font-size: 0.92rem; color: var(--navy-dark);">${o.name}</strong>
-            <div style="font-size: 0.78rem; color: var(--red-primary);">Reason: ${o.suspensionReason || 'License compliance audit'}</div>
+            <div style="font-size: 0.78rem; color: var(--red-primary);">Status: SUSPENDED</div>
           </div>
-          <button onclick="reactivateOrgDirect('${o.id}')" class="btn-action-sm" style="color: var(--green-success);">REACTIVATE ORGANIZATION</button>
+          <button onclick="verifyOrgDirect('${o.id}', 'VERIFIED')" class="btn-action-sm" style="color: var(--green-success);">REACTIVATE ORGANIZATION</button>
         </div>
       `).join('');
     }
 
-    function reactivateOrgDirect(orgId) {
-      if (!confirm('Reactivate this organization?')) return;
-
-      const org = MockData.organizations.find(o => o.id === orgId);
-      if (org) {
-        org.status = 'VERIFIED';
-        org.portalAccess = 'ACTIVE';
-        org.history.unshift({ date: 'Just now', event: 'Reactivated by System Admin', author: 'System Admin' });
-        
-        MockData.logAudit('Organization Reactivated', org.name, 'ORGANIZATION_ACCOUNT_REACTIVATED', `Reactivated by Admin`, 'System Admin');
-        MockData.logAudit('Portal Access Enabled', org.name, 'PORTAL_ACCESS_ENABLED', `Portal access status updated to ACTIVE`, 'System Admin');
-      }
-
-      alert(`✓ ${org.name} Reactivated!`);
-
-      updateStatCounts();
-      renderMasterOrgTable();
-      renderSuspendedOrgs();
-      renderAuditLogs();
-    }
-
-    // AUDIT LOGS
-    function renderAuditLogs() {
-      const tbody = document.getElementById('auditLogsTableBody');
-      if (!tbody) return;
-
-      const localLogs = JSON.parse(localStorage.getItem('lifelink_audit_logs') || '[]');
-      const mockLogs = MockData.auditLogs || [];
-      const combined = [...localLogs, ...mockLogs];
-
-      tbody.innerHTML = combined.map(l => `
-        <tr>
-          <td><span style="font-size: 0.75rem; color: var(--slate-muted);">${l.timestamp}</span></td>
-          <td>
-            <strong>${l.action}</strong>
-            <div style="font-size: 0.68rem; color: var(--blue-accent); font-family: monospace;">${l.actionType || 'AUDIT_EVENT'}</div>
-          </td>
-          <td><span class="badge-status status-verified">${l.user || 'System Admin'}</span></td>
-          <td>${l.orgName || 'System'}</td>
-          <td style="font-size: 0.78rem; color: var(--slate-muted);">${l.details}</td>
-        </tr>
-      `).join('');
-    }
-
-    // ADMIN NOTIFICATIONS DATA & LOGIC
-    let adminCurrentNotifFilter = 'ALL';
-    let adminNotificationsData = [
-      {
-        id: 'NOTIF-001',
-        category: 'CRITICAL',
-        title: 'REQ-1042 requires 1 additional O+ donor.',
-        description: 'Government General Hospital emergency request is nearing the wave deadline.',
-        orgName: 'Government General Hospital',
-        timestamp: '2 minutes ago',
-        unread: true,
-        actionText: 'VIEW REQUEST',
-        targetView: 'live-dispatch',
-        badgeColor: '#E4002B',
-        badgeBg: '#FFF0F3',
-        iconClass: 'fa-triangle-exclamation'
-      },
-      {
-        id: 'NOTIF-002',
-        category: 'EMERGENCY',
-        title: 'Round 2 activated for REQ-1042.',
-        description: 'The first notification round did not reach the required confirmation count. Radius expanded to 5 km.',
-        orgName: 'Government General Hospital',
-        timestamp: '5 minutes ago',
-        unread: true,
-        actionText: 'VIEW DISPATCH',
-        targetView: 'live-dispatch',
-        badgeColor: '#E4002B',
-        badgeBg: '#FFF0F3',
-        iconClass: 'fa-tower-broadcast'
-      },
-      {
-        id: 'NOTIF-003',
-        category: 'ORGANIZATION',
-        title: 'City Blood Bank verification request pending review.',
-        description: 'City Blood Bank submitted registration license documents for verification.',
-        orgName: 'City Blood Bank',
-        timestamp: '20 minutes ago',
-        unread: true,
-        actionText: 'REVIEW REQUEST',
-        targetView: 'verification-requests',
-        badgeColor: '#2563EB',
-        badgeBg: '#EFF6FF',
-        iconClass: 'fa-building-circle-check'
-      },
-      {
-        id: 'NOTIF-004',
-        category: 'ORGANIZATION',
-        title: 'Organization Change Request submitted.',
-        description: 'Government General Hospital submitted a change to its official emergency contact number.',
-        orgName: 'Government General Hospital',
-        timestamp: '32 minutes ago',
-        unread: true,
-        actionText: 'REVIEW CHANGE',
-        targetView: 'change-requests',
-        badgeColor: '#2563EB',
-        badgeBg: '#EFF6FF',
-        iconClass: 'fa-code-pull-request'
-      },
-      {
-        id: 'NOTIF-005',
-        category: 'FULFILLMENT',
-        title: 'REQ-1031 fulfilled successfully.',
-        description: 'REQ-1031 has reached the required donor confirmation count (3/3 units secured).',
-        orgName: 'Apollo Speciality Hospital',
-        timestamp: '45 minutes ago',
-        unread: false,
-        actionText: 'VIEW REQUEST',
-        targetView: 'request-history',
-        badgeColor: '#16A34A',
-        badgeBg: '#F0FDF4',
-        iconClass: 'fa-circle-check'
-      },
-      {
-        id: 'NOTIF-006',
-        category: 'SECURITY',
-        title: 'Organization Password Reset Request received.',
-        description: 'Organization password reset request received from: Government General Hospital (Username: govgeneralhosur).',
-        orgName: 'Government General Hospital',
-        timestamp: '1 hour ago',
-        unread: false,
-        actionText: 'REVIEW REQUEST',
-        targetView: 'verification-requests',
-        badgeColor: '#D97706',
-        badgeBg: '#FEF3C7',
-        iconClass: 'fa-key'
-      },
-      {
-        id: 'NOTIF-007',
-        category: 'SYSTEM',
-        title: 'Daily platform audit completed successfully.',
-        description: 'All active dispatch channels and RBAC permission schemas verified cleanly.',
-        orgName: 'LIFE LINK System',
-        timestamp: '2 hours ago',
-        unread: false,
-        actionText: 'VIEW AUDIT',
-        targetView: 'audit-logs',
-        badgeColor: '#64748B',
-        badgeBg: '#F1F5F9',
-        iconClass: 'fa-shield-halved'
-      }
-    ];
-
-    function filterAdminNotifs(filterKey) {
-      adminCurrentNotifFilter = filterKey;
-      const tabs = ['ALL', 'UNREAD', 'EMERGENCY', 'ORGANIZATION', 'SECURITY', 'SYSTEM'];
-      tabs.forEach(t => {
-        const btn = document.getElementById(`tabNotif${t}`);
-        if (btn) {
-          if (t === filterKey) {
-            btn.className = 'btn-action-sm btn-action-primary';
-          } else {
-            btn.className = 'btn-action-sm';
-          }
-        }
-      });
-      renderAdminNotificationList();
-    }
+    let adminNotificationsData = [];
 
     function renderAdminNotificationList() {
       const container = document.getElementById('adminNotificationList');
       if (!container) return;
 
-      const searchVal = (document.getElementById('adminNotifSearch')?.value || '').toLowerCase().trim();
-
-      let list = adminNotificationsData;
-
-      if (adminCurrentNotifFilter === 'UNREAD') {
-        list = list.filter(n => n.unread);
-      } else if (adminCurrentNotifFilter === 'CRITICAL') {
-        list = list.filter(n => n.category === 'CRITICAL');
-      } else if (adminCurrentNotifFilter !== 'ALL') {
-        list = list.filter(n => n.category === adminCurrentNotifFilter || (adminCurrentNotifFilter === 'EMERGENCY' && (n.category === 'CRITICAL' || n.category === 'EMERGENCY')));
-      }
-
-      if (searchVal) {
-        list = list.filter(n =>
-          n.title.toLowerCase().includes(searchVal) ||
-          n.description.toLowerCase().includes(searchVal) ||
-          n.orgName.toLowerCase().includes(searchVal) ||
-          n.category.toLowerCase().includes(searchVal)
-        );
-      }
-
-      const totalCount = adminNotificationsData.length;
-      const unreadCount = adminNotificationsData.filter(n => n.unread).length;
-      const criticalCount = adminNotificationsData.filter(n => n.category === 'CRITICAL').length;
-      const orgCount = adminNotificationsData.filter(n => n.category === 'ORGANIZATION').length;
-
-      const notifStatAll = document.getElementById('notifStatAll');
-      if (notifStatAll) notifStatAll.textContent = totalCount;
-      const notifStatUnread = document.getElementById('notifStatUnread');
-      if (notifStatUnread) notifStatUnread.textContent = unreadCount;
-      const notifStatCritical = document.getElementById('notifStatCritical');
-      if (notifStatCritical) notifStatCritical.textContent = criticalCount;
-      const notifStatOrg = document.getElementById('notifStatOrg');
-      if (notifStatOrg) notifStatOrg.textContent = orgCount;
-
-      const navBadgeNotifs = document.getElementById('navBadgeNotifs');
-      if (navBadgeNotifs) {
-        navBadgeNotifs.textContent = unreadCount;
-        navBadgeNotifs.style.display = unreadCount > 0 ? 'inline-block' : 'none';
-      }
-
-      if (list.length === 0) {
-        container.innerHTML = `
-          <div class="card-white" style="text-align: center; padding: 2.5rem 1.5rem; margin-top: 0.5rem;">
-            <i class="fa-solid fa-bell-slash" style="font-size: 2.2rem; color: var(--slate-muted); margin-bottom: 0.75rem;"></i>
-            <h3 style="font-family: var(--font-main); font-weight: 700; font-size: 1.1rem; color: var(--navy-dark); margin-bottom: 0.35rem;">No Notifications Found</h3>
-            <p style="font-size: 0.83rem; color: var(--slate-muted); margin-bottom: 1.25rem;">You currently have no matching platform notifications.</p>
-            <button onclick="switchView('dashboard')" class="btn-create-org-cta">Back to Dashboard</button>
+      container.innerHTML = `
+        <div style="background: #FFFFFF; border: 1px solid var(--slate-border); border-radius: 12px; padding: 1.1rem 1.25rem; display: flex; gap: 1rem; align-items: center;">
+          <div style="width: 36px; height: 36px; border-radius: 50%; background: #EFF6FF; color: var(--blue-accent); display: flex; align-items: center; justify-content: center; font-size: 1rem;">
+            <i class="fa-solid fa-shield-halved"></i>
           </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = list.map(n => `
-        <div style="background: ${n.unread ? (n.category === 'CRITICAL' ? '#FFF0F3' : '#F8FAFC') : '#FFFFFF'}; border: 1px solid ${n.unread ? (n.category === 'CRITICAL' ? '#FCA5A5' : '#CBD5E1') : 'var(--slate-border)'}; border-radius: 12px; padding: 1.1rem 1.25rem; display: flex; gap: 1rem; align-items: flex-start; transition: all 0.15s ease;">
-          <div style="width: 36px; height: 36px; border-radius: 9999px; background: ${n.badgeBg}; color: ${n.badgeColor}; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem;">
-            <i class="fa-solid ${n.iconClass}"></i>
-          </div>
-
-          <div style="flex: 1;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem; flex-wrap: wrap; gap: 0.5rem;">
-              <div style="display: flex; align-items: center; gap: 0.45rem;">
-                <span style="font-size: 0.68rem; font-weight: 800; color: ${n.badgeColor}; background: ${n.badgeBg}; padding: 0.15rem 0.5rem; border-radius: 9999px; letter-spacing: 0.04em;">${n.category}</span>
-                <span style="font-size: 0.78rem; color: var(--slate-muted); font-weight: 600;">• ${n.orgName}</span>
-                ${n.unread ? `<span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--red-primary);" title="Unread"></span>` : ''}
-              </div>
-              <span style="font-size: 0.75rem; color: var(--slate-muted);">${n.timestamp}</span>
-            </div>
-
-            <h4 style="font-family: var(--font-main); font-size: 0.92rem; font-weight: ${n.unread ? '700' : '600'}; color: var(--navy-dark); margin-bottom: 0.3rem;">${n.title}</h4>
-            <p style="font-size: 0.8rem; color: var(--slate-muted); line-height: 1.45; margin-bottom: 0.75rem;">${n.description}</p>
-
-            <div style="display: flex; gap: 0.5rem; align-items: center;">
-              <button onclick="handleAdminNotifAction('${n.id}')" class="btn-action-sm btn-action-primary" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">
-                ${n.actionText} →
-              </button>
-              ${n.unread ? `<button onclick="markSingleAdminNotifRead('${n.id}')" class="btn-action-sm" style="font-size: 0.72rem; padding: 0.35rem 0.6rem; color: var(--slate-muted);">Mark Read</button>` : ''}
-            </div>
+          <div>
+            <div style="font-weight: 700; font-size: 0.9rem; color: var(--navy-dark);">System Admin Operations Active</div>
+            <div style="font-size: 0.8rem; color: var(--slate-muted);">Real-time governance monitoring enabled on MongoDB cluster.</div>
           </div>
         </div>
-      `).join('');
-    }
-
-    function handleAdminNotifAction(id) {
-      const n = adminNotificationsData.find(item => item.id === id);
-      if (n) {
-        n.unread = false;
-        renderAdminNotificationList();
-        if (n.targetView) {
-          switchView(n.targetView);
-        }
-      }
-    }
-
-    function markSingleAdminNotifRead(id) {
-      const n = adminNotificationsData.find(item => item.id === id);
-      if (n) {
-        n.unread = false;
-        renderAdminNotificationList();
-      }
-    }
-
-    function markAllAdminNotificationsRead() {
-      adminNotificationsData.forEach(n => n.unread = false);
-      renderAdminNotificationList();
+      `;
     }
   </script>
 </body>

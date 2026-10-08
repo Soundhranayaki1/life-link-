@@ -72,27 +72,23 @@ app.get('*', (req, res) => {
 // Central error handler
 app.use(errorHandler);
 
-let PORT = parseInt(process.env.PORT) || 5000;
+const targetPorts = [5000, 5001];
+const envPort = parseInt(process.env.PORT);
+if (envPort && !targetPorts.includes(envPort)) {
+  targetPorts.push(envPort);
+}
 
-const startServer = (portToTry) => {
-  const server = app.listen(portToTry, () => {
-    console.log(`
-  =======================================================
-     LIFE LINK - Blood Donor Management System
-     Running on: http://localhost:${portToTry}
-     Environment: ${process.env.NODE_ENV || 'development'}
-  =======================================================
-    `);
+targetPorts.forEach((port) => {
+  const server = app.listen(port, () => {
+    console.log(`[LIFE LINK Server] Running on http://localhost:${port}`);
   });
 
   server.on('error', (err) => {
     if (err.code === 'EADDRINUSE') {
-      console.warn(`[Port Alert] Port ${portToTry} is already in use. Trying port ${portToTry + 1}...`);
-      startServer(portToTry + 1);
+      console.warn(`[Port Alert] Port ${port} is already in use.`);
     } else {
-      console.error('[Server Error]', err);
+      console.error(`[Server Error on ${port}]`, err);
     }
   });
-};
+});
 
-startServer(PORT);

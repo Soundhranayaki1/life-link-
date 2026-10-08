@@ -62,49 +62,71 @@
       renderFullStock();
     });
 
-    function renderBloodBanks() {
+    async function renderBloodBanks() {
       const container = document.getElementById('bloodBanksListGrid');
       if (!container) return;
 
-      container.innerHTML = MockData.bloodBanks.map(b => `
-        <div class="card card-body card-hover">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
-            <h3 style="font-size: 1.25rem;">${b.bankName}</h3>
-            <span class="badge badge-success">✓ ${b.verificationStatus}</span>
+      try {
+        const res = await fetch('/api/blood-banks');
+        const data = await res.json();
+        const banks = (data.success && data.bloodBanks) ? data.bloodBanks : [];
+
+        if (banks.length === 0) {
+          container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--navy-muted); padding: 2rem;">No verified facilities currently registered.</div>`;
+          return;
+        }
+
+        container.innerHTML = banks.map(b => `
+          <div class="card card-body card-hover">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+              <h3 style="font-size: 1.25rem;">${b.bankName}</h3>
+              <span class="badge badge-success">✓ ${b.verificationStatus || 'Approved'}</span>
+            </div>
+
+            <p style="color: var(--navy-muted); font-size: 0.88rem; margin-bottom: 0.5rem;">🏥 ${b.address || ''}, ${b.city || ''}</p>
+            <p style="color: var(--navy-muted); font-size: 0.88rem; margin-bottom: 1rem;">📜 License #: <code>${b.licenseNumber || 'GOVT-TN-2026'}</code> • 🕒 ${b.operatingHours || '24/7'}</p>
+
+            <a href="tel:${b.contactPhone}" class="btn btn-secondary btn-sm" style="width: 100%;">
+              📞 Call Facility (${b.contactPhone || 'N/A'})
+            </a>
           </div>
-
-          <p style="color: var(--navy-muted); font-size: 0.88rem; margin-bottom: 0.5rem;">🏥 ${b.address}, ${b.city}</p>
-          <p style="color: var(--navy-muted); font-size: 0.88rem; margin-bottom: 1rem;">📜 License #: <code>${b.licenseNumber}</code> • 🕒 ${b.operatingHours}</p>
-
-          <a href="tel:${b.contactPhone}" class="btn btn-secondary btn-sm" style="width: 100%;">
-            📞 Call Facility (${b.contactPhone})
-          </a>
-        </div>
-      `).join('');
+        `).join('');
+      } catch (err) {
+        console.error('Error rendering blood banks:', err);
+      }
     }
 
-    function renderFullStock() {
+    async function renderFullStock() {
       const container = document.getElementById('fullStockGrid');
       if (!container) return;
 
-      container.innerHTML = MockData.bloodStock.map(item => {
-        const fillPercent = Math.round((item.unitsAvailable / item.maxCapacity) * 100);
-        const isCritical = item.status === 'CRITICAL' || item.status === 'LOW';
+      try {
+        const res = await fetch('/api/stock');
+        const data = await res.json();
+        const stockList = (data.success && data.stock) ? data.stock : [];
 
-        return `
-          <div class="blood-meter-card">
-            <span class="badge ${isCritical ? 'badge-critical' : 'badge-success'}" style="margin-bottom: 0.5rem; font-size: 0.72rem;">${item.status}</span>
-            <div style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800;">${item.bloodGroup}</div>
-            
-            <div class="blood-vial">
-              <div class="blood-vial-fill" style="height: ${fillPercent}%;"></div>
+        container.innerHTML = stockList.map(item => {
+          const maxCapacity = 50;
+          const fillPercent = Math.min(100, Math.round((item.unitsAvailable / maxCapacity) * 100));
+          const isCritical = item.unitsAvailable < 5;
+
+          return `
+            <div class="blood-meter-card">
+              <span class="badge ${isCritical ? 'badge-critical' : 'badge-success'}" style="margin-bottom: 0.5rem; font-size: 0.72rem;">${isCritical ? 'LOW / CRITICAL' : 'SUFFICIENT'}</span>
+              <div style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800;">${item.bloodGroup}</div>
+              
+              <div class="blood-vial">
+                <div class="blood-vial-fill" style="height: ${fillPercent}%;"></div>
+              </div>
+
+              <div style="font-family: var(--font-heading); font-size: 1.35rem; font-weight: 800; color: var(--crimson-red);">${item.unitsAvailable} Units</div>
+              <div style="font-size: 0.78rem; color: var(--navy-muted); margin-top: 0.25rem;">Live MongoDB Level</div>
             </div>
-
-            <div style="font-family: var(--font-heading); font-size: 1.35rem; font-weight: 800; color: var(--crimson-red);">${item.unitsAvailable} Units</div>
-            <div style="font-size: 0.78rem; color: var(--navy-muted); margin-top: 0.25rem;">Capacity: ${item.maxCapacity} Units</div>
-          </div>
-        `;
-      }).join('');
+          `;
+        }).join('');
+      } catch (err) {
+        console.error('Error rendering full stock:', err);
+      }
     }
   </script>
 

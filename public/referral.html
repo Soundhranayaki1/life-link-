@@ -239,7 +239,7 @@
 
       <div class="form-group">
         <label class="form-label">Your Mobile Number</label>
-        <input type="tel" id="friendPhoneInput" class="form-control" value="+91 98765 43210" placeholder="Enter 10-digit mobile number">
+        <input type="tel" id="friendPhoneInput" class="form-control" placeholder="Enter 10-digit mobile number">
       </div>
 
       <div class="form-group" id="otpInputGroup" style="display: block;">
@@ -384,10 +384,10 @@
                 ✓ VERIFIED EMERGENCY REQUEST
               </span>
               <h3 style="font-size: 1.15rem; font-weight: 800; margin-top: 0.5rem; margin-bottom: 0.25rem;">
-                XYZ Government Hospital
+                ${currentReferral && currentReferral.hospitalName ? currentReferral.hospitalName : 'Emergency Healthcare Center'}
               </h3>
               <p style="font-size: 0.85rem; color: var(--slate-muted); margin-bottom: 0.75rem;">
-                📍 Hosur Healthcare Center (~3.4 km away) &nbsp;|&nbsp; 2 Units Required
+                📍 ${currentReferral && currentReferral.location ? currentReferral.location : 'Healthcare Center'} &nbsp;|&nbsp; ${currentReferral && currentReferral.unitsRequired ? currentReferral.unitsRequired : '2'} Units Required
               </p>
               <div style="font-size: 0.82rem; background: var(--red-soft); color: var(--red-primary); padding: 0.5rem 0.75rem; border-radius: 8px; font-weight: 700;">
                 ⏱ Required within: 1 hour 40 mins

@@ -24,6 +24,12 @@ const userSchema = new mongoose.Schema({
     unique: true,
     trim: true
   },
+  username: {
+    type: String,
+    trim: true,
+    lowercase: true,
+    sparse: true
+  },
   role: {
     type: String,
     enum: ['Donor', 'Organization', 'BloodBank', 'Admin'],

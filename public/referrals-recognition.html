@@ -497,8 +497,8 @@
 
     <div class="header-user-actions">
       <a href="donor-profile.html" class="user-profile-btn">
-        <div class="user-avatar-circle">A</div>
-        <span>Arun</span> <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; color: var(--slate-muted);"></i>
+        <div class="user-avatar-circle">--</div>
+        <span>Donor</span> <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem; color: var(--slate-muted);"></i>
       </a>
 
       <button onclick="MockAuth.logout()" class="btn-signout" title="Sign Out">
@@ -769,8 +769,8 @@
         This certificate officially verifies the lifesaving actions performed by
       </p>
 
-      <div style="font-size: 1.8rem; font-weight: 800; color: var(--navy-dark); font-family: var(--font-cursive); margin-bottom: 1rem; border-bottom: 2px solid #E6002E; display: inline-block; padding: 0 2rem;">
-        Arun Kumar
+      <div id="certDonorName" style="font-size: 1.8rem; font-weight: 800; color: var(--navy-dark); font-family: var(--font-cursive); margin-bottom: 1rem; border-bottom: 2px solid #E6002E; display: inline-block; padding: 0 2rem;">
+        Donor
       </div>
 
       <p style="font-size: 0.88rem; color: var(--slate-body); line-height: 1.5; margin-bottom: 1.5rem;">
@@ -812,47 +812,52 @@
       loadReferralData();
     });
 
-    function loadReferralData() {
-      const stats = MockData.calculateReferralStats();
-      const referrals = MockData.getReferrals();
+    async function loadReferralData() {
+      try {
+        MockAuth.syncHeaderUserUI();
+        const res = await fetch('/api/referrals', { headers: MockAuth.getAuthHeaders() });
+        const data = await res.json();
+        if (data.success) {
+          const stats = data.stats || { totalSent: 0, registered: 0, completed: 0 };
+          const referrals = data.referrals || [];
 
-      document.getElementById('statPeopleReferred').textContent = stats.totalReferred.toString().padStart(2, '0');
-      document.getElementById('statSuccessfulReferralDonations').textContent = stats.donatedCount.toString().padStart(2, '0');
+          document.getElementById('statPeopleReferred').textContent = (stats.totalSent || 0).toString().padStart(2, '0');
+          document.getElementById('statSuccessfulReferralDonations').textContent = (stats.completed || 0).toString().padStart(2, '0');
 
-      document.getElementById('pipeReferred').textContent = stats.totalReferred;
-      document.getElementById('pipeVerified').textContent = stats.verifiedCount;
-      document.getElementById('pipeMatched').textContent = stats.matchedCount;
-      document.getElementById('pipeResponded').textContent = stats.respondedCount;
-      document.getElementById('pipeDonated').textContent = stats.donatedCount;
+          document.getElementById('pipeReferred').textContent = stats.totalSent || 0;
+          document.getElementById('pipeVerified').textContent = stats.registered || 0;
+          document.getElementById('pipeMatched').textContent = stats.registered || 0;
+          document.getElementById('pipeResponded').textContent = stats.completed || 0;
+          document.getElementById('pipeDonated').textContent = stats.completed || 0;
 
-      document.getElementById('formulaSuccessRateDisplay').textContent = stats.successRate + '%';
+          const rate = stats.totalSent ? Math.round((stats.completed / stats.totalSent) * 100) : 0;
+          document.getElementById('formulaSuccessRateDisplay').textContent = rate + '%';
 
-      const tbody = document.getElementById('referralHistoryTableBody');
-      if (tbody) {
-        tbody.innerHTML = referrals.map(r => {
-          let badgeClass = 'badge-sent';
-          if (r.status === 'Donation Completed') badgeClass = 'badge-completed';
-          else if (r.status === 'OTP Verified' || r.status === 'Matched') badgeClass = 'badge-verified';
-          else if (r.status === 'Not Compatible') badgeClass = 'badge-incompatible';
-
-          return `
-            <tr>
-              <td><strong>${r.id}</strong></td>
-              <td>${r.anonymizedPhone}</td>
-              <td>${r.referralDate}</td>
-              <td><span class="badge-status ${badgeClass}">${r.status}</span></td>
-              <td>
-                <a href="referral.html?ref=${r.refToken}" target="_blank" style="color: #2563EB; font-weight: 700; text-decoration: underline; font-size: 0.8rem;">
-                  Open Referral Link →
-                </a>
-              </td>
-            </tr>
-          `;
-        }).join('');
+          const tbody = document.getElementById('referralHistoryTableBody');
+          if (tbody) {
+            tbody.innerHTML = referrals.map(r => `
+              <tr>
+                <td><strong>${r.referralCode || 'REF'}</strong></td>
+                <td>${r.refereePhone ? r.refereePhone.substring(0, 5) + '*****' : 'Masked'}</td>
+                <td>${r.createdAt ? new Date(r.createdAt).toLocaleDateString() : 'Today'}</td>
+                <td><span class="badge-status badge-verified">${r.status || 'Sent'}</span></td>
+                <td>
+                  <span style="font-size: 0.8rem; color: var(--navy-dark); font-weight: 700;">Code: ${r.referralCode}</span>
+                </td>
+              </tr>
+            `).join('') || `<tr><td colspan="5" style="text-align: center; color: var(--slate-muted); padding: 1.5rem;">No referrals recorded yet. Use the Refer button on the home feed to send invites!</td></tr>`;
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching referral data:', err);
       }
     }
 
     function openCertificateModal() {
+      const user = MockAuth.getCurrentUser();
+      if (user && user.name) {
+        document.getElementById('certDonorName').textContent = user.name;
+      }
       document.getElementById('certificateModal').style.display = 'flex';
     }
 

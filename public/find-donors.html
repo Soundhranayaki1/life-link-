@@ -100,7 +100,6 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Parse query params if present
       const params = new URLSearchParams(window.location.search);
       if (params.has('bloodGroup')) document.getElementById('filterBloodGroup').value = params.get('bloodGroup');
       if (params.has('city')) document.getElementById('filterCity').value = params.get('city');
@@ -108,7 +107,7 @@
       renderDonorDirectory();
     });
 
-    function renderDonorDirectory() {
+    async function renderDonorDirectory() {
       const container = document.getElementById('donorMatchingGrid');
       if (!container) return;
 
@@ -117,67 +116,75 @@
       const radius = parseFloat(document.getElementById('filterRadius').value);
       const availFilter = document.getElementById('filterAvailable').value;
 
-      let list = MockData.matchDonors(bg === 'All' ? 'O+' : bg, city);
+      try {
+        const queryParams = new URLSearchParams();
+        if (bg && bg !== 'All') queryParams.append('bloodGroup', bg);
+        if (city) queryParams.append('city', city);
+        if (radius) queryParams.append('maxDistance', radius);
 
-      list = list.filter(d => {
-        if (bg !== 'All' && !MockData.isCompatible(d.bloodGroup, bg)) return false;
-        if (d.distanceKm > radius) return false;
-        if (availFilter === 'Available' && !d.isAvailable) return false;
-        return true;
-      });
+        const res = await fetch(`/api/donors/match?${queryParams.toString()}`);
+        const data = await res.json();
+        let list = (data.success && data.donors) ? data.donors : [];
 
-      if (list.length === 0) {
-        container.innerHTML = `
-          <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem;" class="card card-body">
-            <h3 style="margin-bottom: 0.5rem;">No Matching Donors Found</h3>
-            <p style="color: var(--navy-muted);">No willing, eligible donors found within ${radius} km matching your filters.</p>
-          </div>
-        `;
-        return;
-      }
+        if (availFilter === 'Available') {
+          list = list.filter(d => d.isAvailable);
+        }
 
-      container.innerHTML = list.map((d, index) => {
-        const isBestMatch = index === 0;
-
-        return `
-          <div class="card card-body card-hover" style="position: relative; border-top: 4px solid ${isBestMatch ? 'var(--crimson-red)' : 'var(--navy-border)'}">
-            <div style="position: absolute; top: 12px; right: 12px; display: flex; gap: 0.5rem;">
-              <span class="badge ${d.isEligible ? 'badge-success' : 'badge-warning'}">${d.isEligible ? 'Eligible' : 'Not Eligible Yet'}</span>
-              ${isBestMatch ? '<span class="badge badge-critical">BEST MATCH</span>' : ''}
+        if (list.length === 0) {
+          container.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem;" class="card card-body">
+              <h3 style="margin-bottom: 0.5rem;">No Matching Donors Found</h3>
+              <p style="color: var(--navy-muted);">No willing, eligible donors found within ${radius} km matching your filters.</p>
             </div>
+          `;
+          return;
+        }
 
-            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-              <div class="blood-pill blood-pill-lg">${d.bloodGroup}</div>
-              <div>
-                <h3 style="font-size: 1.25rem; margin-bottom: 0.15rem;">${d.name}</h3>
-                <div style="font-size: 0.85rem; color: var(--navy-muted);">
-                  📍 ${d.approxDistance} • ${d.city} &nbsp;|&nbsp; <span style="color: #2563EB; font-weight: 700;">${d.waveRound}</span>
+        container.innerHTML = list.map((d, index) => {
+          const isBestMatch = index === 0;
+
+          return `
+            <div class="card card-body card-hover" style="position: relative; border-top: 4px solid ${isBestMatch ? 'var(--crimson-red)' : 'var(--navy-border)'}">
+              <div style="position: absolute; top: 12px; right: 12px; display: flex; gap: 0.5rem;">
+                <span class="badge badge-success">Eligible</span>
+                ${isBestMatch ? '<span class="badge badge-critical">BEST MATCH</span>' : ''}
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <div class="blood-pill blood-pill-lg">${d.bloodGroup}</div>
+                <div>
+                  <h3 style="font-size: 1.25rem; margin-bottom: 0.15rem;">${d.name || 'Voluntary Donor'}</h3>
+                  <div style="font-size: 0.85rem; color: var(--navy-muted);">
+                    📍 ~${d.distanceKm || 2.5} km • ${d.city} &nbsp;|&nbsp; <span style="color: #2563EB; font-weight: 700;">${d.matchingWave || 'Round 1'}</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-light); padding: 0.75rem 1rem; border-radius: var(--radius-sm); margin-bottom: 1rem;">
-              <div>
-                <span style="font-size: 0.78rem; color: var(--navy-muted); display: block;">Match Status</span>
-                <strong style="color: #2563EB; font-size: 0.95rem;">${d.matchStatus}</strong>
+              <div style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-light); padding: 0.75rem 1rem; border-radius: var(--radius-sm); margin-bottom: 1rem;">
+                <div>
+                  <span style="font-size: 0.78rem; color: var(--navy-muted); display: block;">Match Status</span>
+                  <strong style="color: #2563EB; font-size: 0.95rem;">Exact Group Match</strong>
+                </div>
+
+                <div>
+                  <span class="badge ${d.isAvailable ? 'badge-success' : 'badge-neutral'}">${d.isAvailable ? '🟢 Available' : '🔴 Unavailable'}</span>
+                </div>
               </div>
 
-              <div>
-                <span class="badge ${d.isAvailable ? 'badge-success' : 'badge-neutral'}">${d.isAvailable ? '🟢 Available' : '🔴 Unavailable'}</span>
+              <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--navy-border); padding-top: 0.85rem;">
+                <span style="font-size: 0.8rem; color: var(--navy-muted);">
+                  Status: <strong>VERIFIED</strong>
+                </span>
+                <button onclick="alert('Sending notification alert to ${d.name} (${d.city})')" class="btn btn-primary btn-sm">
+                  Notify Donor
+                </button>
               </div>
             </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--navy-border); padding-top: 0.85rem;">
-              <span style="font-size: 0.8rem; color: var(--navy-muted);">
-                48-Day Status: <strong>${d.eligibilityStatus}</strong>
-              </span>
-              <button onclick="alert('Sending emergency notification request to ${d.name} (${d.approxDistance}) under Privacy Shield.')" class="btn btn-primary btn-sm" ${!d.isEligible ? 'disabled style="opacity: 0.6; cursor: not-allowed;"' : ''}>
-                Notify Donor
-              </button>
-            </div>
-          </div>
-        `;
-      }).join('');
+          `;
+        }).join('');
+      } catch (err) {
+        console.error('Error fetching donors:', err);
+      }
     }
   </script>
 

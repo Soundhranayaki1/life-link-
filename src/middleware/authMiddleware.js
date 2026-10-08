@@ -15,6 +15,9 @@ const protect = async (req, res, next) => {
 
       if (User.db && User.db.readyState === 1) {
         req.user = await User.findById(decoded.id).select('-password');
+        if (!req.user) {
+          return res.status(401).json({ success: false, message: 'User account no longer exists' });
+        }
       } else {
         req.user = decoded;
       }

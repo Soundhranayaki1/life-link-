@@ -6,9 +6,13 @@ const Notification = require('../models/Notification');
 const getNotifications = async (req, res, next) => {
   try {
     const userId = req.user.id || req.user._id;
+    const mongoose = require('mongoose');
+    const recipientObjId = mongoose.Types.ObjectId.isValid(userId) ? new mongoose.Types.ObjectId(userId) : userId;
 
     if (Notification.db && Notification.db.readyState === 1) {
-      const notifications = await Notification.find({ recipientId: userId }).sort({ createdAt: -1 });
+      const notifications = await Notification.find({
+        $or: [{ recipientId: recipientObjId }, { recipientId: userId.toString() }]
+      }).sort({ createdAt: -1 });
       const unreadCount = notifications.filter(n => !n.isRead).length;
       return res.json({ success: true, count: notifications.length, unreadCount, notifications });
     } else {

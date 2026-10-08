@@ -8,7 +8,7 @@ const Organization = require('../models/Organization');
 const Notification = require('../models/Notification');
 const AuditLog = require('../models/AuditLog');
 const SystemSetting = require('../models/SystemSetting');
-const { getCompatibleDonors } = require('./compatibility');
+const { getCompatibleDonors, isCompatible } = require('./compatibility');
 const { calculateDistance } = require('./distance');
 
 // Helper to fetch current system settings
@@ -143,12 +143,19 @@ async function evaluateRequestDispatch(requestId, triggerType = 'AUTO') {
   const nextWaveNumber = request.currentWaveNumber + 1;
   const newWaveTitle = `Round ${nextWaveNumber} (${minRadius}–${maxRadiusForWave} km)`;
 
-  const hospitalLocation = { city: request.city };
-  if (request.organizationId) {
+  const hospitalLocation = {
+    city: request.city,
+    district: request.district,
+    latitude: request.locationCoords ? request.locationCoords.latitude : null,
+    longitude: request.locationCoords ? request.locationCoords.longitude : null
+  };
+  if (!hospitalLocation.latitude && request.organizationId) {
     const org = await Organization.findById(request.organizationId);
     if (org && org.locationCoords && org.locationCoords.latitude) {
-      hospitalLocation.latitude = org.locationCoords.latitude;
-      hospitalLocation.longitude = org.locationCoords.longitude;
+      if (!request.city || (org.city && org.city.trim().toLowerCase() === request.city.trim().toLowerCase())) {
+        hospitalLocation.latitude = org.locationCoords.latitude;
+        hospitalLocation.longitude = org.locationCoords.longitude;
+      }
     }
   }
 
@@ -164,17 +171,13 @@ async function evaluateRequestDispatch(requestId, triggerType = 'AUTO') {
 
   for (const p of activeProfiles) {
     if (!p.userId || p.userId.status === 'SUSPENDED') continue;
+    if (!isCompatible(p.bloodGroup, request.bloodGroup)) continue;
 
     // STRICT RULE: Do NOT repeatedly notify donors who were already notified in previous waves!
     const alreadyNotified = request.notifiedDonorIds.some(notifiedId => 
       notifiedId.toString() === p.userId._id.toString()
     );
     if (alreadyNotified) continue;
-
-    // Check Notification Cooldown / Fatigue Protection
-    if (p.lastNotifiedAt && (now - new Date(p.lastNotifiedAt).getTime()) < cooldownMs) {
-      continue;
-    }
 
     const donorLoc = {
       city: p.city,
@@ -268,8 +271,76 @@ async function runBackgroundDispatchCycle() {
   }
 }
 
+/**
+ * Automatically match a newly registered/active donor against existing active blood requests in MongoDB
+ * @param {Object} user User document
+ * @param {Object} profile DonorProfile document
+ */
+async function matchNewDonorWithActiveRequests(user, profile) {
+  try {
+    console.log(`[matchNewDonor] Starting for user ${user._id || user.id} (Blood: ${profile ? profile.bloodGroup : 'N/A'})`);
+    if (!user || !profile || profile.isAvailable === false) {
+      console.log(`[matchNewDonor] Bailed early: user=${!!user}, profile=${!!profile}, isAvailable=${profile ? profile.isAvailable : false}`);
+      return;
+    }
+    
+    // Check 48-day eligibility
+    const { calculateEligibility } = require('./eligibility');
+    const eligibility = calculateEligibility(profile.lastDonationDate);
+    if (!eligibility.isEligible) {
+      console.log(`[matchNewDonor] Not eligible:`, eligibility);
+      return;
+    }
+
+    // Find all active blood requests
+    const activeRequests = await BloodRequest.find({
+      status: { $in: ['Pending', 'In Progress'] }
+    });
+    console.log(`[matchNewDonor] Found ${activeRequests.length} active requests in DB`);
+
+    for (const req of activeRequests) {
+      // Check medical compatibility
+      const comp = isCompatible(profile.bloodGroup, req.bloodGroup);
+      if (!comp) continue;
+
+      const userIdStr = (user._id || user.id).toString();
+      const alreadyNotified = req.notifiedDonorIds && req.notifiedDonorIds.some(
+        id => id.toString() === userIdStr
+      );
+
+      if (!alreadyNotified) {
+        req.notifiedDonorIds.push(user._id || user.id);
+        req.donorsNotifiedCount = req.notifiedDonorIds.length;
+        await req.save();
+
+        // Create Notification document for the donor with BSON ObjectId
+        const mongoose = require('mongoose');
+        const recipientObjId = mongoose.Types.ObjectId.isValid(user._id || user.id)
+          ? new mongoose.Types.ObjectId(user._id || user.id)
+          : (user._id || user.id);
+
+        const cleanUrgency = req.urgency || 'Urgent';
+        const notifDoc = await Notification.create({
+          recipientId: recipientObjId,
+          title: `🚨 ${cleanUrgency} Request: ${req.bloodGroup} needed at ${req.hospitalName || req.orgName}`,
+          message: `Active emergency requirement: ${req.unitsNeeded} Units of ${req.bloodGroup} at ${req.hospitalName || req.orgName}, ${req.city}. Tap to respond.`,
+          type: 'EmergencyRequest',
+          link: 'donor-dashboard.html'
+        });
+        console.log(`[matchNewDonor] Created Notification ${notifDoc._id} for recipientId ${notifDoc.recipientId}`);
+
+        profile.lastNotifiedAt = new Date();
+        await profile.save();
+      }
+    }
+  } catch (err) {
+    console.error('[matchNewDonorWithActiveRequests] Error:', err.message);
+  }
+}
+
 module.exports = {
   getSystemSettingsMap,
   evaluateRequestDispatch,
-  runBackgroundDispatchCycle
+  runBackgroundDispatchCycle,
+  matchNewDonorWithActiveRequests
 };

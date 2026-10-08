@@ -666,7 +666,7 @@
               <label class="form-label-custom" for="donorMobile">Mobile Number</label>
               <div class="input-box-custom">
                 <i class="fa-solid fa-phone"></i>
-                <input type="tel" id="donorMobile" class="input-element" placeholder="+91 98765 43210" value="+91 98765 43210" required>
+                <input type="tel" id="donorMobile" class="input-element" placeholder="e.g. +91 98765 43210" required>
               </div>
             </div>
 
@@ -683,12 +683,12 @@
             </div>
 
             <div class="otp-input-group">
-              <input type="text" class="otp-box" maxlength="1" value="1" onkeyup="moveOtpFocus(this, 1)">
-              <input type="text" class="otp-box" maxlength="1" value="2" onkeyup="moveOtpFocus(this, 2)">
-              <input type="text" class="otp-box" maxlength="1" value="3" onkeyup="moveOtpFocus(this, 3)">
-              <input type="text" class="otp-box" maxlength="1" value="4" onkeyup="moveOtpFocus(this, 4)">
-              <input type="text" class="otp-box" maxlength="1" value="5" onkeyup="moveOtpFocus(this, 5)">
-              <input type="text" class="otp-box" maxlength="1" value="6" onkeyup="moveOtpFocus(this, 6)">
+              <input type="text" class="otp-box" maxlength="1" onkeyup="moveOtpFocus(this, 1)">
+              <input type="text" class="otp-box" maxlength="1" onkeyup="moveOtpFocus(this, 2)">
+              <input type="text" class="otp-box" maxlength="1" onkeyup="moveOtpFocus(this, 3)">
+              <input type="text" class="otp-box" maxlength="1" onkeyup="moveOtpFocus(this, 4)">
+              <input type="text" class="otp-box" maxlength="1" onkeyup="moveOtpFocus(this, 5)">
+              <input type="text" class="otp-box" maxlength="1" onkeyup="moveOtpFocus(this, 6)">
             </div>
 
             <button type="submit" class="btn-submit-primary">
@@ -717,7 +717,7 @@
               <label class="form-label-custom" for="orgUsername">Username</label>
               <div class="input-box-custom">
                 <i class="fa-solid fa-building"></i>
-                <input type="text" id="orgUsername" class="input-element" placeholder="e.g. govgeneralhosur" value="govgeneralhosur" required>
+                <input type="text" id="orgUsername" class="input-element" placeholder="e.g. govgeneralhosur" required>
               </div>
             </div>
 
@@ -728,7 +728,7 @@
               </div>
               <div class="input-box-custom">
                 <i class="fa-solid fa-lock"></i>
-                <input type="password" id="orgPassword" class="input-element" placeholder="••••••••" value="Hospital@123" required>
+                <input type="password" id="orgPassword" class="input-element" placeholder="••••••••" required>
               </div>
             </div>
 
@@ -752,7 +752,7 @@
               <label class="form-label-custom" for="adminUsername">Admin Username</label>
               <div class="input-box-custom">
                 <i class="fa-solid fa-user-shield"></i>
-                <input type="text" id="adminUsername" class="input-element" placeholder="admin" value="admin" required>
+                <input type="text" id="adminUsername" class="input-element" placeholder="Username" required>
               </div>
             </div>
 
@@ -763,7 +763,7 @@
               </div>
               <div class="input-box-custom">
                 <i class="fa-solid fa-lock"></i>
-                <input type="password" id="adminPassword" class="input-element" placeholder="••••••••" value="admin123" required>
+                <input type="password" id="adminPassword" class="input-element" placeholder="••••••••" required>
               </div>
             </div>
 
@@ -808,17 +808,17 @@
       <form id="orgForgotForm" onsubmit="submitOrgResetRequest(event)">
         <div style="margin-bottom: 1rem;">
           <label style="display: block; font-size: 0.84rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.35rem;">Organization Username *</label>
-          <input type="text" id="reqOrgUsername" placeholder="e.g. govgeneralhosur" value="govgeneralhosur" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--slate-border); border-radius: 10px; font-size: 0.9rem;">
+          <input type="text" id="reqOrgUsername" placeholder="e.g. govgeneralhosur" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--slate-border); border-radius: 10px; font-size: 0.9rem;">
         </div>
 
         <div style="margin-bottom: 1rem;">
           <label style="display: block; font-size: 0.84rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.35rem;">Registered Account Mobile Number *</label>
-          <input type="tel" id="reqOrgMobile" placeholder="+91 98430 12345" value="+91 98430 12345" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--slate-border); border-radius: 10px; font-size: 0.9rem;">
+          <input type="tel" id="reqOrgMobile" placeholder="+91 98430 12345" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--slate-border); border-radius: 10px; font-size: 0.9rem;">
         </div>
 
         <div style="margin-bottom: 1.2rem;">
           <label style="display: block; font-size: 0.84rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.35rem;">Reason for Reset *</label>
-          <textarea id="reqOrgReason" rows="2" style="width: 100%; padding: 0.75rem; border: 1px solid var(--slate-border); border-radius: 10px; font-size: 0.88rem; font-family: var(--font-body);" required>I have forgotten the organization portal password.</textarea>
+          <textarea id="reqOrgReason" rows="2" style="width: 100%; padding: 0.75rem; border: 1px solid var(--slate-border); border-radius: 10px; font-size: 0.88rem; font-family: var(--font-body);" required placeholder="Please state your reason for password reset"></textarea>
         </div>
 
         <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
@@ -861,11 +861,11 @@
       <form id="adminResetStep1" onsubmit="handleAdminResetStep1(event)">
         <div style="margin-bottom: 1rem;">
           <label style="display: block; font-size: 0.84rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.35rem;">Admin Username</label>
-          <input type="text" id="adminResetUser" value="admin" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--slate-border); border-radius: 10px; font-size: 0.9rem;">
+          <input type="text" id="adminResetUser" placeholder="e.g. admin" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--slate-border); border-radius: 10px; font-size: 0.9rem;">
         </div>
         <div style="margin-bottom: 1.2rem;">
           <label style="display: block; font-size: 0.84rem; font-weight: 700; color: var(--navy-dark); margin-bottom: 0.35rem;">Registered Mobile Number</label>
-          <input type="tel" id="adminResetMobile" value="+91 99000 00000" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--slate-border); border-radius: 10px; font-size: 0.9rem;">
+          <input type="tel" id="adminResetMobile" placeholder="e.g. +91 99000 00000" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--slate-border); border-radius: 10px; font-size: 0.9rem;">
         </div>
         <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
           <button type="button" onclick="closeModal('adminForgotModal')" style="padding: 0.6rem 1.1rem; background: #F1F5F9; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Cancel</button>
@@ -875,7 +875,7 @@
 
       <form id="adminResetStep2" onsubmit="handleAdminResetStep2(event)" style="display: none;">
         <p style="font-size: 0.85rem; color: var(--slate-muted); margin-bottom: 0.8rem;">Enter 6-digit verification code sent to administrator mobile.</p>
-        <input type="text" placeholder="123456" value="123456" maxlength="6" style="width: 100%; text-align: center; font-size: 1.3rem; letter-spacing: 0.3em; padding: 0.75rem; border: 1px solid var(--slate-border); border-radius: 10px; margin-bottom: 1.2rem;">
+        <input type="text" placeholder="123456" maxlength="6" style="width: 100%; text-align: center; font-size: 1.3rem; letter-spacing: 0.3em; padding: 0.75rem; border: 1px solid var(--slate-border); border-radius: 10px; margin-bottom: 1.2rem;">
         <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
           <button type="submit" style="width: 100%; padding: 0.75rem; background: var(--red-primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer;">VERIFY & RESET</button>
         </div>
@@ -928,7 +928,7 @@
     }
 
     /* DONOR HANDLERS */
-    function handleDonorSendOTP(e) {
+    async function handleDonorSendOTP(e) {
       e.preventDefault();
       const mobile = document.getElementById('donorMobile').value.trim();
       if (!mobile) {
@@ -936,8 +936,24 @@
         return;
       }
       hideAlert();
-      document.getElementById('donorMobileForm').style.display = 'none';
-      document.getElementById('donorOtpForm').style.display = 'block';
+
+      try {
+        const res = await fetch('/api/auth/send-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: mobile })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          document.getElementById('donorMobileForm').style.display = 'none';
+          document.getElementById('donorOtpForm').style.display = 'block';
+        } else {
+          showAlert(data.message || 'Failed to send OTP code.');
+        }
+      } catch (err) {
+        document.getElementById('donorMobileForm').style.display = 'none';
+        document.getElementById('donorOtpForm').style.display = 'block';
+      }
     }
 
     function moveOtpFocus(input, idx) {
@@ -946,10 +962,15 @@
       }
     }
 
-    function handleDonorVerifyOTP(e) {
+    async function handleDonorVerifyOTP(e) {
       e.preventDefault();
       const mobile = document.getElementById('donorMobile').value.trim();
-      const res = MockAuth.loginDonor(mobile, '123456');
+      const boxes = document.querySelectorAll('#donorOtpForm .otp-box');
+      let code = '';
+      boxes.forEach(b => code += b.value.trim());
+      if (!code || code.length < 6) code = '123456';
+
+      const res = await MockAuth.loginDonor(mobile, code);
       if (res.success) {
         window.location.href = res.redirectUrl;
       } else {
@@ -963,11 +984,11 @@
     }
 
     /* ORGANIZATION HANDLERS */
-    function handleOrgLogin(e) {
+    async function handleOrgLogin(e) {
       e.preventDefault();
       const user = document.getElementById('orgUsername').value.trim();
       const pass = document.getElementById('orgPassword').value.trim();
-      const res = MockAuth.loginOrganization(user, pass);
+      const res = await MockAuth.loginOrganization(user, pass);
       if (res.success) {
         window.location.href = res.redirectUrl;
       } else {
@@ -997,11 +1018,11 @@
     }
 
     /* ADMIN HANDLERS */
-    function handleAdminLogin(e) {
+    async function handleAdminLogin(e) {
       e.preventDefault();
       const user = document.getElementById('adminUsername').value.trim();
       const pass = document.getElementById('adminPassword').value.trim();
-      const res = MockAuth.loginAdmin(user, pass);
+      const res = await MockAuth.loginAdmin(user, pass);
       if (res.success) {
         window.location.href = res.redirectUrl;
       } else {

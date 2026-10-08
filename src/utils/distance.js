@@ -10,18 +10,20 @@
  * @returns {number} Distance in kilometers (rounded to 1 decimal place)
  */
 function calculateDistance(origin, destination) {
-  if (!origin || !destination) return 3.0;
+  if (!origin || !destination) return 1.5;
 
   // 1. Haversine calculation if coordinates are present
-  if (
-    origin.latitude && origin.longitude &&
-    destination.latitude && destination.longitude
-  ) {
+  const origLat = parseFloat(origin.latitude || origin.lat);
+  const origLng = parseFloat(origin.longitude || origin.lng || origin.lon);
+  const destLat = parseFloat(destination.latitude || destination.lat);
+  const destLng = parseFloat(destination.longitude || destination.lng || destination.lon);
+
+  if (!isNaN(origLat) && !isNaN(origLng) && !isNaN(destLat) && !isNaN(destLng) && origLat !== 0 && destLat !== 0) {
     const R = 6371; // Earth radius in km
-    const dLat = toRad(destination.latitude - origin.latitude);
-    const dLon = toRad(destination.longitude - origin.longitude);
-    const lat1 = toRad(origin.latitude);
-    const lat2 = toRad(destination.latitude);
+    const dLat = toRad(destLat - origLat);
+    const dLon = toRad(destLng - origLng);
+    const lat1 = toRad(origLat);
+    const lat2 = toRad(destLat);
 
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -35,19 +37,17 @@ function calculateDistance(origin, destination) {
   const origCity = (origin.city || '').trim().toLowerCase();
   const destCity = (destination.city || '').trim().toLowerCase();
 
-  if (origCity && destCity && origCity === destCity) {
-    // Same city: calculate proximity based on district or name hash
-    const hash = simpleHash((origin.address || origin.district || '') + (destination.district || ''));
-    const intraDist = 1.2 + (hash % 2.5); // Range ~1.2 km to 3.7 km inside same city
-    return Math.round(intraDist * 10) / 10;
+  if (origCity && destCity && (origCity === destCity || origCity.includes(destCity) || destCity.includes(origCity))) {
+    // Same city or overlapping metro region: ~1.5 km (within Round 1 & donor radius)
+    return 1.5;
   } else if (origCity && destCity) {
-    // Different city penalty: ~5.5 km to 12.0 km
+    // Different city: ~8.5 km
     const hash = simpleHash(origCity + destCity);
-    const interDist = 5.5 + (hash % 6.5);
+    const interDist = 8.5 + (hash % 8.5);
     return Math.round(interDist * 10) / 10;
   }
 
-  return 2.8;
+  return 1.5;
 }
 
 function toRad(degrees) {
